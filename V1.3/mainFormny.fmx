@@ -850,12 +850,12 @@ object Form1: TForm1
       Width = 57.000000000000000000
     end
     object PropConstrButton: TButton
-      Height = 22.000000000000000000
-      Position.X = 512.000000000000000000
-      Position.Y = 416.000000000000000000
+      Height = 33.000000000000000000
+      Position.X = 456.000000000000000000
+      Position.Y = 352.000000000000000000
       TabOrder = 12
       Text = 'Bibliotek'
-      Width = 80.000000000000000000
+      Width = 89.000000000000000000
       OnClick = PropConstrButtonClick
     end
     object PropAbsLabel: TLabel
