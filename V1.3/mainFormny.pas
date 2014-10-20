@@ -341,9 +341,15 @@ begin
   DerobModel.HouseProperties.IntValue['FloorHolder'] := FloorComboBox.ItemIndex;
 
   DerobModel.HouseProperties.IntValue['WallHolder'] := WallComboBox.ItemIndex;
-  DerobModel.HouseProperties.IntValue['GlazeHolder'] := GlazeComboBox.ItemIndex;
-  DerobModel.HouseProperties.IntValue['WindowHolder'] :=
-    WindowComboBox.ItemIndex;
+
+  if GlazeComboBox.Enabled = True then
+    begin
+      DerobModel.HouseProperties.IntValue['GlazeHolder'] := GlazeComboBox.ItemIndex;
+    end;
+  if WindowComboBox.Enabled = True then
+    begin
+      DerobModel.HouseProperties.IntValue['WindowHolder'] := WindowComboBox.ItemIndex;
+    end;
 end;
 
 procedure TForm1.GeometryClear;
