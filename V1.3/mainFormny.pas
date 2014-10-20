@@ -1,5 +1,4 @@
 unit mainFormny;
-
 interface
 
 uses
@@ -212,6 +211,7 @@ type
     Label36: TLabel;
     Label37: TLabel;
     Label38: TLabel;
+    OpeningNrBox: TNumberBox;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -464,6 +464,7 @@ begin
   if IntGlazeCheckBox1.IsChecked then
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := True;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:=OpeningNrBox.Value;
   end
   else
   begin
@@ -970,7 +971,6 @@ var
   ArgPath, KGKPath: String;
   iniFile: TextFile;
 begin
-  // Nytt Musten 19/7 - Kör KGKShow med Indata1.txt
   SetCurrentDir(StartDir);
   mainGeometrySave;
   VolumeCount;
@@ -996,21 +996,7 @@ begin
   ArgPath := GetCurrentDir + '\Winter\Indata1.txt';
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
-  KGKPath := GetCurrentDir + '\KGK_Show.exe';
-
-  // Skriver om .ini filen till KGK_Show så att den läser in rätt datafil till programmet.
-  AssignFile(iniFile, 'KGK_Show.ini');
-  ReWrite(iniFile);
-  WriteLn(iniFile, 'This file is created by the KGK_Show program.');
-  WriteLn(iniFile, 'Changing the content may result in serious error!');
-  WriteLn(iniFile, ArgPath); // Path till datafilen all annat är 'standard'
-  WriteLn(iniFile, ' F F T T');
-  WriteLn(iniFile, ' 420 175 1260 875');
-  WriteLn(iniFile, ' 0 0 0 0');
-  WriteLn(iniFile, ' 0 0 0 0');
-  WriteLn(iniFile, ' 0 0 0 0');
-  WriteLn(iniFile, ' 0 0 0 0');
-  CloseFile(iniFile);
+  KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "'+ArgPath+'"';
 
   ExecProcess(KGKPath, '', True);
   DeleteFile('KGK_Show.ini');
@@ -1238,28 +1224,29 @@ begin
   SetCurrentDir('Derob');
 
   for Idx := 1 to 5 do
+ // IDX 1: Vinterfall, 2:3 Sommarfall, 3: Vinterfall med öppning, 4: Sommarfall med öppning, 5: Referensfall
   begin
     if Idx = 1 then
     begin
       season := 'Winter';
       datanumber := 'Indata1.txt';
-    end
-    else if Idx = 2 then
+    end;
+    if Idx = 2 then
     begin
       season := 'Summer';
       datanumber := 'Indata2.txt';
-    end
-    else if Idx = 3 then
+    end;
+    if Idx = 3 then
     begin
       season := 'WinterOpen';
       datanumber := 'Indata3.txt';
-    end
-    else if Idx = 4 then
+    end;
+    if Idx = 4 then
     begin
       season := 'SummerOpen';
       datanumber := 'Indata4.txt';
-    end
-    else if Idx = 5 then
+    end;
+    if Idx = 5 then
     begin
       season := 'NoGlaze';
       datanumber := 'Indata5.txt';
@@ -1283,37 +1270,80 @@ begin
     tl := GetCurrentDir + '\TL.exe ' + '"' + CaseDir + '\' +
       DerobModel.HouseProperties.StringValue['CaseName'] + '\' + season + '\' +
       datanumber + '"';
-    // FRÅGA JONAS OM ATT GÅ TILL EXECUTE FINISHED
-    ExitCode := ExecProcess(dig, '', True);
-    if ExitCode <> 0 then
+
+ // FRÅGA JONAS OM ATT GÅ TILL EXECUTE FINISHED
+
+//De tre vanliga beräkningsfallen
+    if (Idx = 1) or (Idx = 2) or (Idx = 5) then
     begin
-      ShowMessage('Fel i DIG');
-    end;
-    ExitCode := ExecProcess(wal, '', True);
-    if ExitCode <> 0 then
+      ExitCode := ExecProcess(dig, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i DIG');
+      end;
+      ExitCode := ExecProcess(wal, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i WAL');
+      end;
+      ExitCode := ExecProcess(gf, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i GF');
+      end;
+      ExitCode := ExecProcess(lum, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i LUM');
+      end;
+      ExitCode := ExecProcess(sol, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i SOL');
+      end;
+      ExitCode := ExecProcess(tl, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i TL');
+      end;
+    end
+
+    //Kollar om användaren har valt att göra beräkningar för automatisk öppning
+    else if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True)
+      and ((Idx = 3) or (Idx = 4)) then
     begin
-      ShowMessage('Fel i WAL');
+      ExitCode := ExecProcess(dig, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i DIG');
+      end;
+      ExitCode := ExecProcess(wal, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i WAL');
+      end;
+      ExitCode := ExecProcess(gf, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i GF');
+      end;
+      ExitCode := ExecProcess(lum, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i LUM');
+      end;
+      ExitCode := ExecProcess(sol, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i SOL');
+      end;
+      ExitCode := ExecProcess(tl, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i TL');
+      end;
     end;
-    ExitCode := ExecProcess(gf, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i GF');
-    end;
-    ExitCode := ExecProcess(lum, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i LUM');
-    end;
-    ExitCode := ExecProcess(sol, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i SOL');
-    end;
-    ExitCode := ExecProcess(tl, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i TL');
-    end;
+
   end;
 end;
 
@@ -1500,6 +1530,7 @@ begin
   if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
   begin
     IntGlazeCheckBox1.IsChecked := True;
+    OpeningNrBox.Value:=DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'];
   end;
   if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True then
   begin
