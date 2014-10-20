@@ -49,7 +49,7 @@ var
     idGlassCon, idnr, igSurf, idSurf, ShapeIndex: array of integer;
   WallCount, nel, nvol, advec, GlazeIndex: integer;
   MaterialName, ConstructionName: array of string;
-  LayerCount, GlassCount: array of integer;
+  LayerCount, GlassCount, GlazeRoofA, GlazeRoofB: array of integer;
   NorthVol, EastVol, SouthVol, WestVol, VolCount: integer;
   DistanceNorth, DistanceEast, DistanceWest, DistanceSouth: double;
   AreaNorth, AreaEast, AreaSouth, AreaWest: double;
@@ -173,9 +173,12 @@ begin
     else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Opaque' then
     begin
       MaterialName[i] := DerobModel.Materials[i].Name;
-      Lambda[i-GlassMatCount-GasMatCount] := DerobModel.Materials[i].DoubleValue['Lambda'];
-      Conduct[i-GlassMatCount-GasMatCount] := DerobModel.Materials[i].DoubleValue['HeatCapacity'];
-      Dens[i-GlassMatCount-GasMatCount] := DerobModel.Materials[i].DoubleValue['Density'];
+      Lambda[i - GlassMatCount - GasMatCount] := DerobModel.Materials[i]
+        .DoubleValue['Lambda'];
+      Conduct[i - GlassMatCount - GasMatCount] := DerobModel.Materials[i]
+        .DoubleValue['HeatCapacity'];
+      Dens[i - GlassMatCount - GasMatCount] := DerobModel.Materials[i]
+        .DoubleValue['Density'];
       idWallMat[i - GlassMatCount - GasMatCount] :=
         (i - GlassMatCount - GasMatCount) + 1;
     end;
@@ -279,8 +282,9 @@ begin
     begin
       WriteLn(LibraryFile, ig[2], ' ',
         idWallMat[i - GlassMatCount - GasMatCount], ' ', MaterialName[i]);
-      WriteLn(LibraryFile, '  ', Lambda[i-GlassMatCount-GasMatCount]:0:3, ' ', Conduct[i-GlassMatCount-GasMatCount]:0:3, ' ',
-        Dens[i-GlassMatCount-GasMatCount]:0:1);
+      WriteLn(LibraryFile, '  ', Lambda[i - GlassMatCount - GasMatCount]:0:3,
+        ' ', Conduct[i - GlassMatCount - GasMatCount]:0:3, ' ',
+        Dens[i - GlassMatCount - GasMatCount]:0:1);
     end;
   end;
 
@@ -378,12 +382,13 @@ begin
   SetLength(ivol1, nel); // Frontside
   SetLength(ivol2, nel); // Backside
   SetLength(igSurf, nel);
-  // SetLength(idGlaze, nel);
+  SetLength(GlazeRoofA, nel);
+  SetLength(GlazeRoofB, nel);
   SetLength(AbsorptionFront, nel);
   SetLength(AbsorptionBack, nel);
   SetLength(EmittanceFront, nel);
   SetLength(EmittanceBack, nel);
-  // Nollställ så att den inte behåller gamla värden ffs - MUSTEN 25/7
+  // Nollställ så att den inte behåller gamla värden
   for i := 0 to nel - 1 do
   begin
     X[i] := 0;
@@ -400,6 +405,8 @@ begin
     ivol1[i] := 0;
     ivol2[i] := 0;
     ShapeIndex[i] := 0;
+    GlazeRoofA[i] := 0;
+    GlazeRoofB[i] := 0;
   end;
 
   // --------------
@@ -593,6 +600,9 @@ begin
     ivol2[GlazeIndex + 1] := NorthVol;
     ivol2[GlazeIndex + 2] := NorthVol;
     ivol2[GlazeIndex + 3] := NorthVol;
+    // Bestämmer vilken  inglasning som är tak
+    GlazeRoofB[GlazeIndex + 2] := 1;
+
     if DerobModel.GlazingProperties.BoolValue['WestNorth'] = true then
     begin
       ivol1[GlazeIndex + 1] := WestVol;
@@ -704,6 +714,9 @@ begin
     ivol2[GlazeIndex + 2] := NorthVol;
     ivol2[GlazeIndex + 3] := NorthVol;
     ivol2[GlazeIndex + 4] := NorthVol;
+
+    GlazeRoofB[GlazeIndex + 3] := 1;
+
     if DerobModel.GlazingProperties.BoolValue['WestNorth'] = true then
     begin
       ivol1[GlazeIndex + 1] := WestVol;
@@ -761,6 +774,9 @@ begin
     ivol1[GlazeIndex + 3] := -1;
     ivol2[GlazeIndex] := EastVol;
     ivol2[GlazeIndex + 1] := EastVol;
+
+    GlazeRoofA[GlazeIndex + 2] := 1;
+
     if DerobModel.GlazingProperties.BoolValue['NorthEast'] = true then
     begin
       ivol1[GlazeIndex + 1] := NorthVol;
@@ -871,6 +887,9 @@ begin
     ivol1[GlazeIndex + 4] := -1;
     ivol2[GlazeIndex] := EastVol;
     ivol2[GlazeIndex + 1] := EastVol;
+
+    GlazeRoofA[GlazeIndex + 3] := 1;
+
     if DerobModel.GlazingProperties.BoolValue['NorthEast'] = true then
     begin
       ivol1[GlazeIndex + 1] := NorthVol;
@@ -931,6 +950,9 @@ begin
     Azimuth[GlazeIndex + 3] := 0;
     ivol1[GlazeIndex + 3] := -1;
     ivol2[GlazeIndex] := SouthVol;
+
+    GlazeRoofB[GlazeIndex + 2] := 1;
+
     if DerobModel.GlazingProperties.BoolValue['EastSouth'] = true then
     begin
       ivol1[GlazeIndex + 1] := EastVol;
@@ -947,7 +969,6 @@ begin
     begin
       idSurf[i] := idGlaze;
       igSurf[i] := igGlaze;
-
     end;
     idSurf[GlazeIndex + 3] := GroundConstruction;
     igSurf[GlazeIndex + 3] := 1;
@@ -1054,6 +1075,9 @@ begin
     ivol2[GlazeIndex + 2] := SouthVol;
     ivol2[GlazeIndex + 3] := SouthVol;
     ivol2[GlazeIndex + 4] := SouthVol;
+
+    GlazeRoofB[GlazeIndex + 3] := 1;
+
     if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
     begin
       ivol1[GlazeIndex + 1] := WestVol;
@@ -1115,6 +1139,8 @@ begin
     ivol2[GlazeIndex + 1] := WestVol;
     ivol2[GlazeIndex + 2] := WestVol;
     ivol2[GlazeIndex + 3] := WestVol;
+
+    GlazeRoofA[GlazeIndex + 2] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
     begin
@@ -1229,6 +1255,8 @@ begin
     ivol2[GlazeIndex + 3] := WestVol;
     ivol2[GlazeIndex + 4] := WestVol;
 
+    GlazeRoofA[GlazeIndex + 3] := 1;
+
     if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
     begin
       ivol1[GlazeIndex + 1] := SouthVol;
@@ -1307,7 +1335,7 @@ begin
 
     if nvol > 1 then
     begin
-      vent :=(1- DerobModel.VentilationProperties.DoubleValue['Eta'] / 100) *
+      vent := (1 - DerobModel.VentilationProperties.DoubleValue['Eta'] / 100) *
         DerobModel.VentilationProperties.DoubleValue['Flow'] / (nvol - 1);
       vent := Round(vent * 10) / 10;
     end
@@ -1343,15 +1371,16 @@ var
   i, j: integer;
   Idx: integer;
 begin
-  for Idx := 1 to 3 do
-  // 3 = Normalt hus utan inglasning, 1 = Med inglasning vinter, 2 = Med inglasning sommar
+  SetCurrentDir('Cases');
+  SetCurrentDir(CaseName);
+  CreateDir('Winter');
+  CreateDir('Summer');
+  CreateDir('WinterOpen');
+  CreateDir('SummerOpen');
+  CreateDir('NoGlaze');
+  for Idx := 1 to 5 do
+  // IDX 1: Vinterfall, 2:3 Sommarfall, 3: Vinterfall med öppning, 4: Sommarfall med öppning, 5: Referensfall
   begin
-
-    SetCurrentDir('Cases');
-    SetCurrentDir(CaseName);
-    CreateDir('Winter'); // Khoan
-    CreateDir('Summer');
-    CreateDir('NoGlaze');
 
     SetCurrentDir(StartDir);
 
@@ -1367,6 +1396,16 @@ begin
     end
     else if Idx = 3 then
     begin
+      AssignFile(T, 'Cases/' + CaseName + '/WinterOpen/Indata' + IntToStr(Idx)
+        + '.txt');
+    end
+    else if Idx = 4 then
+    begin
+      AssignFile(T, 'Cases/' + CaseName + '/SummerOpen/Indata' + IntToStr(Idx)
+        + '.txt');
+    end
+    else if Idx = 5 then
+    begin
       AssignFile(T, 'Cases/' + CaseName + '/NoGlaze/Indata' + IntToStr(Idx)
         + '.txt');
     end;
@@ -1378,7 +1417,7 @@ begin
     SetCurrentDir(CaseName);
     WriteLn(T, GetCurrentDir + '\Libraryfile.txt');
 
-    if Idx = 3 then
+    if Idx = 5 then
     begin
       vent := (1 - DerobModel.VentilationProperties.DoubleValue['Eta'] / 100) *
         DerobModel.VentilationProperties.DoubleValue['Flow'];
@@ -1428,10 +1467,35 @@ begin
       WriteLn(T, Name[j]);
       WriteLn(T, ShapeIndex[j], ' ', igSurf[j], ' ', idSurf[j], ' ', ivol1[j],
         ' ', ivol2[j]);
+      if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = true) and
+        ((Idx = 3) or (Idx = 4)) then
+      begin
+        if GlazeRoofA[j] = 1 then
+        begin
+          WriteLn(T, '   ', A[j]:0:3, '   ', 0.9 * B[j]:0:3, '   ', C[j]:0:3,
+            '   ', D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j],
+            ' ', Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+        end
+        else if GlazeRoofB[j] = 1 then
+        begin
+          WriteLn(T, '   ', 0.9 * A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3,
+            '   ', D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j],
+            ' ', Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+        end
+        else
+        begin
+          WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
+            D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
+            Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+        end;
+      end
+      else
+      begin
+        WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
+          D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
+          Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+      end;
 
-      WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
-        D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
-        Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
       if igSurf[j] = 1 then
       begin
         WriteLn(T, AbsorptionFront[j], ' ', AbsorptionBack[j], ' ',
@@ -1559,7 +1623,7 @@ begin
         WriteLn(T, '   ', '1', ' ', '0', ' ', summervent:0:2);
       end
 
-      else if Idx = 3 then
+      else if Idx = 5 then
       begin
         WriteLn(T, ' ', '2');
         WriteLn(T, '   ', '0', ' ', '1', ' ', vent:0:2);
