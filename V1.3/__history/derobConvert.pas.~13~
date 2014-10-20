@@ -1563,19 +1563,19 @@ begin
         begin
           v1 := LeakRoom;
         end;
-        if (LeakNorth <> 0) and (i = NorthVol-1) then
+        if (LeakNorth <> 0) and (i = NorthVol) then
         begin
           v1 := LeakNorth + NLeakOpening;
         end;
-        if (LeakEast <> 0) and (i = EastVol-1) then
+        if (LeakEast <> 0) and (i = EastVol) then
         begin
           v1 := LeakEast + ELeakOpening;
         end;
-        if (LeakSouth <> 0) and (i = SouthVol-1) then
+        if (LeakSouth <> 0) and (i = SouthVol) then
         begin
           v1 := LeakSouth + SLeakOpening;
         end;
-        if (LeakWest <> 0) and (i = WestVol-1) then
+        if (LeakWest <> 0) and (i = WestVol) then
         begin
           v1 := LeakWest + WLeakOpening;
         end;

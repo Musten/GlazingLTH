@@ -1289,10 +1289,10 @@ begin
       begin
         ShowMessage('Fel i TL');
       end;
-    end
+    end;
 
     //Kollar om användaren har valt att göra beräkningar för automatisk öppning
-    else if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True)
+    if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True)
       and ((Idx = 3) or (Idx = 4)) then
     begin
       ExitCode := ExecProcess(dig, '', True);
