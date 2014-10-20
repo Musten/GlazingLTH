@@ -1,5 +1,5 @@
 unit mainFormny;
-          //Testar
+
 interface
 
 uses
@@ -861,7 +861,7 @@ begin
 
   FExecThread.Start;
 
-  // Disable start button     }
+  // Disable start button
 
 end;
 
@@ -1173,18 +1173,6 @@ begin
   begin
     Window := WindowComboBox.Selected.Text;
   end;
-  // if DerobModel.Walls[1].Properties.BoolValue['HoleEast'] = True then
-  // begin
-  // EWindow := EWindowComboBox.Selected.Text;
-  // end;
-  // if DerobModel.Walls[2].Properties.BoolValue['HoleSouth'] = True then
-  // begin
-  // SWindow := SWindowComboBox.Selected.Text;
-  // end;
-  // if DerobModel.Walls[3].Properties.BoolValue['HoleWest'] = True then
-  // begin
-  // WWindow := WWindowComboBox.Selected.Text;
-  // end;
 
   Roof := RoofComboBox.Selected.Text;
   Floor := FloorComboBox.Selected.Text;
@@ -1247,7 +1235,7 @@ begin
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
 
-  for Idx := 1 to 3 do // Khoan
+  for Idx := 1 to 5 do
   begin
     if Idx = 1 then
     begin
@@ -1261,9 +1249,20 @@ begin
     end
     else if Idx = 3 then
     begin
-      season := 'NoGlaze';
+      season := 'WinterOpen';
       datanumber := 'Indata3.txt';
+    end
+    else if Idx = 4 then
+    begin
+      season := 'SummerOpen';
+      datanumber := 'Indata4.txt';
+    end
+    else if Idx = 5 then
+    begin
+      season := 'NoGlaze';
+      datanumber := 'Indata5.txt';
     end;
+
     dig := GetCurrentDir + '\DIG.exe ' + '"' + CaseDir + '\' +
       DerobModel.HouseProperties.StringValue['CaseName'] + '\' + season + '\' +
       datanumber + '"';
@@ -2227,7 +2226,7 @@ begin
   if GlazeCheckBox1.IsChecked or GlazeCheckBox2.IsChecked or
     GlazeCheckBox3.IsChecked or GlazeCheckBox4.IsChecked then
   begin
-    IntGlazeCheckBox1.Enabled := False; //Inte implementerat
+    IntGlazeCheckBox1.Enabled := True;
     GlazeComboBox.Enabled := True;
   end
   else
