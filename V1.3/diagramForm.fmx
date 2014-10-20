@@ -68,7 +68,7 @@ object Form5: TForm5
     TabOrder = 0
     Anchors = [akLeft, akTop, akRight, akBottom]
     ColorPaletteIndex = 13
-    object Series1: TFastLineSeries
+    object Series1: TLineSeries
       Marks.Visible = False
       Marks.Arrow.Fill.Color = claWhite
       Marks.Callout.Arrow.Fill.Color = claWhite
@@ -76,20 +76,26 @@ object Form5: TForm5
       Title = 'Inglasning'
       LinePen.Color = xFFDE0000
       LinePen.Fill.Color = xFFDE0000
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      Pointer.Visible = False
       XValues.Name = 'X'
       XValues.Order = loNone
       YValues.Name = 'Y'
       YValues.Order = loNone
       Data = {0000000000}
     end
-    object Series2: TFastLineSeries
+    object Series2: TLineSeries
       Marks.Visible = False
       Marks.Arrow.Fill.Color = claWhite
       Marks.Callout.Arrow.Fill.Color = claWhite
+      SeriesColor = xFF4466A3
       Title = 'Utan Inglasning'
       LinePen.Color = xFF4466A3
       LinePen.Fill.Color = xFF4466A3
-      TreatNulls = tnDontPaint
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      Pointer.Visible = False
       XValues.Name = 'X'
       XValues.Order = loNone
       YValues.Name = 'Y'
