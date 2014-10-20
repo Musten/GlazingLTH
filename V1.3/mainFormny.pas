@@ -216,6 +216,7 @@ type
     Label36: TLabel;
     Label37: TLabel;
     Label38: TLabel;
+    Label50: TLabel;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
