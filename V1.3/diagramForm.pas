@@ -645,7 +645,8 @@ begin
   // GlazeChart;
   // NoGlazeChart;
   GlazeHistogram;
-//  NoGlazeHistogram;
+  NoGlazeHistogram;
+  Chart1.BottomAxis.Increment := 1;
 end;
 
 procedure TForm5.GlazeHistogram;
@@ -668,10 +669,6 @@ var
     Cool5Winter, Sun5Winter: array of Real;
   i, SkipLine, intervall: integer;
   IgnoreText: Boolean;
-  TempJanSummer, TempMarSummer, TempJanWinter, TempMarWinter, TempMaySummer,
-    TempMayWinter, TempJulSummer, TempJulWinter, TempAugWinter, TempAugSummer,
-    TempOctSummer, TempOctWinter, TempDecSummer, TempDecWinter: array of Real;
-  TempFebSummer, TempFebWinter: array of Real;
 
   TempAprSummer, TempAprWinter, TempJunSummer, TempJunWinter, TempSepWinter,
     TempSepSummer, TempNovWinter, TempNovSummer: array of Real;
@@ -684,8 +681,8 @@ var
 
   HeatAprSummer, HeatAprWinter, HeatJunSummer, HeatJunWinter, HeatSepWinter,
     HeatSepSummer, HeatNovWinter, HeatNovSummer: array of Real;
-
-  Hour, Time, YearlyTemp,Temp, Heat, TempSummer, TempWinter: array of Real;
+  Temp: Array of double;
+  Hour, Time, YearlyTemp, Heat, TempSummer, TempWinter: array of Real;
 
   meanJan, meanFeb, meanMar, meanApr, meanMay, meanJun, meanJul, meanAug,
     meanSep, meanOct, meanNov, meanDec: Real;
@@ -696,7 +693,7 @@ var
 begin
   intervall := (40 - DerobModel.HouseProperties.IntValue['TMinRoom']) * 10;
   SkipLine := 12;
-  SetLength(YearlyTemp,8760);
+  SetLength(YearlyTemp, 8760);
   SetLength(Hour, 8760);
   SetLength(TempSummer, 8760);
   SetLength(TempWinter, 8760);
@@ -769,30 +766,6 @@ begin
   SetLength(Time, intervall);
   SetLength(Heat, 8760);
 
-  SetLength(TempJanSummer, 744);
-  SetLength(TempFebSummer, 672);
-  SetLength(TempMarSummer, 744);
-  SetLength(TempAprSummer, 720);
-  SetLength(TempMaySummer, 744);
-  SetLength(TempJunSummer, 720);
-  SetLength(TempJulSummer, 744);
-  SetLength(TempAugSummer, 744);
-  SetLength(TempSepSummer, 720);
-  SetLength(TempOctSummer, 744);
-  SetLength(TempNovSummer, 720);
-  SetLength(TempDecSummer, 744);
-  SetLength(TempJanWinter, 744);
-  SetLength(TempFebWinter, 672);
-  SetLength(TempMarWinter, 744);
-  SetLength(TempAprWinter, 720);
-  SetLength(TempMayWinter, 744);
-  SetLength(TempJunWinter, 720);
-  SetLength(TempJulWinter, 744);
-  SetLength(TempAugWinter, 744);
-  SetLength(TempSepWinter, 720);
-  SetLength(TempOctWinter, 744);
-  SetLength(TempNovWinter, 720);
-  SetLength(TempDecWinter, 744);
   SetLength(HeatJanSummer, 744);
   SetLength(HeatFebSummer, 672);
   SetLength(HeatMarSummer, 744);
@@ -834,7 +807,7 @@ begin
   Temp[0] := DerobModel.HouseProperties.IntValue['TMinRoom'];
   for i := 1 to intervall do
   begin
-    Temp[i] := Temp[i - 1] + 0.1;
+    Temp[i] := Round(Temp[i - 1] * 10) / 10 + 0.1;
   end;
 
   IgnoreText := False;
@@ -1011,9 +984,9 @@ begin
   end;
   CloseFile(Summer);
   CloseFile(Winter);
-for i := 0 to 8759 do
+  for i := 0 to 8759 do
   begin
-  if TempWinter[i] > DerobModel.HouseProperties.IntValue['TMaxRoom'] then
+    if TempWinter[i] > DerobModel.HouseProperties.IntValue['TMaxRoom'] then
     begin
       YearlyTemp[i] := TempSummer[i];
       Heat[i] := Heat1Summer[i];
@@ -1028,19 +1001,21 @@ for i := 0 to 8759 do
   begin
     for j := 0 to 8759 do
     begin
-       if YearlyTemp[j] >= Temp[i] then
+      if YearlyTemp[j] >= Temp[i] then
       begin
         Time[i] := Time[i] + 1;
       end;
     end;
   end;
-   With Chart1.Series[0] Do
+  With Chart1.Series[0] Do
   Begin
     for i := 0 to intervall do
     begin
       AddXY(Temp[i], Time[i], '', clTeeColor);
     end;
   end;
+  Chart1.LeftAxis.Title.Caption := 'Timmar';
+  Chart1.BottomAxis.Title.Caption := 'Temperatur';
 end;
 
 procedure TForm5.NoGlazeChart;
@@ -1049,7 +1024,8 @@ var
   DataFile: TStringList;
   VolPath, StartDir: String;
   buffer: String;
-  Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1, Temp: array of Real;
+  Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1: array of Real;
+  Temp: Array of double;
   i: integer;
   IgnoreText: Boolean;
   meanJan, meanFeb, meanMar, meanApr, meanMay, meanJun, meanJul, meanAug,
@@ -1226,8 +1202,8 @@ var
   DataFile: TStringList;
   VolPath, StartDir: String;
   buffer: String;
-  Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1, Temp,
-    Time: array of Real;
+  Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1, Time: array of Real;
+  Temp: array of double;
   i, intervall: integer;
   IgnoreText: Boolean;
   meanJan, meanFeb, meanMar, meanApr, meanMay, meanJun, meanJul, meanAug,
@@ -1249,8 +1225,9 @@ begin
   Temp[0] := DerobModel.HouseProperties.IntValue['TMinRoom'];
   for i := 1 to intervall do
   begin
-    Temp[i] := Temp[i - 1] + 0.1;
+    Temp[i] := Round(Temp[i - 1] * 10) / 10 + 0.1;
   end;
+
   IgnoreText := False;
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Cases/');
@@ -1291,14 +1268,112 @@ begin
 
     end;
   end;
-  With Chart1.Series[1] Do
-  Begin
-    for i := 0 to intervall do
-    begin
-      AddXY(Temp[i], Time[i], '', clTeeColor);
+  CloseFile(NoGlaze);
+  for i := 0 to 743 do
+  begin
+    meanJan := meanJan + Temp1[i];
+    HeatJan := HeatJan + Heat1[i];
+  end;
+  for i := 744 to 1415 do
+  begin
+    meanFeb := meanFeb + Temp1[i];
+    HeatFeb := HeatFeb + Heat1[i];
+  end;
+  for i := 1416 to 2159 do
+  begin
+    meanMar := meanMar + Temp1[i];
+    HeatMar := HeatMar + Heat1[i];
+  end;
+  for i := 2160 to 2879 do
+  begin
+    meanApr := meanApr + Temp1[i];
+    HeatApr := HeatApr + Heat1[i];
+  end;
+  for i := 2880 to 3623 do
+  begin
+    meanMay := meanMay + Temp1[i];
+    HeatMay := HeatMay + Heat1[i];
+  end;
+  for i := 3624 to 4343 do
+  begin
+    meanJun := meanJun + Temp1[i];
+    HeatJun := HeatJun + Heat1[i];
+  end;
+  for i := 4344 to 5087 do
+  begin
+    meanJul := meanJul + Temp1[i];
+    HeatJul := HeatJul + Heat1[i];
+  end;
+  for i := 5088 to 5831 do
+  begin
+    meanAug := meanAug + Temp1[i];
+    HeatAug := HeatAug + Heat1[i];
+  end;
+  for i := 5832 to 6551 do
+  begin
+    meanSep := meanSep + Temp1[i];
+    HeatSep := HeatSep + Heat1[i];
+  end;
+  for i := 6552 to 7295 do
+  begin
+    meanOct := meanOct + Temp1[i];
+    HeatOct := HeatOct + Heat1[i];
+  end;
+  for i := 7296 to 8015 do
+  begin
+    meanNov := meanNov + Temp1[i];
+    HeatNov := HeatNov + Heat1[i];
+  end;
+  for i := 8016 to 8759 do
+  begin
+    meanDec := meanDec + Temp1[i];
+    HeatDec := HeatDec + Heat1[i];
+  end;
+
+  totalHeat := HeatJan + HeatFeb + HeatMar + HeatApr + HeatMay + HeatJun +
+    HeatJul + HeatAug + HeatSep + HeatOct + HeatNov + HeatDec;
+
+  if HeatRadioButton.IsChecked = true then
+  begin
+    HeatJan := HeatJan / 744;
+    HeatFeb := HeatFeb / 672;
+    HeatMar := HeatMar / 744;
+    HeatApr := HeatApr / 720;
+    HeatMay := HeatMay / 744;
+    HeatJun := HeatJun / 720;
+    HeatJul := HeatJul / 744;
+    HeatAug := HeatAug / 744;
+    HeatSep := HeatSep / 720;
+    HeatOct := HeatOct / 744;
+    HeatNov := HeatNov / 720;
+    HeatDec := HeatDec / 744;
+
+    With Chart1.Series[1] Do
+    Begin
+      AddXY(1, HeatJan, '', clTeeColor);
+      AddXY(2, HeatFeb, '', clTeeColor);
+      AddXY(3, HeatMar, '', clTeeColor);
+      AddXY(4, HeatApr, '', clTeeColor);
+      AddXY(5, HeatMay, '', clTeeColor);
+      AddXY(6, HeatJun, '', clTeeColor);
+      AddXY(7, HeatJul, '', clTeeColor);
+      AddXY(8, HeatAug, '', clTeeColor);
+      AddXY(9, HeatSep, '', clTeeColor);
+      AddXY(10, HeatOct, '', clTeeColor);
+      AddXY(11, HeatNov, '', clTeeColor);
+      AddXY(12, HeatDec, '', clTeeColor);
+    end;
+  end
+  else if TempRadioButton.IsChecked = true then
+  begin
+    With Chart1.Series[1] Do
+    Begin
+      for i := 0 to intervall do
+      begin
+        AddXY(Temp[i], Time[i], '', clTeeColor);
+      end;
     end;
   end;
-  CloseFile(NoGlaze);
 end;
 
 procedure TForm5.SetDerobModel(const Value: TDerobModel);
