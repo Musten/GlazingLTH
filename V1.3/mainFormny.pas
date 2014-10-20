@@ -98,9 +98,7 @@ type
     WindowComboBox: TComboBox;
     PropWallLabel: TLabel;
     PropConstrButton: TButton;
-    PropSaveButton: TButton;
     fileMenuClose: TMenuItem;
-    GeoSaveButton: TButton;
     GeoClearButton: TButton;
     Viewport3D1: TViewport3D;
     ColorMaterialSource3: TColorMaterialSource;
@@ -189,8 +187,6 @@ type
     IntGlazeCheckBox1: TCheckBox;
     Label49: TLabel;
     IntGlazeCheckBox2: TCheckBox;
-    EnergySaveButton: TButton;
-    ClimateSaveButton: TButton;
     Image1: TImage;
     Label51: TLabel;
     Button1: TButton;
