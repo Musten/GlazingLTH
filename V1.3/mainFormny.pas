@@ -1,6 +1,6 @@
 unit mainFormny;
 interface
-
+  //Hej
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
