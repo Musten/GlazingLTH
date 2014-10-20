@@ -212,6 +212,7 @@ type
     Label37: TLabel;
     Label38: TLabel;
     OpeningNrBox: TNumberBox;
+    Label50: TLabel;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -225,21 +226,17 @@ type
     procedure PropConstrButtonClick(Sender: TObject);
     procedure fileMenuCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure GeoSaveButtonClick(Sender: TObject);
     procedure fileMenuSaveClick(Sender: TObject);
     procedure fileMenuLoadClick(Sender: TObject);
     procedure resultMenuChartClick(Sender: TObject);
     procedure simulateMenuCalculateClick(Sender: TObject);
-    procedure PropSaveButtonClick(Sender: TObject);
     procedure GeoClearButtonClick(Sender: TObject);
     procedure EnergyBalanceClick(Sender: TObject);
     procedure InternalHeatButtonClick(Sender: TObject);
     procedure ClimateClick(Sender: TObject);
     procedure OrientationTrackBarChange(Sender: TObject);
     procedure AbsorptionButtonClick(Sender: TObject);
-    procedure EnergySaveButtonClick(Sender: TObject);
     procedure AbsComboBoxChange(Sender: TObject);
-    procedure ClimateSaveButtonClick(Sender: TObject);
     procedure fileMenuNewClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -248,6 +245,7 @@ type
     procedure GlazeTempRadioButtonChange(Sender: TObject);
     procedure ClimateComboBoxChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure IntGlazeCheckBox1Change(Sender: TObject);
 
   private
     { Private declarations }
@@ -469,6 +467,7 @@ begin
   else
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := False;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:= 0;
   end;
 
   if IntGlazeCheckBox2.IsChecked then
@@ -1029,14 +1028,6 @@ begin
   PropertiesPanel.Visible := True;
 end;
 
-procedure TForm1.PropSaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
-end;
-
 procedure TForm1.AbsComboBoxChange(Sender: TObject);
 begin
   ChangeAbsCombo;
@@ -1110,14 +1101,6 @@ begin
   mainHide;
   ClimatePanel.Visible := True;
   LoadClimateFiles;
-end;
-
-procedure TForm1.ClimateSaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
 end;
 
 procedure TForm1.ClimateComboBoxChange(Sender: TObject);
@@ -2108,15 +2091,6 @@ begin
   GeometryPanel.Visible := True;
 end;
 
-procedure TForm1.GeoSaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
-  VolumeCount;
-end;
-
 procedure TForm1.GlazeCheckBox1Change(Sender: TObject);
 begin
   DerobModel.HouseProperties.BoolValue['GlazeChange'] := True;
@@ -2202,6 +2176,20 @@ begin
   Form3.Show;
 end;
 
+procedure TForm1.IntGlazeCheckBox1Change(Sender: TObject);
+begin
+  if IntGlazeCheckBox1.IsChecked then
+    begin
+      OpeningNrBox.Enabled := True;
+      Label50.Enabled := True;
+    end
+  else
+    begin
+      OpeningNrBox.Enabled := False;
+      Label50.Enabled := False;
+    end;
+end;
+
 procedure TForm1.IntheatVent;
 begin
   GlazeControlComboBox.Items.Clear;
@@ -2278,6 +2266,7 @@ begin
   else
   begin
     IntGlazeCheckBox2.Enabled := False;
+    IntGlazeCheckBox2.IsChecked := False;
   end;
 
   if (GlazeCheckBox1.IsChecked) or (GlazeCheckBox2.IsChecked) or
@@ -2310,14 +2299,6 @@ begin
   mainHide;
   IntheatVent;
   EnergyPanel.Visible := True;
-end;
-
-procedure TForm1.EnergySaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
 end;
 
 procedure TForm1.WindowCheckBox1Change(Sender: TObject);

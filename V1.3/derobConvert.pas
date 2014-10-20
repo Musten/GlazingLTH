@@ -1,5 +1,5 @@
 unit derobConvert;
-
+
 interface
 
 uses
@@ -56,7 +56,7 @@ var
   idGlaze, GroundConstruction, igGlaze, idGlass: integer;
 
   vent, lat, rsoil, gvr, caph, v2, LeakRoom, LeakNorth, LeakEast, LeakSouth,
-    LeakWest, summervent, v1: double;
+    LeakWest, LeakOpening, summervent, v1: double;
   rot, iy1, im1, id1, iy2, im2, id2, imuse, iacc, isun, iout, temp, inclw, nrpm,
     hco, hci, intld, ityp, ndp, nhp, ih1, ih2, v3, v5, v6, nventsummer,
     nventwinter, capc, v4, GlassMatCount, GasMatCount, OpaqueMatCount,
@@ -1349,6 +1349,8 @@ begin
     LeakEast := DerobModel.VentilationProperties.DoubleValue['Leak3'];
     LeakSouth := DerobModel.VentilationProperties.DoubleValue['Leak4'];
     LeakWest := DerobModel.VentilationProperties.DoubleValue['Leak5'];
+    LeakOpening := DerobModel.VentilationProperties.DoubleValue
+      ['OpeningLeakage'];
 
     if Form1.nvol > 1 then
     begin
@@ -1549,25 +1551,34 @@ begin
         end;
 
         v1 := 0;
-        if (LeakRoom <> 0) and (i = 0) then
+        if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = false
+        then
         begin
-          v1 := LeakRoom;
+          if (LeakRoom <> 0) and (i = 0) then
+          begin
+            v1 := LeakRoom;
+          end
+          else if (LeakNorth <> 0) and (i = NorthVol) then
+          begin
+            v1 := LeakNorth+LeakOpening;
+          end
+          else if (LeakEast <> 0) and (i = EastVol) then
+          begin
+            v1 := LeakEast+LeakOpening;
+          end
+          else if (LeakSouth <> 0) and (i = SouthVol) then
+          begin
+            v1 := LeakSouth+LeakOpening;
+          end
+          else if (LeakWest <> 0) and (i = WestVol) then
+          begin
+            v1 := LeakWest+LeakOpening;
+          end;
         end
-        else if (LeakNorth <> 0) and (i = 1) then
+        else if DerobModel.VentilationProperties.BoolValue
+          ['AdvectionConnection'] = true then
         begin
-          v1 := LeakNorth;
-        end
-        else if (LeakEast <> 0) and (i = 2) then
-        begin
-          v1 := LeakEast;
-        end
-        else if (LeakSouth <> 0) and (i = 3) then
-        begin
-          v1 := LeakSouth;
-        end
-        else if (LeakWest <> 0) and (i = 4) then
-        begin
-          v1 := LeakWest;
+
         end;
 
         WriteLn(T, '   ', ityp, ' ', caph:0:1, ' ', capc);
@@ -1647,3 +1658,4 @@ begin
 end;
 
 end.
+
