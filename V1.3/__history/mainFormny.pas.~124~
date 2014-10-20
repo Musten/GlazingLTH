@@ -1,6 +1,9 @@
 unit mainFormny;
 interface
+<<<<<<< HEAD
+=======
   //Hej        ?
+>>>>>>> origin/master
 uses
 //Hallo
   System.SysUtils, System.Types, System.UITypes, System.Classes,
