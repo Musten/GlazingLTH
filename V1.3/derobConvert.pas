@@ -49,7 +49,7 @@ var
     idGlassCon, idnr, igSurf, idSurf, ShapeIndex: array of integer;
   WallCount, nel, nvol, advec, GlazeIndex: integer;
   MaterialName, ConstructionName: array of string;
-  LayerCount, GlassCount, GlazeRoofA, GlazeRoofB: array of integer;
+  LayerCount, GlassCount: array of integer;
   NorthVol, EastVol, SouthVol, WestVol, VolCount: integer;
   DistanceNorth, DistanceEast, DistanceWest, DistanceSouth: double;
   AreaNorth, AreaEast, AreaSouth, AreaWest: double;
@@ -382,8 +382,6 @@ begin
   SetLength(ivol1, nel); // Frontside
   SetLength(ivol2, nel); // Backside
   SetLength(igSurf, nel);
-  SetLength(GlazeRoofA, nel);
-  SetLength(GlazeRoofB, nel);
   SetLength(AbsorptionFront, nel);
   SetLength(AbsorptionBack, nel);
   SetLength(EmittanceFront, nel);
@@ -405,8 +403,6 @@ begin
     ivol1[i] := 0;
     ivol2[i] := 0;
     ShapeIndex[i] := 0;
-    GlazeRoofA[i] := 0;
-    GlazeRoofB[i] := 0;
   end;
 
   // --------------
@@ -601,7 +597,6 @@ begin
     ivol2[GlazeIndex + 2] := NorthVol;
     ivol2[GlazeIndex + 3] := NorthVol;
     // Bestämmer vilken  inglasning som är tak
-    GlazeRoofB[GlazeIndex + 2] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['WestNorth'] = true then
     begin
@@ -715,7 +710,6 @@ begin
     ivol2[GlazeIndex + 3] := NorthVol;
     ivol2[GlazeIndex + 4] := NorthVol;
 
-    GlazeRoofB[GlazeIndex + 3] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['WestNorth'] = true then
     begin
@@ -775,7 +769,6 @@ begin
     ivol2[GlazeIndex] := EastVol;
     ivol2[GlazeIndex + 1] := EastVol;
 
-    GlazeRoofA[GlazeIndex + 2] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['NorthEast'] = true then
     begin
@@ -888,7 +881,6 @@ begin
     ivol2[GlazeIndex] := EastVol;
     ivol2[GlazeIndex + 1] := EastVol;
 
-    GlazeRoofA[GlazeIndex + 3] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['NorthEast'] = true then
     begin
@@ -951,7 +943,6 @@ begin
     ivol1[GlazeIndex + 3] := -1;
     ivol2[GlazeIndex] := SouthVol;
 
-    GlazeRoofB[GlazeIndex + 2] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['EastSouth'] = true then
     begin
@@ -1076,7 +1067,6 @@ begin
     ivol2[GlazeIndex + 3] := SouthVol;
     ivol2[GlazeIndex + 4] := SouthVol;
 
-    GlazeRoofB[GlazeIndex + 3] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
     begin
@@ -1140,7 +1130,6 @@ begin
     ivol2[GlazeIndex + 2] := WestVol;
     ivol2[GlazeIndex + 3] := WestVol;
 
-    GlazeRoofA[GlazeIndex + 2] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
     begin
@@ -1255,7 +1244,6 @@ begin
     ivol2[GlazeIndex + 3] := WestVol;
     ivol2[GlazeIndex + 4] := WestVol;
 
-    GlazeRoofA[GlazeIndex + 3] := 1;
 
     if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
     begin
@@ -1467,34 +1455,9 @@ begin
       WriteLn(T, Name[j]);
       WriteLn(T, ShapeIndex[j], ' ', igSurf[j], ' ', idSurf[j], ' ', ivol1[j],
         ' ', ivol2[j]);
-      if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = true) and
-        ((Idx = 3) or (Idx = 4)) then
-      begin
-        if GlazeRoofA[j] = 1 then
-        begin
-          WriteLn(T, '   ', A[j]:0:3, '   ', 0.9 * B[j]:0:3, '   ', C[j]:0:3,
-            '   ', D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j],
-            ' ', Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
-        end
-        else if GlazeRoofB[j] = 1 then
-        begin
-          WriteLn(T, '   ', 0.9 * A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3,
-            '   ', D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j],
-            ' ', Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
-        end
-        else
-        begin
-          WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
-            D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
-            Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
-        end;
-      end
-      else
-      begin
-        WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
-          D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
-          Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
-      end;
+      WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
+        D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
+        Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
 
       if igSurf[j] = 1 then
       begin

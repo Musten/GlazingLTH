@@ -1406,15 +1406,6 @@ object Form1: TForm1
       Text = #214'ppet mellan inglasningsvolymer'
       Width = 193.000000000000000000
     end
-    object EnergySaveButton: TButton
-      Height = 22.000000000000000000
-      Position.X = 520.000000000000000000
-      Position.Y = 416.000000000000000000
-      TabOrder = 39
-      Text = 'Spara'
-      Width = 80.000000000000000000
-      OnClick = EnergySaveButtonClick
-    end
     object Label55: TLabel
       Height = 17.000000000000000000
       Position.X = 80.000000000000000000
@@ -1428,8 +1419,26 @@ object Form1: TForm1
       Height = 17.000000000000000000
       Position.X = 152.000000000000000000
       Position.Y = 120.000000000000000000
-      TabOrder = 41
+      TabOrder = 40
       Width = 97.000000000000000000
+    end
+    object Label50: TLabel
+      Height = 17.000000000000000000
+      Position.X = 88.000000000000000000
+      Position.Y = 416.000000000000000000
+      Text = 'Oms/h f'#246'r '#246'ppning'
+      Width = 120.000000000000000000
+    end
+    object OpeningNrBox: TNumberBox
+      Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+      TabOrder = 42
+      Cursor = crIBeam
+      ValueType = vtFloat
+      Position.X = 48.000000000000000000
+      Position.Y = 416.000000000000000000
+      Width = 33.000000000000000000
+      Height = 17.000000000000000000
+      VertIncrement = 1.000000000000000000
     end
   end
   object ClimatePanel: TPanel
