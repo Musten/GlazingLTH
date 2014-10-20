@@ -56,7 +56,7 @@ var
   idGlaze, GroundConstruction, igGlaze, idGlass: integer;
 
   vent, lat, rsoil, gvr, caph, v2, LeakRoom, LeakNorth, LeakEast, LeakSouth,
-    LeakWest, LeakOpening, NLeakOpening, ELeakOpening, SLeakOpening, WLeakOpening, summervent, v1: double;
+    LeakWest, LeakOpening, summervent, v1: double;
   rot, iy1, im1, id1, iy2, im2, id2, imuse, iacc, isun, iout, temp, inclw, nrpm,
     hco, hci, intld, ityp, ndp, nhp, ih1, ih2, v3, v5, v6, nventsummer,
     nventwinter, capc, v4, GlassMatCount, GasMatCount, OpaqueMatCount,
@@ -1349,7 +1349,8 @@ begin
     LeakEast := DerobModel.VentilationProperties.DoubleValue['Leak3'];
     LeakSouth := DerobModel.VentilationProperties.DoubleValue['Leak4'];
     LeakWest := DerobModel.VentilationProperties.DoubleValue['Leak5'];
-    LeakOpening := DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'];
+    LeakOpening := DerobModel.VentilationProperties.DoubleValue
+      ['OpeningLeakage'];
 
     if Form1.nvol > 1 then
     begin
@@ -1468,9 +1469,34 @@ begin
       WriteLn(T, Name[j]);
       WriteLn(T, ShapeIndex[j], ' ', igSurf[j], ' ', idSurf[j], ' ', ivol1[j],
         ' ', ivol2[j]);
-      WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
-        D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
-        Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+      if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = true) and
+        ((Idx = 3) or (Idx = 4)) then
+      begin
+        if GlazeRoofA[j] = 1 then
+        begin
+          WriteLn(T, '   ', A[j]:0:3, '   ', 0.9 * B[j]:0:3, '   ', C[j]:0:3,
+            '   ', D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j],
+            ' ', Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+        end
+        else if GlazeRoofB[j] = 1 then
+        begin
+          WriteLn(T, '   ', 0.9 * A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3,
+            '   ', D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j],
+            ' ', Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+        end
+        else
+        begin
+          WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
+            D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
+            Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+        end;
+      end
+      else
+      begin
+        WriteLn(T, '   ', A[j]:0:3, '   ', B[j]:0:3, '   ', C[j]:0:3, '   ',
+          D[j]:0:3, '   ', E[j]:0:3, '   ', F[j]:0:3, ' ', Zenith[j], ' ',
+          Azimuth[j], ' ', X[j]:0:3, '   ', Y[j]:0:3, '   ', Z[j]:0:3);
+      end;
 
       if igSurf[j] = 1 then
       begin
@@ -1524,60 +1550,35 @@ begin
           v6 := DerobModel.HouseProperties.IntValue['IntHeat'];
         end;
 
-        NLeakOpening := 0;
-        ELeakOpening := 0;
-        SLeakOpening := 0;
-        WLeakOpening := 0;
-
-        if (DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = False) and ((Idx = 3) or (Idx = 4)) then
-          begin
-            NLeakOpening := LeakOpening;
-            ELeakOpening := LeakOpening;
-            SLeakOpening := LeakOpening;
-            WLeakOpening := LeakOpening;
-          end;
-
-        if (DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True) and ((Idx = 3) or (Idx = 4)) then
-          begin
-            if DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = True then
-              begin
-                SLeakOpening := LeakOpening;
-              end
-            else if DerobModel.GlazingProperties.BoolValue['GlazingEast'] = True then
-              begin
-                ELeakOpening := LeakOpening;
-              end
-            else if DerobModel.GlazingProperties.BoolValue['GlazingWest'] = True then
-              begin
-                WLeakOpening := LeakOpening;
-              end
-            else if DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = True then
-              begin
-                NLeakOpening := LeakOpening;
-              end;
-          end;
-
-
         v1 := 0;
-        if (LeakRoom <> 0) and (i = 0) then
+        if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = false
+        then
         begin
-          v1 := LeakRoom;
+          if (LeakRoom <> 0) and (i = 0) then
+          begin
+            v1 := LeakRoom;
+          end
+          else if (LeakNorth <> 0) and (i = NorthVol) then
+          begin
+            v1 := LeakNorth+LeakOpening;
+          end
+          else if (LeakEast <> 0) and (i = EastVol) then
+          begin
+            v1 := LeakEast+LeakOpening;
+          end
+          else if (LeakSouth <> 0) and (i = SouthVol) then
+          begin
+            v1 := LeakSouth+LeakOpening;
+          end
+          else if (LeakWest <> 0) and (i = WestVol) then
+          begin
+            v1 := LeakWest+LeakOpening;
+          end;
         end
-        else if (LeakNorth <> 0) and (i = NorthVol) then
+        else if DerobModel.VentilationProperties.BoolValue
+          ['AdvectionConnection'] = true then
         begin
-          v1 := LeakNorth + NLeakOpening;
-        end
-        else if (LeakEast <> 0) and (i = EastVol) then
-        begin
-          v1 := LeakEast + ELeakOpening;
-        end
-        else if (LeakSouth <> 0) and (i = SouthVol) then
-        begin
-          v1 := LeakSouth + SLeakOpening;
-        end
-        else if (LeakWest <> 0) and (i = WestVol) then
-        begin
-          v1 := LeakWest + WLeakOpening;
+
         end;
 
         WriteLn(T, '   ', ityp, ' ', caph:0:1, ' ', capc);
@@ -1588,7 +1589,7 @@ begin
           ' ', v4, ' ', v5, ' ', v6);
       end;
 
-      if (Idx = 1) or (Idx = 3) then
+      if Idx = 1 then
       begin
         WriteLn(T, ' ', nventwinter);
 
@@ -1626,7 +1627,7 @@ begin
         end;
       end;
 
-      if (Idx = 2) or (Idx = 4) then
+      if Idx = 2 then
       begin
         WriteLn(T, ' ', nventsummer);
         WriteLn(T, '   ', '0', ' ', '1', ' ', summervent:0:2);
@@ -1640,7 +1641,7 @@ begin
         WriteLn(T, '   ', '1', ' ', '0', ' ', vent:0:2);
       end;
 
-      if (Idx = 1) or (Idx = 3) then
+      if Idx = 1 then
       begin
         if nvol > 1 then
         begin

@@ -1408,6 +1408,7 @@ object Form1: TForm1
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 41
       Cursor = crIBeam
+      ValueType = vtFloat
       Position.X = 128.000000000000000000
       Position.Y = 392.000000000000000000
       Width = 41.000000000000000000
