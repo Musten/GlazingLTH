@@ -1,0 +1,260 @@
+unit diagramForm;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.Variants,
+  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
+  FMXTee.Engine, FMXTee.Procs, FMXTee.Chart, derob, FMXTee.Series;
+
+type
+  TForm5 = class(TForm)
+    Chart1: TChart;
+    GlazeDiagramButton: TButton;
+    NonGlazeDiagramButton: TButton;
+    TempRadioButton: TRadioButton;
+    HeatRadioButton: TRadioButton;
+    Series2: TFastLineSeries;
+    Series1: TFastLineSeries;
+    procedure GlazeDiagramButtonClick(Sender: TObject);
+  private
+    FDerobModel: TDerobModel;
+    procedure SetDerobModel(const Value: TDerobModel);
+    procedure GlazeChart;
+    procedure NoGlazeChart;
+    { Private declarations }
+  public
+    { Public declarations }
+    property DerobModel: TDerobModel read FDerobModel write SetDerobModel;
+  end;
+
+var
+  Form5: TForm5;
+
+implementation
+
+{$R *.fmx}
+
+procedure TForm5.GlazeChart;
+var
+  Summer, Winter, NoGlaze: TextFile;
+  DataFile: TStringList;
+  VolPath: String;
+  buffer: String;
+  HourSummer, OutTempSummer, GlobalRadiationSummer, Temp1Summer, OpTemp1Summer,
+    Heat1Summer, HourWinter, OutTempWinter, GlobalRadiationWinter, Temp1Winter,
+    OpTemp1Winter, Heat1Winter: array of Real;
+  i: integer;
+  IgnoreText: Boolean;
+  TempJanSummer, TempFebSummer, TempMarSummer, TempAprSummer, TempMaySummer,
+    TempJunSummer, TempJulSummer, TempAugSummer, TempSepSummer, TempOctSummer,
+    TempNovSummer, TempDecSummer: array of Real;
+  TempJanWinter, TempFebWinter, TempMarWinter, TempAprWinter, TempMayWinter,
+    TempJunWinter, TempJulWinter, TempAugWinter, TempSepWinter, TempOctWinter,
+    TempNovWinter, TempDecWinter: array of Real;
+  TempTemp, Hour: Real;
+  Hour1 :array of Real;
+begin
+  SetLength(HourSummer, 8760);
+  SetLength(OutTempSummer, 8760);
+  SetLength(GlobalRadiationSummer, 8760);
+  SetLength(Temp1Summer, 8760);
+  SetLength(OpTemp1Summer, 8760);
+  SetLength(Heat1Summer, 8760);
+  SetLength(Temp1Winter, 8760);
+  SetLength(TempJanSummer, 744);
+  SetLength(TempFebSummer, 672);
+  SetLength(TempMarSummer, 744);
+  SetLength(TempAprSummer,720);
+  SetLength(TempMaySummer, 744);
+  SetLength(TempJunSummer,720);
+  SetLength(TempJulSummer, 744);
+  SetLength(TempAugSummer, 744);
+  SetLength(TempSepSummer,720);
+  SetLength(TempOctSummer, 744);
+  SetLength(TempNovSummer,720);
+  SetLength(TempDecSummer, 744);
+  SetLength(Hour1,8760);
+
+  IgnoreText := False;
+  Chart1.Series[0].Clear;
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
+  SetCurrentDir('../Cases/');
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  SetCurrentDir('Summer');
+  VolPath := GetCurrentDir + '\Vol_Load.txt';
+  AssignFile(Summer, VolPath);
+  Reset(Summer);
+  SetCurrentDir('../Winter');
+  VolPath := GetCurrentDir + '\Vol_Load.txt';
+  AssignFile(Winter, VolPath);
+  Reset(Winter);
+  while not Eof(Summer) do
+  begin
+    // Pass the first 12 lines that describes the variables in the text files
+    if IgnoreText = False then
+    begin
+      for i := 0 to 11 do
+      begin
+        ReadLn(Summer, buffer);
+        ReadLn(Winter, buffer);
+      end;
+      IgnoreText := true;
+    end;
+    for i := 12 to 8772 do
+    begin
+      ReadLn(Summer, HourSummer[i - 12], OutTempSummer[i - 12],
+        GlobalRadiationSummer[i - 12], Temp1Summer[i - 12],
+        OpTemp1Summer[i - 12], Heat1Summer[i - 12]);
+
+      // ReadLn(Winter, HourWinter[i], OutTempWinter[i],
+      // GlobalRadiationWinter[i], Temp1Winter[i], OpTemp1Winter[i],
+      // Heat1Winter[i]);
+    end;
+    for i := 0 to 743 do
+    begin
+      TempJanSummer[i] := Temp1Summer[i];
+      Hour1[i]:=HourSummer[i];
+      // TempJanWinter[i]:=Temp1Winter[i];
+    end;
+    for i := 744 to 1415 do
+    begin
+      TempFebSummer[i-744] := Temp1Summer[i];
+      Hour1[i]:=HourSummer[i];
+      // TempFebWinter[i]:=Temp1Winter[i];
+    end;
+    for i := 1416 to 2159 do
+    begin
+      TempMarSummer[i-1416] := Temp1Summer[i];
+    end;
+    for i := 2160 to 2879 do
+    begin
+      TempAprSummer[i-2160] := Temp1Summer[i];
+    end;
+    for i := 2880 to 3623 do
+    begin
+      TempMaySummer[i-2880] := Temp1Summer[i];
+    end;
+    for i := 3624 to 4343 do
+    begin
+      TempJunSummer[i-3624] := Temp1Summer[i];
+    end;
+    for i := 4344 to 5087 do
+    begin
+      TempJulSummer[i-4344] := Temp1Summer[i];
+    end;
+    for i := 5088 to 5831 do
+    begin
+      TempAugSummer[i-5088] := Temp1Summer[i];
+    end;
+    for i := 5832 to 6551  do
+    begin
+      TempSepSummer[i-5832]:=Temp1Summer[i];
+    end;
+    for i := 6552 to 7295 do
+    begin
+      TempOctSummer[i-6552]:=Temp1Summer[i];
+    end;
+    for i := 7296 to 8015 do
+    begin
+      TempNovSummer[i-7296]:=Temp1Summer[i];
+    end;
+    for i := 8016 to 8759 do
+    begin
+      TempDecSummer[i-8016]:=Temp1Summer[i];
+      Hour1[i]:=HourSummer[i];
+    end;
+
+
+
+
+
+  end;
+         ShowMessage(FloatToStr(HourSummer[8771-12]));
+         ShowMessage(FloatToStr(Temp1Summer[8771-12]));
+         ShowMessage(FloatToStr(TempDecSummer[743]));
+  for i := 0 to 8759 do
+  begin
+    TempTemp := Temp1Summer[i];
+    Hour := HourSummer[i];
+    Chart1.Series[0].AddXY(Hour, TempTemp, '', clTeeColor);
+  end;
+  // end;
+  // if Temp1Summer > Temp1Winter then
+  // begin
+  // if Temp1Summer > DerobModel.HouseProperties.IntValue['TMaxRoom'] then
+  // begin
+  // Chart1.Series[0].AddXY(HourSummer, Temp1Winter, '', clTeeColor);
+  // end
+  // else
+  // Chart1.Series[0].AddXY(HourSummer, Temp1Summer, '', clTeeColor);
+  // end
+  // else
+  // if Temp1Winter>DerobModel.HouseProperties.IntValue['TMaxRoom'] then
+  // begin
+  // Chart1.Series[0].AddXY(HourSummer, Temp1Summer, '', clTeeColor);
+  // end
+  // else
+  // Chart1.Series[0].AddXY(HourSummer, Temp1Winter, '', clTeeColor);
+  // end;
+  CloseFile(Summer);
+  CloseFile(Winter);
+  SetLength(HourSummer, 0);
+  SetLength(OutTempSummer, 0);
+  SetLength(GlobalRadiationSummer, 0);
+  SetLength(Temp1Summer, 0);
+  SetLength(OpTemp1Summer, 0);
+  SetLength(Heat1Summer, 0);
+  SetLength(Temp1Winter, 0);
+  SetLength(TempJanSummer, 0);
+  SetLength(TempFebSummer, 0);
+
+end;
+
+procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
+begin
+  GlazeChart;
+
+  // NoGlazeChart;
+end;
+
+procedure TForm5.NoGlazeChart;
+var
+  NoGlaze: TextFile;
+  DataFile: TStringList;
+  VolPath, StartDir: String;
+  buffer: String;
+  Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1: Real;
+  i: integer;
+  IgnoreText: Boolean;
+begin
+  IgnoreText := False;
+  Chart1.Series[1].Clear;
+  SetCurrentDir('../NoGlaze/');
+  VolPath := GetCurrentDir + '\Vol_Load.txt';
+  AssignFile(NoGlaze, VolPath);
+  Reset(NoGlaze);
+
+  while not Eof(NoGlaze) do
+  begin
+    if IgnoreText = False then
+    begin
+      for i := 0 to 11 do
+      begin
+        ReadLn(NoGlaze, buffer);
+      end;
+      IgnoreText := true;
+    end;
+    ReadLn(NoGlaze, Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1);
+    Chart1.Series[1].AddXY(Hour, Temp1, '', clTeeColor)
+  end;
+  CloseFile(NoGlaze);
+end;
+
+procedure TForm5.SetDerobModel(const Value: TDerobModel);
+begin
+  FDerobModel := Value;
+end;
+
+end.

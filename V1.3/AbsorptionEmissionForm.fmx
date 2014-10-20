@@ -1,0 +1,294 @@
+object Form4: TForm4
+  Left = 0
+  Top = 0
+  Caption = 'Absorption/Emittans - Tak'
+  ClientHeight = 242
+  ClientWidth = 474
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [dkDesktop, dkiPhone, dkiPad]
+  DesignerMobile = False
+  DesignerWidth = 0
+  DesignerHeight = 0
+  DesignerDeviceName = ''
+  DesignerOrientation = 0
+  DesignerOSVersion = ''
+  object ListBox1: TListBox
+    Height = 337.000000000000000000
+    TabOrder = 0
+    Width = 161.000000000000000000
+    ItemIndex = 0
+    DefaultItemStyles.ItemStyle = ''
+    DefaultItemStyles.GroupHeaderStyle = ''
+    DefaultItemStyles.GroupFooterStyle = ''
+    object RoofItem: TListBoxItem
+      Height = 19.000000000000000000
+      IsSelected = True
+      Text = 'Tak'
+      Width = 157.000000000000000000
+      OnClick = RoofItemClick
+    end
+    object FloorItem: TListBoxItem
+      Height = 19.000000000000000000
+      Position.Y = 19.000000000000000000
+      Text = 'Golv'
+      Width = 157.000000000000000000
+      OnClick = FloorItemClick
+    end
+    object NWallItem: TListBoxItem
+      Height = 19.000000000000000000
+      Position.Y = 38.000000000000000000
+      Text = 'V'#228'gg Nord'
+      Width = 157.000000000000000000
+      OnClick = NWallItemClick
+    end
+    object EWallItem: TListBoxItem
+      Height = 19.000000000000000000
+      Position.Y = 57.000000000000000000
+      Text = 'V'#228'gg '#214'st'
+      Width = 157.000000000000000000
+      OnClick = EWallItemClick
+    end
+    object SWallItem: TListBoxItem
+      Height = 19.000000000000000000
+      Position.Y = 76.000000000000000000
+      Text = 'V'#228'gg Syd'
+      Width = 157.000000000000000000
+      OnClick = SWallItemClick
+    end
+    object WWallItem: TListBoxItem
+      Height = 19.000000000000000000
+      Position.Y = 95.000000000000000000
+      Text = 'V'#228'gg V'#228'st'
+      Width = 157.000000000000000000
+      OnClick = WWallItemClick
+    end
+  end
+  object RoofAbs1: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 1
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 248.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+  end
+  object RoofAbs2: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 2
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 328.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+  end
+  object Label2: TLabel
+    Height = 17.000000000000000000
+    Position.X = 256.000000000000000000
+    Position.Y = 24.000000000000000000
+    Text = 'Absorption (Fram - Bak)'
+    Width = 121.000000000000000000
+  end
+  object Label3: TLabel
+    Height = 17.000000000000000000
+    Position.X = 256.000000000000000000
+    Position.Y = 104.000000000000000000
+    Text = 'Emittans (Fram - Bak)'
+    Width = 113.000000000000000000
+  end
+  object Label4: TLabel
+    Height = 17.000000000000000000
+    Position.X = 304.000000000000000000
+    Position.Y = 56.000000000000000000
+    Text = '%'
+    Width = 17.000000000000000000
+  end
+  object Label5: TLabel
+    Height = 17.000000000000000000
+    Position.X = 384.000000000000000000
+    Position.Y = 56.000000000000000000
+    Text = '%'
+    Width = 17.000000000000000000
+  end
+  object Label6: TLabel
+    Height = 17.000000000000000000
+    Position.X = 304.000000000000000000
+    Position.Y = 136.000000000000000000
+    Text = '%'
+    Width = 17.000000000000000000
+  end
+  object Label7: TLabel
+    Height = 17.000000000000000000
+    Position.X = 384.000000000000000000
+    Position.Y = 136.000000000000000000
+    Text = '%'
+    Width = 17.000000000000000000
+  end
+  object AbsSaveButton: TButton
+    Height = 22.000000000000000000
+    Position.X = 384.000000000000000000
+    Position.Y = 208.000000000000000000
+    TabOrder = 9
+    Text = 'Spara'
+    Width = 80.000000000000000000
+    OnClick = AbsSaveButtonClick
+  end
+  object FloorAbs1: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 10
+    Cursor = crArrow
+    Position.X = 248.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Enabled = False
+    Visible = False
+  end
+  object FloorAbs2: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 11
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 328.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object NWallAbs1: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 12
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 248.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object NWallAbs2: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 13
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 328.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object EWallAbs1: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 14
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 248.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object EWallAbs2: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 15
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 328.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object Em1: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 16
+    Cursor = crArrow
+    Value = 87.000000000000000000
+    Position.X = 248.000000000000000000
+    Position.Y = 136.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    Enabled = False
+  end
+  object Em2: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 17
+    Cursor = crArrow
+    Value = 87.000000000000000000
+    Position.X = 328.000000000000000000
+    Position.Y = 136.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    Enabled = False
+  end
+  object SWallAbs1: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 18
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 248.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object SWallAbs2: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 19
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 328.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object WWallAbs1: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 20
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 248.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+  object WWallAbs2: TNumberBox
+    Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+    TabOrder = 21
+    Cursor = crArrow
+    Value = 70.000000000000000000
+    Position.X = 328.000000000000000000
+    Position.Y = 56.000000000000000000
+    Width = 49.000000000000000000
+    Height = 22.000000000000000000
+    VertIncrement = 5.000000000000000000
+    DesignVisible = False
+    Visible = False
+  end
+end

@@ -1,0 +1,1968 @@
+unit derob;
+
+// ---------------------------------------------------------------------------
+// DEROB Data model unit
+// ---------------------------------------------------------------------------
+
+interface
+
+uses
+  Generics.Collections;
+
+type
+
+  //
+  // Base DEROB class
+  //
+  // Defined the basic functionality available to
+  // all derived classes.
+  //
+
+  TDerobBase = class
+  private
+    FName: string;
+    FIdx : integer;
+    procedure SetName(const Value: string);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f: TextFile); virtual;
+    procedure ReadFromFile(var f: TextFile); virtual;
+
+    property Name: string read FName write SetName;
+    property Idx : integer read FIdx write FIdx;
+  end;
+
+  //
+  // Derob property class
+  //
+  // Implements a base class for implementing property/value pairs.
+  // The class implements a dictionary like data structure for
+  // storing the property value pairs. Loading and saving of
+  // properties is also implemented.
+  //
+
+  TDerobPropertyType = (ptString, ptDouble, ptInteger, ptBoolean, ptNone);
+
+  TDerobProperties = class(TDerobBase)
+  private
+    FProperties: TDictionary<string, TDerobPropertyType>;
+    FStringProperties: TDictionary<string, string>;
+    FDoubleProperties: TDictionary<string, double>;
+    FIntProperties: TDictionary<string, integer>;
+    FBoolProperties: TDictionary<string, boolean>;
+    FKeys: TDictionary<string, TDerobPropertyType>.TKeyCollection;
+    FCount: integer;
+    function GetDoubleValue(Name: string): double;
+    function GetIntValue(Name: string): integer;
+    function GetStringValue(Name: string): string;
+    function GetValueType(Name: string): TDerobPropertyType;
+    function GetBoolValue(Name: string): boolean;
+    procedure SetDoubleValue(Name: string; const Value: double);
+    procedure SetIntValue(Name: string; const Value: integer);
+    procedure SetStringValue(Name: string; const Value: string);
+    procedure SetValueType(Name: string; const Value: TDerobPropertyType);
+    procedure SetBoolValue(Name: string; const Value: boolean);
+    function GetKeys: TDictionary<string, TDerobPropertyType>.TKeyCollection;
+    function GetCount: integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Add(Name: string; PropertyType: TDerobPropertyType);
+    procedure Remove(Name: string);
+    procedure Clear;
+
+    procedure AssignFrom(DerobProperty: TDerobProperties);
+
+    procedure SaveToFile(var f: TextFile); override;
+    procedure ReadFromFile(var f: TextFile); override;
+
+    property Keys: TDictionary<string, TDerobPropertyType>.TKeyCollection
+      read GetKeys;
+    property Count: integer read GetCount;
+
+    property ValueType[Name: string]: TDerobPropertyType read GetValueType
+      write SetValueType;
+    property DoubleValue[Name: string]: double read GetDoubleValue
+      write SetDoubleValue;
+    property StringValue[Name: string]: string read GetStringValue
+      write SetStringValue;
+    property IntValue[Name: string]: integer read GetIntValue write SetIntValue;
+    property BoolValue[Name: string]: boolean read GetBoolValue
+      write SetBoolValue;
+  end;
+
+  //
+  // Material class
+  //
+  // Stores material information
+  //
+
+  TMaterial = class(TDerobProperties)
+  private
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  //
+  // Construction class
+  //
+  // Describes a construction consisting of material "Layers"
+  //
+
+  TConstruction = class(TDerobProperties)
+  private
+    FLayers : TList<TMaterial>;
+    FLayerIdx : TList<integer>;
+    FLayerThickness : TList<double>;
+    function GetLayers(idx: integer): TMaterial;
+    function GetLayerThickness(idx: integer): double;
+    procedure SetLayers(idx: integer; const Value: TMaterial);
+    procedure SetLayerThickness(idx: integer; const Value: double);
+    function GetLayerIdx(idx: integer): integer;
+    procedure SetLayerIdx(idx: integer; const Value: integer);
+    function GetLayerCount: integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f: TextFile); override;
+    procedure ReadFromFile(var f: TextFile); override;
+    procedure ReConnect(var Materials : TObjectList<TMaterial>);
+
+    procedure AddLayer(Material : TMaterial; Thickness : double);
+    procedure RemoveLayer(Material : TMaterial);
+
+    property Layers[idx : integer] : TMaterial read GetLayers write SetLayers;
+    property LayerThickness[idx : integer] : double read GetLayerThickness write SetLayerThickness;
+    property LayerIdx[idx : integer] : integer read GetLayerIdx write SetLayerIdx;
+    property LayerCount : integer read GetLayerCount;
+  end;
+
+  //
+  // Surface base class
+  //
+  // Geometric base class for roof, floor and wall classes.
+  // Contains generic geometry properties for surfaces.
+  //
+
+  TSurface = class(TDerobBase)
+  private
+    FX: double;
+    FY: double;
+    FZ: double;
+    FRotationX: double;
+    FRotationY: double;
+    FRotationZ: double;
+    FWidth: double;
+    FHeight: double;
+    FConstruction: TConstruction;
+    FConstructionIdx : integer;
+    FLength: double;
+    procedure SetRotationX(const Value: double);
+    procedure SetRotationY(const Value: double);
+    procedure SetX(const Value: double);
+    procedure SetY(const Value: double);
+    procedure SetZ(const Value: double);
+    procedure SetRotationZ(const Value: double);
+    procedure SetHeight(const Value: double);
+    procedure SetWidth(const Value: double);
+    procedure SetConstruction(const Value: TConstruction);
+    procedure SetLength(const Value: double);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f: TextFile); override;
+    procedure ReadFromFile(var f: TextFile); override;
+    procedure ReConnect(var Constructions : TObjectList<TConstruction>);
+
+    property X: double read FX write SetX;
+    property Y: double read FY write SetY;
+    property Z: double read FZ write SetZ;
+    property RotationX: double read FRotationX write SetRotationX;
+    property RotationY: double read FRotationY write SetRotationY;
+    property RotationZ: double read FRotationZ write SetRotationZ;
+    property Width: double read FWidth write SetWidth;
+    property Height: double read FHeight write SetHeight;
+    property Length:double read FLength write SetLength;
+    property Construction : TConstruction read FConstruction write SetConstruction;
+  end;
+
+  //
+  // Floor properties class
+  //
+
+  TFloorProperties = class(TDerobProperties)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  //
+  // Floor class
+  //
+
+  TFloor = class(TSurface)
+  private
+    FProperties: TFloorProperties;
+    procedure SetProperties(const Value: TFloorProperties);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f: TextFile); override;
+    procedure ReadFromFile(var f: TextFile); override;
+
+    property Properties: TFloorProperties read FProperties write SetProperties;
+  end;
+
+  // *NEW*
+  // Window properties class
+  //
+
+  TWindowProperties = class(TDerobProperties)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  // *NEW*
+  //  Window class
+  //
+
+  TWindow = class(TSurface)
+  private
+    FProperties: TWindowProperties;
+    procedure SetProperties(const Value: TWindowProperties);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f: TextFile); override;
+    procedure ReadFromFile(var f: TextFile); override;
+
+    property Properties: TWindowProperties read FProperties write SetProperties;
+  end;
+
+  //*NEW*
+  // Glazing Properties class
+  //
+TGlazingProperties = class(TDerobProperties)
+private
+public
+  constructor Create;
+  destructor Destroy; override;
+end;
+
+  // *NEW*
+  // Glazing class
+  //
+
+TGlazing = class(TSurface)
+  private
+    FProperties: TGlazingProperties;
+    procedure SetProperties(const Value: TGlazingProperties);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f:TextFile); override;
+    procedure ReadFromFile(var f:TextFile); override;
+
+    property Properties: TGlazingProperties read FProperties write SetProperties;
+  end;
+
+
+  //
+  // Wall properties class
+  //
+
+  TWallProperties = class(TDerobProperties)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  //
+  // Wall class
+  //
+
+  TWall = class(TSurface)
+  private
+    FProperties: TWallProperties;
+    procedure SetProperties(const Value: TWallProperties);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f: TextFile); override;
+    procedure ReadFromFile(var f: TextFile); override;
+
+    property Properties: TWallProperties read FProperties write SetProperties;
+  end;
+
+  //
+  // Roof properties class
+  //
+
+  TRoofProperties = class(TDerobProperties)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  //
+  // Roof class
+  //
+
+  TRoof = class(TSurface)
+  private
+    FProperties: TRoofProperties;
+    procedure SetProperties(const Value: TRoofProperties);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SaveToFile(var f: TextFile); override;
+    procedure ReadFromFile(var f: TextFile); override;
+
+    property Properties: TRoofProperties read FProperties write SetProperties;
+  end;
+
+  //
+  // House properties class
+  //
+
+  THouseProperties = class(TDerobProperties)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  //
+  // Location properties class
+  //
+
+  TLocationProperties = class(TDerobProperties)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  //
+  // Ventilation properties class
+  //
+
+  TVentilationProperties = class(TDerobProperties)
+  private
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  //
+  // DEROB Model class
+  //
+  // Class implements the DEROB data model
+  //
+
+  TDerobModel = class
+  private
+    FFilename: string;
+
+    FWalls: TObjectList<TWall>;
+    FFloors: TObjectList<TFloor>;
+    FRoofs: TObjectList<TRoof>;
+    FWindows: TObjectList<TWindow>;
+    FGlazing: TObjectList<TGlazing>;
+
+    FMaterials : TObjectList<TMaterial>;
+    FConstructions : TObjectList<TConstruction>;
+
+    FHouseProperties: THouseProperties;
+    FVentilationProperties: TVentilationProperties;
+    FLocationProperties: TLocationProperties;
+    FMaterialCount: integer;
+    FConstructionCount: integer;
+    FWindowCount: integer;
+    FGlazeCount: integer;
+    FGlazingCount: integer;
+
+    //ÄNDRAT
+    FWallProperties : TWallProperties;
+    FGlazingProperties : TGlazingProperties;
+    FSurface: TSurface;
+
+
+    procedure SetFilename(const Value: string);
+    function GetWalls(idx: integer): TWall;
+    procedure SetWalls(idx: integer; const Value: TWall);
+    function GetWallCount: integer;
+    function GetFloors(idx: integer): TFloor;
+    function GetRoofs(idx: integer): TRoof;
+    procedure SetFloors(idx: integer; const Value: TFloor);
+    procedure SetRoofs(idx: integer; const Value: TRoof);
+    function GetFloorCount: integer;
+    function GetRoofCount: integer;
+    procedure SetHouseProperties(const Value: THouseProperties);
+    procedure SetLocationProperties(const Value: TLocationProperties);
+    procedure SetVentilationProperties(const Value: TVentilationProperties);
+    function GetConstructions(idx: integer): TConstruction;
+    function GetMaterials(idx: integer): TMaterial;
+    procedure SetConstructionCount(const Value: integer);
+    procedure SetConstructions(idx: integer; const Value: TConstruction);
+    procedure SetMaterialCount(const Value: integer);
+    procedure SetMaterials(idx: integer; const Value: TMaterial);
+    function GetConstructionCount: integer;
+    function GetMaterialCount: integer;
+    function GetWindows(idx: integer): TWindow;
+    procedure SetWindowCount(const Value: integer);
+    procedure SetWindows(idx: integer; const Value: TWindow);
+    function GetWindowCount: integer;
+    function GetGlazing(idx: integer): TGlazing;
+    procedure SetGlazing(idx: integer; const Value: TGlazing);
+    procedure SetGlazingCount(const Value: integer);
+    function GetGlazingCount: integer;
+    procedure SetGlazingProperties(const Value: TGlazingProperties);
+    procedure SetSurface(const Value: TSurface);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure AddWall(Wall: TWall);
+    procedure RemoveWall(Wall: TWall); overload;
+    procedure RemoveWall(idx: integer); overload;
+    procedure ClearWalls;
+
+    procedure AddRoof(Roof: TRoof);
+    procedure RemoveRoof(Roof: TRoof); overload;
+    procedure RemoveRoof(idx: integer); overload;
+    procedure ClearRoofs;
+
+    procedure AddFloor(Floor: TFloor);
+    procedure RemoveFloor(Floor: TFloor); overload;
+    procedure RemoveFloor(idx: integer); overload;
+    procedure ClearFloors;
+
+    //Lägga till fönster
+    procedure AddWindow(Window:TWindow);
+    procedure RemoveWindow(Window: TWindow); overload;
+    procedure RemoveWindow(idx:integer); overload;
+    procedure ClearWindows;
+
+    // Lägga till inglasning
+    procedure AddGlazing(Glazing:TGlazing);
+    procedure RemoveGlazing(Glazing:TGlazing);overload;
+    procedure RemoveGlazing(idx:integer);overload;
+    procedure ClearGlazing;
+
+    procedure AddMaterial(Material : TMaterial);
+    procedure RemoveMaterial(Material : TMaterial); overload;
+    procedure RemoveMaterial(idx : integer); overload;
+    procedure ClearMaterials;
+
+    procedure AddConstruction(Construction : TConstruction);
+    procedure RemoveConstruction(Construction : TConstruction); overload;
+    procedure RemoveConstruction(idx : integer); overload;
+    procedure ClearConstructions;
+
+    procedure Save;
+    procedure Open;
+
+    property Filename: string read FFilename write SetFilename;
+    property Walls[idx: integer]: TWall read GetWalls write SetWalls;
+    property WallCount: integer read GetWallCount;
+    property Roofs[idx: integer]: TRoof read GetRoofs write SetRoofs;
+    property RoofCount: integer read GetRoofCount;
+    property Floors[idx: integer]: TFloor read GetFloors write SetFloors;
+    property FloorCount: integer read GetFloorCount;
+
+    // Tillagt med fönsterklass
+    property Windows[idx: integer]: TWindow read GetWindows write SetWindows;
+    property WindowCount:integer read GetWindowCount;
+
+    // Inglasningsklass
+    property Glazing[idx:integer]:TGlazing  read GetGlazing write SetGlazing;
+    property GlazingCount:integer  read GetGlazingCount;
+
+    property Materials[idx : integer]: TMaterial read GetMaterials write SetMaterials;
+    property MaterialCount : integer read GetMaterialCount;
+    property Constructions[idx : integer]: TConstruction read GetConstructions write SetConstructions;
+    property ConstructionCount : integer read GetConstructionCount;
+
+    property HouseProperties: THouseProperties read FHouseProperties
+      write SetHouseProperties;
+    property LocationProperties: TLocationProperties read FLocationProperties
+      write SetLocationProperties;
+    property VentilationProperties: TVentilationProperties
+      read FVentilationProperties write SetVentilationProperties;
+      property Surface:TSurface read FSurface write SetSurface;
+
+    //ÄNDRAT
+    property GlazingProperties: TGlazingProperties read FGlazingProperties
+     write SetGlazingProperties;
+  end;
+
+implementation
+
+{ TDerobBase }
+
+constructor TDerobBase.Create;
+begin
+  inherited;
+  FName:='';
+end;
+
+destructor TDerobBase.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TDerobBase.ReadFromFile(var f: TextFile);
+begin
+  ReadLn(f, FName);
+end;
+
+procedure TDerobBase.SaveToFile(var f: TextFile);
+begin
+  Writeln(f, FName);
+end;
+
+procedure TDerobBase.SetName(const Value: string);
+begin
+  FName := Value;
+end;
+
+{ TDerobProperty }
+
+constructor TDerobProperties.Create;
+begin
+  inherited;
+  FProperties := TDictionary<string, TDerobPropertyType>.Create;
+  FStringProperties := TDictionary<string, string>.Create;
+  FDoubleProperties := TDictionary<string, double>.Create;
+  FIntProperties := TDictionary<string, integer>.Create;
+  FBoolProperties := TDictionary<string, boolean>.Create;
+end;
+
+destructor TDerobProperties.Destroy;
+begin
+  FProperties.Free;
+  FStringProperties.Free;
+  FDoubleProperties.Free;
+  FIntProperties.Free;
+  FBoolProperties.Free;
+  inherited;
+end;
+
+procedure TDerobProperties.Add(Name: string; PropertyType: TDerobPropertyType);
+begin
+  if not FProperties.ContainsKey(Name) then
+  begin
+    FProperties.Add(Name, PropertyType);
+    FStringProperties.Add(Name, '');
+    FDoubleProperties.Add(Name, 0.0);
+    FIntProperties.Add(Name, 0);
+    FBoolProperties.Add(Name, True);
+  end;
+end;
+
+procedure TDerobProperties.Remove(Name: string);
+begin
+  if FProperties.ContainsKey(Name) then
+  begin
+    FProperties.Remove(Name);
+    FStringProperties.Remove(Name);
+    FIntProperties.Remove(Name);
+    FDoubleProperties.Remove(Name);
+    FBoolProperties.Remove(Name);
+  end;
+end;
+
+procedure TDerobProperties.AssignFrom(DerobProperty: TDerobProperties);
+var
+  Name: string;
+begin
+  Self.Clear;
+
+  for Name in DerobProperty.Keys do
+  begin
+    case DerobProperty.ValueType[Name] of
+      ptString:
+        begin
+          Self.StringValue[Name] := DerobProperty.StringValue[Name];
+        end;
+      ptDouble:
+        begin
+          Self.DoubleValue[Name] := DerobProperty.DoubleValue[Name];
+        end;
+      ptInteger:
+        begin
+          Self.IntValue[Name] := DerobProperty.IntValue[Name];
+        end;
+      ptBoolean:
+        begin
+          Self.BoolValue[Name] := DerobProperty.BoolValue[Name];
+        end;
+    end;
+  end;
+end;
+
+procedure TDerobProperties.Clear;
+begin
+  FProperties.Clear;
+  FStringProperties.Clear;
+  FIntProperties.Clear;
+  FDoubleProperties.Clear;
+  FBoolProperties.Clear;
+end;
+
+procedure TDerobProperties.ReadFromFile(var f: TextFile);
+var
+  i: integer;
+  PropCount: integer;
+  Name: string;
+  PropType: integer;
+  StringVal: string;
+  DoubleVal: double;
+  IntVal: integer;
+  BoolVal: integer;
+begin
+  inherited ReadFromFile(f);
+
+  Self.Clear;
+
+  ReadLn(f, PropCount);
+
+  for i := 1 to PropCount do
+  begin
+    ReadLn(f, Name);
+    ReadLn(f, PropType);
+
+    case PropType of
+      0:
+        begin
+          ReadLn(f, StringVal);
+          Self.StringValue[Name] := StringVal;
+        end;
+      1:
+        begin
+          ReadLn(f, DoubleVal);
+          Self.DoubleValue[Name] := DoubleVal;
+        end;
+      2:
+        begin
+          ReadLn(f, IntVal);
+          Self.IntValue[Name] := IntVal;
+        end;
+      3:
+        begin
+          ReadLn(f, BoolVal);
+          if BoolVal = 1 then
+            Self.BoolValue[Name] := True
+          else
+            Self.BoolValue[Name] := false
+        end;
+    end;
+  end;
+end;
+
+procedure TDerobProperties.SaveToFile(var f: TextFile);
+var
+  Name: string;
+begin
+  inherited SaveToFile(f);
+
+  // Write number of properties to file
+
+  WriteLn(f, Self.Count);
+  for Name in Self.Keys do
+  begin
+
+    // Write property name
+
+    WriteLn(f, Name);
+
+    // Write property type and value
+
+    case FProperties[Name] of
+      ptString:
+        begin
+          WriteLn(f, 0);
+          WriteLn(f, FStringProperties[Name]);
+        end;
+      ptDouble:
+        begin
+          WriteLn(f, 1);
+          WriteLn(f, FDoubleProperties[Name]);
+        end;
+      ptInteger:
+        begin
+          WriteLn(f, 2);
+          WriteLn(f, FIntProperties[Name]);
+        end;
+      ptBoolean:
+        begin
+          WriteLn(f, 3);
+          if FBoolProperties[Name] then
+            WriteLn(f, 1)
+          else
+            WriteLn(f, 0)
+        end;
+    end;
+  end;
+end;
+
+function TDerobProperties.GetBoolValue(Name: string): boolean;
+begin
+  if FProperties.ContainsKey(Name) then
+    Result := FBoolProperties.Items[Name]
+  else
+    Result := false;
+end;
+
+function TDerobProperties.GetCount: integer;
+begin
+  Result := FProperties.Keys.Count;
+end;
+
+function TDerobProperties.GetDoubleValue(Name: string): double;
+begin
+  if FProperties.ContainsKey(Name) then
+    Result := FDoubleProperties.Items[Name]
+  else
+    Result := 0.0;
+end;
+
+function TDerobProperties.GetIntValue(Name: string): integer;
+begin
+  if FProperties.ContainsKey(Name) then
+    Result := FIntProperties.Items[Name]
+  else
+    Result := 0;
+end;
+
+function TDerobProperties.GetKeys: TDictionary<string, TDerobPropertyType>.
+  TKeyCollection;
+begin
+  Result := Self.FProperties.Keys;
+end;
+
+function TDerobProperties.GetStringValue(Name: string): string;
+begin
+  if FProperties.ContainsKey(Name) then
+    Result := FStringProperties.Items[Name]
+  else
+    Result := '';
+end;
+
+function TDerobProperties.GetValueType(Name: string): TDerobPropertyType;
+begin
+  if FProperties.ContainsKey(Name) then
+    Result := FProperties.Items[Name]
+  else
+    Result := ptNone;
+end;
+
+procedure TDerobProperties.SetBoolValue(Name: string; const Value: boolean);
+begin
+  if FProperties.ContainsKey(Name) then
+  begin
+    FBoolProperties.Items[Name] := Value;
+  end
+  else
+  begin
+    Add(Name, ptBoolean);
+    FBoolProperties.Items[Name] := Value;
+  end;
+end;
+
+procedure TDerobProperties.SetDoubleValue(Name: string; const Value: double);
+begin
+  if FProperties.ContainsKey(Name) then
+  begin
+    FDoubleProperties.Items[Name] := Value;
+  end
+  else
+  begin
+    Add(Name, ptDouble);
+    FDoubleProperties.Items[Name] := Value;
+  end;
+end;
+
+procedure TDerobProperties.SetIntValue(Name: string; const Value: integer);
+begin
+  if FProperties.ContainsKey(Name) then
+  begin
+    FIntProperties.Items[Name] := Value;
+  end
+  else
+  begin
+    Add(Name, ptInteger);
+    FIntProperties.Items[Name] := Value;
+  end;
+end;
+
+procedure TDerobProperties.SetStringValue(Name: string; const Value: string);
+begin
+  if FProperties.ContainsKey(Name) then
+  begin
+    FStringProperties.Items[Name] := Value;
+  end
+  else
+  begin
+    Add(Name, ptString);
+    FStringProperties.Items[Name] := Value;
+  end;
+
+end;
+
+procedure TDerobProperties.SetValueType(Name: string;
+  const Value: TDerobPropertyType);
+begin
+  if FProperties.ContainsKey(Name) then
+  begin
+    FProperties.Items[Name] := Value;
+  end
+  else
+  begin
+    Add(Name, Value);
+  end;
+end;
+
+{ TConstruction }
+
+procedure TConstruction.AddLayer(Material: TMaterial; Thickness: double);
+begin
+  FLayers.Add(Material);
+  FLayerThickness.Add(Thickness);
+  FLayerIdx.Add(-1);
+end;
+
+constructor TConstruction.Create;
+begin
+  inherited;
+  FLayers:=TList<TMaterial>.Create;
+  FLayerThickness:=TList<double>.Create;
+  FLayerIdx:=TList<integer>.Create;
+  StringValue['ConstructionType'] := 'Generic';
+end;
+
+destructor TConstruction.Destroy;
+begin
+  FLayers.Free;
+  FLayerThickness.Free;
+  FLayerIdx.Free;
+  inherited;
+end;
+
+function TConstruction.GetLayerCount: integer;
+begin
+  Result:=FLayers.Count;
+end;
+
+function TConstruction.GetLayerIdx(idx: integer): integer;
+begin
+  if (idx>=0) and (idx<FLayerIdx.Count) then
+    Result:=FLayerIdx[idx]
+  else
+    Result:=-1;
+end;
+
+function TConstruction.GetLayers(idx: integer): TMaterial;
+begin
+  if (idx>=0) and (idx<FLayers.Count) then
+    Result:=FLayers[idx]
+  else
+    Result:=nil;
+end;
+
+function TConstruction.GetLayerThickness(idx: integer): double;
+begin
+  if (idx>=0) and (idx<FLayerThickness.Count) then
+    Result:=FLayerThickness[idx]
+  else
+    Result:=0.0;
+end;
+
+procedure TConstruction.ReadFromFile(var f: TextFile);
+var
+  i: integer;
+  ItemCount : integer;
+  Value : integer;
+  Thickness : double;
+begin
+  inherited ReadFromFile(f);
+  FLayerIdx.Clear;
+  FLayerThickness.Clear;
+  ReadLn(f, ItemCount);
+  for i := 0 to ItemCount-1 do
+  begin
+    ReadLn(f, Value, Thickness);
+    FLayerIdx.Add(Value);
+    FLayerThickness.Add(Thickness);
+  end;
+end;
+
+procedure TConstruction.ReConnect(var Materials: TObjectList<TMaterial>);
+var
+  i: integer;
+begin
+  FLayers.Clear;
+  for i := 0 to FLayerIdx.Count-1 do
+    FLayers.Add(Materials[FLayerIdx[i]]);
+end;
+
+procedure TConstruction.RemoveLayer(Material: TMaterial);
+var
+  idx : integer;
+begin
+  idx:=FLayers.IndexOf(Material);
+  FLayers.Delete(idx);
+  FLayerThickness.Delete(idx);
+  FLayerIdx.Delete(idx);
+end;
+
+procedure TConstruction.SaveToFile(var f: TextFile);
+var
+  i : integer;
+begin
+  inherited SaveToFile(f);
+  Writeln(f, FLayers.Count);
+  for i := 0 to FLayers.Count-1 do
+    WriteLn(f, FLayers[i].Idx, FLayerThickness[i]);
+end;
+
+procedure TConstruction.SetLayerIdx(idx: integer; const Value: integer);
+begin
+  if (idx>=0) and (idx<FLayerIdx.Count) then
+    FLayerIdx[idx]:=Value;
+end;
+
+procedure TConstruction.SetLayers(idx: integer; const Value: TMaterial);
+begin
+  if (idx>=0) and (idx<FLayers.Count) then
+    FLayers[idx]:=Value;
+end;
+
+procedure TConstruction.SetLayerThickness(idx: integer; const Value: double);
+begin
+  if (idx>=0) and (idx<FLayerThickness.Count) then
+    FLayerThickness[idx]:=Value;
+end;
+
+{ TMaterial }
+
+constructor TMaterial.Create;
+begin
+  inherited;
+
+  // TODO: Add material properties
+
+  DoubleValue['Density']:=1.0;
+  DoubleValue['Lambda']:=1.0;
+  DoubleValue['HeatCapacity']:=1.0;
+end;
+
+destructor TMaterial.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TSurface }
+
+constructor TSurface.Create;
+begin
+  inherited;
+  FConstruction:=nil;
+  FX:=0;
+  FY:=0;
+  FZ:=0;
+  FRotationX:=0;
+  FRotationY:=0;
+  FRotationZ:=0;
+end;
+
+destructor TSurface.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TSurface.ReadFromFile(var f: TextFile);
+begin
+  inherited ReadFromFile(f);
+  ReadLn(f, FX, FY, FZ);
+  ReadLn(f, FRotationX, FRotationY, FRotationZ);
+  ReadLn(f, FLength, FWidth, FHeight);            // Ändrat
+//  ReadLn(f, FConstructionIdx);                        Ändrat
+end;
+
+procedure TSurface.ReConnect(var Constructions: TObjectList<TConstruction>);
+begin
+  FConstruction:=Constructions[FConstructionIdx];
+end;
+
+procedure TSurface.SaveToFile(var f: TextFile);
+begin
+  inherited SaveToFile(f);
+  WriteLn(f, FX, FY, FZ);
+  WriteLn(f, FRotationX, FRotationY, FRotationZ);
+  WriteLn(f, FLength, FWidth, FHeight);         //Ändrat
+//  WriteLn(f, FConstruction.Idx);               Ändrat
+end;
+
+procedure TSurface.SetConstruction(const Value: TConstruction);
+begin
+  FConstruction := Value;
+end;
+
+procedure TSurface.SetHeight(const Value: double);
+begin
+  FHeight := Value;
+end;
+
+procedure TSurface.SetLength(const Value: double);
+begin
+  FLength := Value;
+end;
+
+procedure TSurface.SetRotationX(const Value: double);
+begin
+  FRotationX := Value;
+end;
+
+procedure TSurface.SetRotationY(const Value: double);
+begin
+  FRotationY := Value;
+end;
+
+procedure TSurface.SetRotationZ(const Value: double);
+begin
+  Self.FRotationZ := Value;
+end;
+
+procedure TSurface.SetWidth(const Value: double);
+begin
+  FWidth := Value;
+end;
+
+procedure TSurface.SetX(const Value: double);
+begin
+  FX := Value;
+end;
+
+procedure TSurface.SetY(const Value: double);
+begin
+  FY := Value;
+end;
+
+procedure TSurface.SetZ(const Value: double);
+begin
+  FZ := Value;
+end;
+
+{ TWallProperty }
+
+constructor TWallProperties.Create;
+begin
+  inherited;
+
+  // ACTION : Add wall properties here with default values
+
+  Self.DoubleValue['Thickness'] := 0.2;
+  Self.DoubleValue['Length'] := 1.0;
+  Self.DoubleValue['Height'] := 1.0;
+  Self.BoolValue['Hole'] := False;
+  Self.IntValue['Zenith'] := 0;
+  Self.IntValue['Azimuth'] := 0;
+end;
+
+destructor TWallProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TWall }
+
+constructor TWall.Create;
+begin
+  inherited;
+
+  // Initialise member variables and defaults
+
+  Self.Name := 'Wall';
+  FProperties := TWallProperties.Create;
+end;
+
+destructor TWall.Destroy;
+begin
+
+  // Clean up any allocated member variables
+
+  FProperties.Destroy;
+  inherited;
+end;
+
+procedure TWall.ReadFromFile(var f: TextFile);
+begin
+  inherited ReadFromFile(f);
+  FProperties.ReadFromFile(f);
+end;
+
+procedure TWall.SaveToFile(var f: TextFile);
+begin
+  inherited SaveToFile(f);
+  FProperties.SaveToFile(f);
+end;
+
+procedure TWall.SetProperties(const Value: TWallProperties);
+begin
+
+end;
+
+{ TFloorProperty }
+
+constructor TFloorProperties.Create;
+begin
+  inherited;
+
+  // ACTION : Add floor properties here with default values
+
+  DoubleValue['Thickness'] := 0.2;
+  DoubleValue['Length'] := 1.0;
+  DoubleValue['Width'] := 1.0;
+  IntValue['Zenith'] := 180;
+  IntValue['Azimuth'] := 0;
+end;
+
+destructor TFloorProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TFloor }
+
+constructor TFloor.Create;
+begin
+  inherited;
+  Name:='Floor';
+  FProperties := TFloorProperties.Create;
+end;
+
+destructor TFloor.Destroy;
+begin
+  FProperties.Free;
+  inherited;
+end;
+
+procedure TFloor.ReadFromFile(var f: TextFile);
+begin
+  inherited ReadFromFile(f);
+  FProperties.ReadFromFile(f);
+end;
+
+procedure TFloor.SaveToFile(var f: TextFile);
+begin
+  inherited SaveToFile(f);
+  FProperties.SaveToFile(f);
+end;
+
+procedure TFloor.SetProperties(const Value: TFloorProperties);
+begin
+  FProperties := Value;
+end;
+
+{ TRoofProperty }
+
+constructor TRoofProperties.Create;
+begin
+  inherited;
+
+  // ACTION : Add roof properties here with default values
+
+  DoubleValue['Thickness'] := 0.2;
+  DoubleValue['Length'] := 1.0;
+  DoubleValue['Width'] := 1.0;
+  IntValue['Zenith'] := 0;
+  IntValue['Azimuth'] := 0;
+end;
+
+destructor TRoofProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TRoof }
+
+constructor TRoof.Create;
+begin
+  inherited;
+  Name:='Roof';
+  FProperties := TRoofProperties.Create;
+end;
+
+destructor TRoof.Destroy;
+begin
+  FProperties.Free;
+  inherited;
+end;
+
+procedure TRoof.ReadFromFile(var f: TextFile);
+begin
+  inherited ReadFromFile(f);
+  FProperties.ReadFromFile(f);
+end;
+
+procedure TRoof.SaveToFile(var f: TextFile);
+begin
+  inherited SaveToFile(f);
+  FProperties.SaveToFile(f);
+end;
+
+procedure TRoof.SetProperties(const Value: TRoofProperties);
+begin
+  FProperties := Value;
+end;
+
+{ THouseProperties }
+
+constructor THouseProperties.Create;
+begin
+  inherited;
+
+  // ACTION : Add house properties here with default values
+
+  StringValue['Description'] := 'Huset Huset';
+end;
+
+destructor THouseProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TLocationProperties }
+
+constructor TLocationProperties.Create;
+begin
+  inherited;
+
+  // ACTION : Add house properties here with default values
+
+  end;
+
+destructor TLocationProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TVentilationProperties }
+
+constructor TVentilationProperties.Create;
+begin
+  inherited;
+
+  // ACTION : Add house properties here with default values
+
+end;
+
+destructor TVentilationProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TDerobModel }
+
+constructor TDerobModel.Create;
+var
+  i: Integer;
+begin
+  inherited;
+  FFilename := 'Noname.dat';
+  FWalls := TObjectList<TWall>.Create;
+  FRoofs := TObjectList<TRoof>.Create;
+  FFloors := TObjectList<TFloor>.Create;
+  FWindows:=TObjectList<TWindow>.Create;
+  FGlazing:=TObjectList<TGlazing>.Create;
+
+  FConstructions := TObjectList<TConstruction>.Create;
+  FMaterials := TObjectList<TMaterial>.Create;
+
+  // Sets ownership of objects to FWalls
+  // FWalls.Free -> destroys contained objects.
+
+  FWalls.OwnsObjects := True;
+  FRoofs.OwnsObjects := True;
+  FFloors.OwnsObjects := True;
+  FWindows.OwnsObjects := True;
+  FGlazing.OwnsObjects:=True;
+
+  // Create global model properties
+  FSurface:=TSurface.Create;
+  FHouseProperties := THouseProperties.Create;
+  FLocationProperties := TLocationProperties.Create;
+  FVentilationProperties := TVentilationProperties.Create;
+  FGlazingProperties := TGlazingProperties.Create;
+
+  // TODO: Create walls
+
+  FWalls.Add(TWall.Create);
+  FWalls.Add(TWall.Create);
+  FWalls.Add(TWall.Create);
+  FWalls.Add(TWall.Create);
+
+  // TODO: Floor and roof.
+
+  FFloors.Add(TFloor.Create);
+  FRoofs.Add(TRoof.Create);
+  // Create Windows *NEW*
+
+  FWindows.Add(TWindow.Create);
+  FWindows.Add(TWindow.Create);
+  FWindows.Add(TWindow.Create);
+  FWindows.Add(TWindow.Create);
+
+{I ordningen: Nord - Öst - Syd - Väst
+Stora Ytan, Lilla yta 1 (Högra ytan sett framifrån),
+ Lilla yta 2,  Takyta,  Golvyta}
+
+
+
+end;
+
+destructor TDerobModel.Destroy;
+begin
+
+  // Make sure created walls are deallocated.
+
+  FLocationProperties.Free;
+  FVentilationProperties.Free;
+  FHouseProperties.Free;
+  FWalls.Free;
+  FRoofs.Free;
+  FFloors.Free;
+  FMaterials.Free;
+  FConstructions.Free;
+  inherited;
+end;
+
+procedure TDerobModel.AddConstruction(Construction: TConstruction);
+begin
+  FConstructions.Add(Construction);
+end;
+
+procedure TDerobModel.AddFloor(Floor: TFloor);
+begin
+  FFloors.Add(Floor);
+end;
+
+procedure TDerobModel.AddGlazing(Glazing: TGlazing);
+begin
+  FGlazing.Add(Glazing);
+end;
+
+procedure TDerobModel.AddMaterial(Material: TMaterial);
+begin
+  FMaterials.Add(Material);
+end;
+
+procedure TDerobModel.AddRoof(Roof: TRoof);
+begin
+  FRoofs.Add(Roof);
+end;
+
+procedure TDerobModel.AddWall(Wall: TWall);
+begin
+  FWalls.Add(Wall);
+end;
+
+procedure TDerobModel.AddWindow(Window: TWindow);
+begin
+  FWindows.Add(Window);
+end;
+
+procedure TDerobModel.ClearConstructions;
+begin
+  FConstructions.Clear;
+end;
+
+procedure TDerobModel.ClearFloors;
+begin
+  FFloors.Clear;
+end;
+
+procedure TDerobModel.ClearGlazing;
+begin
+  FGlazing.Clear;
+end;
+
+procedure TDerobModel.ClearMaterials;
+begin
+  FMaterials.Clear;
+end;
+
+procedure TDerobModel.ClearRoofs;
+begin
+  FRoofs.Clear;
+end;
+
+procedure TDerobModel.ClearWalls;
+begin
+  FWalls.Clear;
+end;
+
+procedure TDerobModel.ClearWindows;
+begin
+  FWindows.Clear;
+end;
+
+function TDerobModel.GetWallCount: integer;
+begin
+  Result := FWalls.Count;
+end;
+
+function TDerobModel.GetWalls(idx: integer): TWall;
+begin
+
+  // Make sure idx is in a valid range,
+  // return nil otherwise.
+
+  if (idx >= 0) and (idx < FWalls.Count) then
+    Result := FWalls[idx]
+  else
+    Result := nil;
+end;
+
+function TDerobModel.GetWindowCount: integer;
+begin
+  Result:=FWindows.Count;
+end;
+
+function TDerobModel.GetWindows(idx: integer): TWindow;
+begin
+  if (idx >= 0) and (idx < FWindows.Count) then
+    Result := FWindows[idx]
+  else
+    Result := nil;
+end;
+
+procedure TDerobModel.RemoveWall(Wall: TWall);
+begin
+
+  // Here we use the TList built-in function remove
+
+  FWalls.Remove(Wall);
+end;
+
+procedure TDerobModel.RemoveFloor(Floor: TFloor);
+begin
+  FFloors.Remove(Floor);
+end;
+
+procedure TDerobModel.RemoveConstruction(idx: integer);
+begin
+  FConstructions.Delete(idx);
+end;
+
+procedure TDerobModel.RemoveConstruction(Construction: TConstruction);
+begin
+  FConstructions.Remove(Construction);
+end;
+
+procedure TDerobModel.RemoveFloor(idx: integer);
+begin
+  FFloors.Delete(idx);
+end;
+
+
+procedure TDerobModel.RemoveGlazing(idx: integer);
+begin
+  FGlazing.Delete(idx);
+end;
+
+procedure TDerobModel.RemoveGlazing(Glazing: TGlazing);
+begin
+  FGlazing.Remove(Glazing);
+end;
+
+procedure TDerobModel.RemoveMaterial(Material: TMaterial);
+begin
+  FMaterials.Remove(Material);
+end;
+
+procedure TDerobModel.RemoveMaterial(idx: integer);
+begin
+  FMaterials.Delete(idx);
+end;
+
+procedure TDerobModel.RemoveRoof(idx: integer);
+begin
+  FRoofs.Delete(idx);
+end;
+
+procedure TDerobModel.RemoveRoof(Roof: TRoof);
+begin
+  FRoofs.Remove(Roof);
+end;
+
+procedure TDerobModel.RemoveWall(idx: integer);
+begin
+
+  // Her we use the TList built-in function delete.
+
+  FWalls.Delete(idx);
+end;
+
+procedure TDerobModel.RemoveWindow(Window: TWindow);
+begin
+  FWindows.Remove(Window);
+end;
+
+procedure TDerobModel.RemoveWindow(idx: integer);
+begin
+  FWindows.Delete(idx);
+end;
+
+procedure TDerobModel.Save;
+var
+  f: TextFile;
+  Wall: TWall;
+  Roof: TRoof;
+  Floor: TFloor;
+  Material : TMaterial;
+  Construction : TConstruction;
+  Window: TWindow;  // Ändrat
+  Glaze : TGlazing;          //Ändrat
+  i : integer;
+begin
+
+  // Save derob model to file
+
+  AssignFile(f, FFilename);
+  Rewrite(f);
+
+  i:=0;
+
+  WriteLn(f, FMaterials.Count);
+  for Material in FMaterials do
+  begin
+    Material.Idx:=i;
+    Material.SaveToFile(f);
+    inc(i);
+  end;
+
+  i:=0;
+
+  WriteLn(f, FConstructions.Count);
+  for Construction in FConstructions do
+  begin
+    Construction.Idx:=i;
+    Construction.SaveToFile(f);
+  end;
+
+  WriteLn(f, FWalls.Count);
+  for Wall in FWalls do
+    Wall.SaveToFile(f);
+
+  WriteLn(f, FRoofs.Count);
+  for Roof in FRoofs do
+    Roof.SaveToFile(f);
+
+  WriteLn(f, FFloors.Count);
+  for Floor in FFloors do
+    Floor.SaveToFile(f);
+
+   {Ändrat}
+  WriteLn(f, FWindows.Count);
+  for Window in FWindows do
+    Window.SaveToFile(f);
+
+   {Ändrat}
+  WriteLn(f, FGlazing.Count);
+  for Glaze in FGlazing do
+    Glaze.SaveToFile(f);
+  FSurface.SaveToFile(f);
+  FHouseProperties.SaveToFile(f);
+  FLocationProperties.SaveToFile(f);
+  FVentilationProperties.SaveToFile(f);
+
+  FGlazingProperties.SaveToFile(f); //Ändrat
+
+  CloseFile(f);
+end;
+
+procedure TDerobModel.Open;
+var
+  f: TextFile;
+  DerobModel:TDerobModel;
+  Wall: TWall;
+  Roof: TRoof;
+  Floor: TFloor;
+  Material : TMaterial;
+  Construction : TConstruction;
+  Window : TWindow; //Ändrat
+  Glaze : TGlazing; // Ändrat
+  ItemCount: integer;
+  i: integer;
+begin
+
+  // Read derob model from file
+
+  AssignFile(f, FFilename);
+  Reset(f);
+
+  Self.ClearWalls;
+  Self.ClearRoofs;
+  Self.ClearFloors;
+  Self.ClearWindows;
+  Self.ClearMaterials;
+  Self.ClearConstructions;
+  Self.ClearGlazing;
+
+  ReadLn(f, ItemCount);
+  for i := 1 to ItemCount do
+  begin
+    Material := TMaterial.Create;
+    Material.ReadFromFile(f);
+    Self.AddMaterial(Material);
+  end;
+
+  ReadLn(f, ItemCount);
+  for i := 1 to ItemCount do
+  begin
+    Construction := TConstruction.Create;
+    Construction.ReadFromFile(f);
+    AddConstruction(Construction);
+    Construction.ReConnect(FMaterials);
+  end;  
+
+  ReadLn(f, ItemCount);
+  for i := 1 to ItemCount do
+  begin
+    Wall := TWall.Create;
+    Wall.ReadFromFile(f);
+    AddWall(Wall);
+ //   Wall.ReConnect(FConstructions);  Senare
+  end;
+
+  ReadLn(f, ItemCount);
+  for i := 1 to ItemCount do
+  begin
+    Roof := TRoof.Create;
+    Roof.ReadFromFile(f);
+    AddRoof(Roof);
+ //   Roof.ReConnect(FConstructions);           Senare
+  end;
+
+  ReadLn(f, ItemCount);
+  for i := 1 to ItemCount do
+  begin
+    Floor := TFloor.Create;
+    Floor.ReadFromFile(f);
+    AddFloor(Floor);
+ //   Floor.ReConnect(FConstructions);       Senare
+  end;
+
+   {Ändrat}
+  ReadLn(f,ItemCount);
+  for I := 1 to ItemCount do
+  begin
+    Window := TWindow.Create;
+    Window.ReadFromFile(f);
+    AddWindow(Window);
+  end;
+
+  {Ändrat}
+  ReadLn(f,ItemCount);
+  for I := 1 to ItemCount do
+  begin
+    Glaze := TGlazing.Create;
+    Glaze.ReadFromFile(f);
+    AddGlazing(Glaze);
+  end;
+  Self.Surface.ReadFromFile(f);
+  Self.HouseProperties.ReadFromFile(f);
+  Self.LocationProperties.ReadFromFile(f);
+  Self.VentilationProperties.ReadFromFile(f);
+  Self.GlazingProperties.ReadFromFile(f);
+
+  CloseFile(f);
+end;
+
+procedure TDerobModel.SetConstructionCount(const Value: integer);
+begin
+  FConstructionCount := Value;
+end;
+
+procedure TDerobModel.SetConstructions(idx: integer;
+  const Value: TConstruction);
+begin
+
+end;
+
+procedure TDerobModel.SetFilename(const Value: string);
+begin
+  FFilename := Value;
+end;
+
+function TDerobModel.GetConstructionCount: integer;
+begin
+  Result:=FConstructions.Count;
+end;
+
+function TDerobModel.GetConstructions(idx: integer): TConstruction;
+begin
+  if (idx >= 0) and (idx < FConstructions.Count) then
+    Result := FConstructions[idx]
+  else
+    Result := nil;
+end;
+
+function TDerobModel.GetFloorCount: integer;
+begin
+  Result:=FFloors.Count;
+end;
+
+function TDerobModel.GetFloors(idx: integer): TFloor;
+begin
+  if (idx >= 0) and (idx < FFloors.Count) then
+    Result := FFloors[idx]
+  else
+    Result := nil;
+end;
+
+function TDerobModel.GetGlazing(idx: integer): TGlazing;
+begin
+  if (idx >= 0) and (idx < FGlazing.Count) then
+    Result := FGlazing[idx]
+  else
+    Result := nil;
+end;
+
+function TDerobModel.GetGlazingCount: integer;
+begin
+  Result:=FGlazing.Count;
+end;
+
+function TDerobModel.GetMaterialCount: integer;
+begin
+  Result:=FMaterials.Count;
+end;
+
+function TDerobModel.GetMaterials(idx: integer): TMaterial;
+begin
+  if (idx >= 0) and (idx < FMaterials.Count) then
+    Result := FMaterials[idx]
+  else
+    Result := nil;
+end;
+
+function TDerobModel.GetRoofCount: integer;
+begin
+  Result:=FRoofs.Count;
+end;
+
+function TDerobModel.GetRoofs(idx: integer): TRoof;
+begin
+  if (idx >= 0) and (idx < FRoofs.Count) then
+    Result := FRoofs[idx]
+  else
+    Result := nil;
+end;
+
+procedure TDerobModel.SetFloors(idx: integer; const Value: TFloor);
+begin
+
+end;
+
+
+procedure TDerobModel.SetGlazing(idx: integer; const Value: TGlazing);
+begin
+
+end;
+
+procedure TDerobModel.SetGlazingCount(const Value: integer);
+begin
+  FGlazingCount := Value;
+end;
+
+
+procedure TDerobModel.SetGlazingProperties(const Value: TGlazingProperties);
+begin
+  FGlazingProperties := Value;
+end;
+
+procedure TDerobModel.SetHouseProperties(const Value: THouseProperties);
+begin
+  FHouseProperties := Value;
+end;
+
+procedure TDerobModel.SetLocationProperties(const Value: TLocationProperties);
+begin
+  FLocationProperties := Value;
+end;
+
+procedure TDerobModel.SetMaterialCount(const Value: integer);
+begin
+  FMaterialCount := Value;
+end;
+
+procedure TDerobModel.SetMaterials(idx: integer; const Value: TMaterial);
+begin
+
+end;
+
+procedure TDerobModel.SetRoofs(idx: integer; const Value: TRoof);
+begin
+
+end;
+
+procedure TDerobModel.SetSurface(const Value: TSurface);
+begin
+  FSurface := Value;
+end;
+
+procedure TDerobModel.SetVentilationProperties(const Value
+  : TVentilationProperties);
+begin
+  FVentilationProperties := Value;
+end;
+
+procedure TDerobModel.SetWalls(idx: integer; const Value: TWall);
+begin
+  // TODO: Implement DerobModel.Walls[n]:=Wall
+end;
+
+procedure TDerobModel.SetWindowCount(const Value: integer);
+begin
+  FWindowCount := Value;
+end;
+
+procedure TDerobModel.SetWindows(idx: integer; const Value: TWindow);
+begin
+
+end;
+
+{ TWindow }
+
+constructor TWindow.Create;
+begin
+  inherited;
+  Name:='Window';
+  FProperties := TWindowProperties.Create;
+end;
+
+destructor TWindow.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TWindow.ReadFromFile(var f: TextFile);
+begin
+  inherited ReadFromFile(f);
+  FProperties.ReadFromFile(f);
+end;
+
+procedure TWindow.SaveToFile(var f: TextFile);
+begin
+  inherited SaveToFile(f);
+  FProperties.SaveToFile(f);
+end;
+
+
+procedure TWindow.SetProperties(const Value: TWindowProperties);
+begin
+  FProperties := Value;
+end;
+
+{ TWindowProperties }
+
+constructor TWindowProperties.Create;
+begin
+  inherited;
+
+  DoubleValue['Thickness'] := 0.2;
+  DoubleValue['Length'] := 1.0;
+  DoubleValue['Height'] := 1.0;
+  BoolValue['Hole'] := False;
+  IntValue['Zenith'] := 0;
+  IntValue['Azimuth'] := 0;
+end;
+
+destructor TWindowProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TGlazingProperties }
+
+constructor TGlazingProperties.Create;
+begin
+  inherited;
+  DoubleValue['Thickness']:=0.2;
+  IntValue['Zenith']:=90;
+  IntValue['Azimuth']:=270;
+end;
+
+destructor TGlazingProperties.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TGlazing }
+
+constructor TGlazing.Create;
+begin
+  inherited;
+  Name := 'Glazing';
+  FProperties:=TGlazingProperties.Create;
+end;
+
+destructor TGlazing.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TGlazing.ReadFromFile(var f: TextFile);
+begin
+  inherited ReadFromFile(f);
+  FProperties.ReadFromFile(f);
+end;
+
+procedure TGlazing.SaveToFile(var f: TextFile);
+begin
+  inherited SaveToFile(f);
+  FProperties.SaveToFile(f);
+
+end;
+
+procedure TGlazing.SetProperties(const Value: TGlazingProperties);
+begin
+  FProperties := Value;
+end;
+
+end.

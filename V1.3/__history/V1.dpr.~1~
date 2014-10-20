@@ -1,0 +1,22 @@
+program V1;
+
+uses
+  FMX.Forms,
+  mainFormny in '..\V.1 - kopia\mainFormny.pas' {Form1},
+  derob in '..\V.1 - kopia\derob.pas',
+  constructionForm in '..\V.1 - kopia\constructionForm.pas' {Form2},
+  internalheatForm in '..\V.1 - kopia\internalheatForm.pas' {Form3},
+  AbsorptionEmissionForm in '..\V.1 - kopia\AbsorptionEmissionForm.pas' {Form4},
+  {$R}
+  derobWrite in '..\V.1 - kopia\derobWrite.pas' {$R *.res};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TForm4, Form4);
+  Application.Run;
+end.
