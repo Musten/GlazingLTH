@@ -863,8 +863,6 @@ end;
 
 procedure TForm1.fileMenuNewClick(Sender: TObject);
 begin
-  TreeView1.Enabled := True;
-  TreeView1.HitTest := True;
   DerobModel.Destroy;
   FDerobModel := TDerobModel.Create;
   DefaultAbsorption;
@@ -880,10 +878,12 @@ begin
       ShowMessage('Fallet existerar redan, v.v. ladda fallet istället.');
     end
     else
-      DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
+    DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
     CreateDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(StartDir);
+    TreeView1.Enabled := True;
+    TreeView1.HitTest := True;
   end;
 
   // ---------------------------------
