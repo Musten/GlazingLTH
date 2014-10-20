@@ -738,27 +738,17 @@ object Form1: TForm1
       Text = ' d:'
       Width = 25.000000000000000000
     end
-    object GeoSaveButton: TButton
-      Height = 22.000000000000000000
-      Position.X = 520.000000000000000000
-      Position.Y = 416.000000000000000000
-      TabOrder = 53
-      Text = 'Spara'
-      Width = 80.000000000000000000
-      OnClick = GeoSaveButtonClick
-    end
     object GeoClearButton: TButton
       Height = 22.000000000000000000
-      Position.X = 424.000000000000000000
+      Position.X = 512.000000000000000000
       Position.Y = 416.000000000000000000
-      TabOrder = 54
+      TabOrder = 53
       Text = 'Rensa'
       Width = 80.000000000000000000
       OnClick = GeoClearButtonClick
     end
   end
   object PropertiesPanel: TPanel
-    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
@@ -859,22 +849,13 @@ object Form1: TForm1
       Text = 'Fasad'
       Width = 57.000000000000000000
     end
-    object PropSaveButton: TButton
-      Height = 22.000000000000000000
-      Position.X = 520.000000000000000000
-      Position.Y = 416.000000000000000000
-      TabOrder = 12
-      Text = 'Spara'
-      Width = 80.000000000000000000
-      OnClick = PropSaveButtonClick
-    end
     object PropConstrButton: TButton
-      Height = 22.000000000000000000
-      Position.X = 424.000000000000000000
-      Position.Y = 416.000000000000000000
-      TabOrder = 13
+      Height = 33.000000000000000000
+      Position.X = 456.000000000000000000
+      Position.Y = 352.000000000000000000
+      TabOrder = 12
       Text = 'Bibliotek'
-      Width = 80.000000000000000000
+      Width = 89.000000000000000000
       OnClick = PropConstrButtonClick
     end
     object PropAbsLabel: TLabel
@@ -891,7 +872,7 @@ object Form1: TForm1
       Height = 22.000000000000000000
       Position.X = 480.000000000000000000
       Position.Y = 64.000000000000000000
-      TabOrder = 15
+      TabOrder = 14
       Width = 100.000000000000000000
       OnChange = AbsComboBoxChange
       object RoofListBoxItem: TListBoxItem
@@ -949,7 +930,7 @@ object Form1: TForm1
     end
     object AbsNumberBox1: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 19
+      TabOrder = 18
       Cursor = crIBeam
       Value = 70.000000000000000000
       Position.X = 432.000000000000000000
@@ -961,7 +942,7 @@ object Form1: TForm1
     end
     object AbsNumberBox2: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 20
+      TabOrder = 19
       Cursor = crIBeam
       Value = 70.000000000000000000
       Position.X = 512.000000000000000000
@@ -973,7 +954,7 @@ object Form1: TForm1
     end
     object EmittNumberBox1: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 21
+      TabOrder = 20
       Cursor = crIBeam
       Value = 87.000000000000000000
       Position.X = 432.000000000000000000
@@ -985,7 +966,7 @@ object Form1: TForm1
     end
     object EmittNumberBox2: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 22
+      TabOrder = 21
       Cursor = crIBeam
       Value = 87.000000000000000000
       Position.X = 512.000000000000000000
@@ -1027,7 +1008,7 @@ object Form1: TForm1
       Height = 22.000000000000000000
       Position.X = 464.000000000000000000
       Position.Y = 240.000000000000000000
-      TabOrder = 27
+      TabOrder = 26
       Text = #196'ndra'
       Width = 80.000000000000000000
       OnClick = AbsorptionButtonClick
@@ -1057,6 +1038,7 @@ object Form1: TForm1
     Top = 224
   end
   object EnergyPanel: TPanel
+    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
@@ -1406,15 +1388,6 @@ object Form1: TForm1
       Text = #214'ppet mellan inglasningsvolymer'
       Width = 193.000000000000000000
     end
-    object EnergySaveButton: TButton
-      Height = 22.000000000000000000
-      Position.X = 520.000000000000000000
-      Position.Y = 416.000000000000000000
-      TabOrder = 39
-      Text = 'Spara'
-      Width = 80.000000000000000000
-      OnClick = EnergySaveButtonClick
-    end
     object Label55: TLabel
       Height = 17.000000000000000000
       Position.X = 80.000000000000000000
@@ -1428,7 +1401,7 @@ object Form1: TForm1
       Height = 17.000000000000000000
       Position.X = 152.000000000000000000
       Position.Y = 120.000000000000000000
-      TabOrder = 41
+      TabOrder = 40
       Width = 97.000000000000000000
     end
   end
@@ -1459,7 +1432,7 @@ object Form1: TForm1
     end
     object OrientationTrackBar: TTrackBar
       Frequency = 1.000000000000000000
-      Height = 20.000000000000000000
+      Height = 19.000000000000000000
       Max = 360.000000000000000000
       Min = -360.000000000000000000
       Orientation = orHorizontal
@@ -1621,21 +1594,11 @@ object Form1: TForm1
         '-------------------'
       Width = 569.000000000000000000
     end
-    object ClimateSaveButton: TButton
-      Height = 22.000000000000000000
-      Position.X = 520.000000000000000000
-      Position.Y = 416.000000000000000000
-      TabOrder = 19
-      Text = 'Spara'
-      Visible = False
-      Width = 80.000000000000000000
-      OnClick = ClimateSaveButtonClick
-    end
     object Button1: TButton
       Height = 17.000000000000000000
       Position.X = 232.000000000000000000
       Position.Y = 280.000000000000000000
-      TabOrder = 20
+      TabOrder = 19
       Text = '>'
       Width = 17.000000000000000000
       OnClick = Button1Click
@@ -1677,7 +1640,7 @@ object Form1: TForm1
       Height = 17.000000000000000000
       Position.X = 80.000000000000000000
       Position.Y = 280.000000000000000000
-      TabOrder = 22
+      TabOrder = 21
       Text = '<'
       Width = 17.000000000000000000
       OnClick = Button2Click
@@ -1777,7 +1740,7 @@ object Form1: TForm1
       Height = 33.000000000000000000
       Position.X = 80.000000000000000000
       Position.Y = 104.000000000000000000
-      TabOrder = 33
+      TabOrder = 32
       Width = 180.000000000000000000
       OnChange = ClimateComboBoxChange
     end

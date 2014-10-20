@@ -98,9 +98,7 @@ type
     WindowComboBox: TComboBox;
     PropWallLabel: TLabel;
     PropConstrButton: TButton;
-    PropSaveButton: TButton;
     fileMenuClose: TMenuItem;
-    GeoSaveButton: TButton;
     GeoClearButton: TButton;
     Viewport3D1: TViewport3D;
     ColorMaterialSource3: TColorMaterialSource;
@@ -189,8 +187,6 @@ type
     IntGlazeCheckBox1: TCheckBox;
     Label49: TLabel;
     IntGlazeCheckBox2: TCheckBox;
-    EnergySaveButton: TButton;
-    ClimateSaveButton: TButton;
     Image1: TImage;
     Label51: TLabel;
     Button1: TButton;
@@ -345,9 +341,15 @@ begin
   DerobModel.HouseProperties.IntValue['FloorHolder'] := FloorComboBox.ItemIndex;
 
   DerobModel.HouseProperties.IntValue['WallHolder'] := WallComboBox.ItemIndex;
-  DerobModel.HouseProperties.IntValue['GlazeHolder'] := GlazeComboBox.ItemIndex;
-  DerobModel.HouseProperties.IntValue['WindowHolder'] :=
-    WindowComboBox.ItemIndex;
+
+  if GlazeComboBox.Enabled = True then
+    begin
+      DerobModel.HouseProperties.IntValue['GlazeHolder'] := GlazeComboBox.ItemIndex;
+    end;
+  if WindowComboBox.Enabled = True then
+    begin
+      DerobModel.HouseProperties.IntValue['WindowHolder'] := WindowComboBox.ItemIndex;
+    end;
 end;
 
 procedure TForm1.GeometryClear;
@@ -867,8 +869,6 @@ end;
 
 procedure TForm1.fileMenuNewClick(Sender: TObject);
 begin
-  TreeView1.Enabled := True;
-  TreeView1.HitTest := True;
   DerobModel.Destroy;
   FDerobModel := TDerobModel.Create;
   DefaultAbsorption;
@@ -884,10 +884,12 @@ begin
       ShowMessage('Fallet existerar redan, v.v. ladda fallet istället.');
     end
     else
-      DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
+    DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
     CreateDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(StartDir);
+    TreeView1.Enabled := True;
+    TreeView1.HitTest := True;
   end;
 
   // ---------------------------------
