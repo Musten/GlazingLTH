@@ -331,33 +331,42 @@ object Form1: TForm1
       TabOrder = 7
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 176.000000000000000000
       Position.Y = 64.000000000000000000
       Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
+      OnChange = HouseNumberBox1Change
+      OnTyping = HouseNumberBox1Typing
     end
     object HouseNumberBox2: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 8
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 176.000000000000000000
       Position.Y = 104.000000000000000000
       Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
+      OnChange = HouseNumberBox2Change
+      OnTyping = HouseNumberBox2Typing
     end
     object HouseNumberBox3: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 9
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 176.000000000000000000
       Position.Y = 144.000000000000000000
       Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
+      OnChange = HouseNumberBox3Change
+      OnTyping = HouseNumberBox3Typing
     end
     object HousemLabel1: TLabel
       Height = 25.000000000000000000
@@ -457,6 +466,7 @@ object Form1: TForm1
       TabOrder = 21
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 96.000000000000000000
       Position.Y = 248.000000000000000000
       Width = 89.000000000000000000
@@ -469,6 +479,7 @@ object Form1: TForm1
       TabOrder = 22
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 96.000000000000000000
       Position.Y = 288.000000000000000000
       Width = 89.000000000000000000
@@ -481,6 +492,7 @@ object Form1: TForm1
       TabOrder = 23
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 96.000000000000000000
       Position.Y = 328.000000000000000000
       Width = 89.000000000000000000
@@ -493,6 +505,7 @@ object Form1: TForm1
       TabOrder = 24
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 96.000000000000000000
       Position.Y = 368.000000000000000000
       Width = 89.000000000000000000
@@ -505,6 +518,7 @@ object Form1: TForm1
       TabOrder = 25
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 232.000000000000000000
       Position.Y = 248.000000000000000000
       Width = 89.000000000000000000
@@ -517,6 +531,7 @@ object Form1: TForm1
       TabOrder = 26
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 232.000000000000000000
       Position.Y = 288.000000000000000000
       Width = 89.000000000000000000
@@ -529,6 +544,7 @@ object Form1: TForm1
       TabOrder = 27
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 232.000000000000000000
       Position.Y = 328.000000000000000000
       Width = 89.000000000000000000
@@ -541,6 +557,7 @@ object Form1: TForm1
       TabOrder = 28
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 232.000000000000000000
       Position.Y = 368.000000000000000000
       Width = 89.000000000000000000
@@ -553,6 +570,7 @@ object Form1: TForm1
       TabOrder = 29
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 472.000000000000000000
       Position.Y = 248.000000000000000000
       Width = 89.000000000000000000
@@ -565,6 +583,7 @@ object Form1: TForm1
       TabOrder = 30
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 472.000000000000000000
       Position.Y = 288.000000000000000000
       Width = 89.000000000000000000
@@ -577,6 +596,7 @@ object Form1: TForm1
       TabOrder = 31
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 472.000000000000000000
       Position.Y = 328.000000000000000000
       Width = 89.000000000000000000
@@ -589,6 +609,7 @@ object Form1: TForm1
       TabOrder = 32
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 472.000000000000000000
       Position.Y = 368.000000000000000000
       Width = 89.000000000000000000
