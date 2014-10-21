@@ -22,6 +22,7 @@ type
     Series1: TLineSeries;
     procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
@@ -36,6 +37,7 @@ type
 
 var
   Form5: TForm5;
+  Resultat: TStrings;
 
 implementation
 
@@ -51,6 +53,11 @@ begin
   TempRadioButton.IsChecked := False;
   Chart1.LeftAxis.Title.Caption := '';
   Chart1.BottomAxis.Title.Caption := '';
+end;
+
+procedure TForm5.FormCreate(Sender: TObject);
+begin
+  Resultat := TStringList.Create;
 end;
 
 procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
@@ -95,6 +102,9 @@ var
     OpTemp5WinterOpen, Heat5WinterOpen, Cool5WinterOpen, Sun5WinterOpen
     : array of Real;
 
+  TempSummerOpen, TempWinterOpen, OpTempSummerOpen, OpTempWinterOpen,
+    SunSummerOpen, SunWinterOpen: Array of Real;
+
   i, SkipLine, intervall: integer;
   IgnoreText: Boolean;
 
@@ -111,6 +121,7 @@ var
     HeatSepSummer, HeatNovWinter, HeatNovSummer: array of Real;
   Temp: Array of double;
   Hour, Time, YearlyTemp, Heat, TempSummer, TempWinter: array of Real;
+  OpTempSummer, OpTempWinter, SunSummer, SunWinter: Array of Real;
 
   meanJan, meanFeb, meanMar, meanApr, meanMay, meanJun, meanJul, meanAug,
     meanSep, meanOct, meanNov, meanDec: Real;
@@ -123,12 +134,88 @@ begin
   SkipLine := 12;
   SetLength(YearlyTemp, 8760);
   SetLength(Hour, 8760);
+
   SetLength(TempSummer, 8760);
   SetLength(TempWinter, 8760);
   SetLength(OutTempSummer, 8760);
   SetLength(OutTempWinter, 8760);
   SetLength(GlobalRadiationSummer, 8760);
   SetLength(GlobalRadiationWinter, 8760);
+  SetLength(OpTempSummer, 8760);
+  SetLength(OpTempWinter, 8760);
+  SetLength(SunSummer, 8760);
+  SetLength(SunWinter, 8760);
+
+  SetLength(TempSummerOpen, 8760);
+  SetLength(TempWinterOpen, 8760);
+  SetLength(OutTempSummerOpen, 8760);
+  SetLength(OutTempWinterOpen, 8760);
+  SetLength(GlobalRadiationSummerOpen, 8760);
+  SetLength(GlobalRadiationWinterOpen, 8760);
+  SetLength(OpTempSummerOpen, 8760);
+  SetLength(OpTempWinterOpen, 8760);
+  SetLength(SunSummerOpen, 8760);
+  SetLength(SunWinterOpen, 8760);
+
+  SetLength(Temp1Summer, 8760);
+  SetLength(OpTemp1Summer, 8760);
+  SetLength(Heat1Summer, 8760);
+  SetLength(Cool1Summer, 8760);
+  SetLength(Sun1Summer, 8760);
+
+  SetLength(Temp1Winter, 8760);
+  SetLength(OpTemp1Winter, 8760);
+  SetLength(Heat1Winter, 8760);
+  SetLength(Cool1Winter, 8760);
+  SetLength(Sun1Winter, 8760);
+
+  SetLength(Temp2Summer, 8760);
+  SetLength(OpTemp2Summer, 8760);
+  SetLength(Heat2Summer, 8760);
+  SetLength(Cool2Summer, 8760);
+  SetLength(Sun2Summer, 8760);
+
+  SetLength(Temp2Winter, 8760);
+  SetLength(OpTemp2Winter, 8760);
+  SetLength(Heat2Winter, 8760);
+  SetLength(Cool2Winter, 8760);
+  SetLength(Sun2Winter, 8760);
+
+  SetLength(Temp3Summer, 8760);
+  SetLength(OpTemp3Summer, 8760);
+  SetLength(Heat3Summer, 8760);
+  SetLength(Cool3Summer, 8760);
+  SetLength(Sun3Summer, 8760);
+
+  SetLength(Temp3Winter, 8760);
+  SetLength(OpTemp3Winter, 8760);
+  SetLength(Heat3Winter, 8760);
+  SetLength(Cool3Winter, 8760);
+  SetLength(Sun3Winter, 8760);
+
+  SetLength(Temp4Summer, 8760);
+  SetLength(OpTemp4Summer, 8760);
+  SetLength(Heat4Summer, 8760);
+  SetLength(Cool4Summer, 8760);
+  SetLength(Sun4Summer, 8760);
+
+  SetLength(Temp4Winter, 8760);
+  SetLength(OpTemp4Winter, 8760);
+  SetLength(Heat4Winter, 8760);
+  SetLength(Cool4Winter, 8760);
+  SetLength(Sun4Winter, 8760);
+
+  SetLength(Temp5Summer, 8760);
+  SetLength(OpTemp5Summer, 8760);
+  SetLength(Heat5Summer, 8760);
+  SetLength(Cool5Summer, 8760);
+  SetLength(Sun5Summer, 8760);
+
+  SetLength(Temp5Winter, 8760);
+  SetLength(OpTemp5Winter, 8760);
+  SetLength(Heat5Winter, 8760);
+  SetLength(Cool5Winter, 8760);
+  SetLength(Sun5Winter, 8760);
 
   SetLength(Temp1SummerOpen, 8760);
   SetLength(OpTemp1SummerOpen, 8760);
@@ -268,6 +355,8 @@ begin
       begin
         ReadLn(Summer, buffer);
         ReadLn(Winter, buffer);
+        ReadLn(SummerOpen, buffer);
+        ReadLn(WinterOpen, buffer);
       end;
       IgnoreText := true;
     end;
@@ -525,47 +614,99 @@ begin
         begin
           TempSummer[i - SkipLine] := Temp2Summer[i - SkipLine];
           TempWinter[i - SkipLine] := Temp2Winter[i - SkipLine];
+          OpTempSummer[i - SkipLine] := OpTemp2Summer[i - SkipLine];
+          OpTempWinter[i - SkipLine] := OpTemp2Winter[i - SkipLine];
+          SunSummer[i - SkipLine] := Sun2Summer[i - SkipLine];
+          SunWinter[i - SkipLine] := Sun2Winter[i - SkipLine];
         end;
         if DerobModel.HouseProperties.IntValue['ChosenGlaze'] = 3 then
         begin
           TempSummer[i - SkipLine] := Temp3Summer[i - SkipLine];
           TempWinter[i - SkipLine] := Temp3Winter[i - SkipLine];
+          OpTempSummer[i - SkipLine] := OpTemp3Summer[i - SkipLine];
+          OpTempWinter[i - SkipLine] := OpTemp3Winter[i - SkipLine];
+          SunSummer[i - SkipLine] := Sun3Summer[i - SkipLine];
+          SunWinter[i - SkipLine] := Sun3Winter[i - SkipLine];
+
         end;
         if DerobModel.HouseProperties.IntValue['ChosenGlaze'] = 4 then
         begin
           TempSummer[i - SkipLine] := Temp4Summer[i - SkipLine];
           TempWinter[i - SkipLine] := Temp4Winter[i - SkipLine];
+          OpTempSummer[i - SkipLine] := OpTemp4Summer[i - SkipLine];
+          OpTempWinter[i - SkipLine] := OpTemp4Winter[i - SkipLine];
+          SunSummer[i - SkipLine] := Sun4Summer[i - SkipLine];
+          SunWinter[i - SkipLine] := Sun4Winter[i - SkipLine];
+
         end;
         if DerobModel.HouseProperties.IntValue['ChosenGlaze'] = 5 then
         begin
           TempSummer[i - SkipLine] := Temp5Summer[i - SkipLine];
           TempWinter[i - SkipLine] := Temp5Winter[i - SkipLine];
+          OpTempSummer[i - SkipLine] := OpTemp5Summer[i - SkipLine];
+          OpTempWinter[i - SkipLine] := OpTemp5Winter[i - SkipLine];
+          SunSummer[i - SkipLine] := Sun5Summer[i - SkipLine];
+          SunWinter[i - SkipLine] := Sun5Winter[i - SkipLine];
+
         end;
       end
       else
       begin
         TempSummer[i - SkipLine] := Temp1Summer[i - SkipLine];
         TempWinter[i - SkipLine] := Temp1Winter[i - SkipLine];
+        OpTempSummer[i - SkipLine] := OpTemp1Summer[i - SkipLine];
+        OpTempWinter[i - SkipLine] := OpTemp1Winter[i - SkipLine];
+        SunSummer[i - SkipLine] := Sun1Summer[i - SkipLine];
+        SunWinter[i - SkipLine] := Sun1Winter[i - SkipLine];
+
       end;
     end;
 
   end;
   CloseFile(Summer);
   CloseFile(Winter);
+
+  Resultat.Add('  Hour  From start of calculation period  [hr]');
+  Resultat.Add(' Tmp_O  Outdoor temperature               [DegreeC]');
+  Resultat.Add('   Igl  Global radiation                  [W/m2]');
+  Resultat.Add(' Tmp_i  Temperature in volume i           [DegreeC]');
+  Resultat.Add(' Opt_i  Operative temperature in volume i [DegreeC]');
+  Resultat.Add('Heat_i  Heating load in volume i          [Wh/h]');
+  Resultat.Add('Cool_i  Cooling load in volume i          [Wh/h]');
+  Resultat.Add(' Sun_i  Sun absorbed in volume i          [Wh/h]');
+  Resultat.Add('');
+  Resultat.Add
+    ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2');
+
   for i := 0 to 8759 do
   begin
     if TempWinter[i] > DerobModel.HouseProperties.IntValue['TMaxRoom'] then
     begin
       YearlyTemp[i] := TempSummer[i];
       Heat[i] := Heat1Summer[i];
+      Resultat.Add(FloatToStr(i + 1) + '  ' +
+        FloatToStr(OutTempSummer[i]) + '  ' +
+        FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+        FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+        ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i])
+        + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+        FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]));
     end
     else
     begin
       YearlyTemp[i] := TempWinter[i];
       Heat[i] := Heat1Winter[i];
+        Resultat.Add(FloatToStr(i + 1) + '  ' +
+        FloatToStr(OutTempWinter[i]) + '  ' +
+        FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+        FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+        ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i])
+        + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+        FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+
     end;
   end;
-
+  Resultat.SaveToFile('Test.txt');
   for i := 0 to 743 do
   begin
     HeatJan := HeatJan + Heat[i];
