@@ -117,6 +117,7 @@ object Form3: TForm3
     Width = 41.000000000000000000
     Height = 22.000000000000000000
     VertIncrement = 5.000000000000000000
+    OnChange = OthersNumberBoxChange
   end
   object Label6: TLabel
     Height = 17.000000000000000000
