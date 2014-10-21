@@ -91,7 +91,6 @@ object Form1: TForm1
     object mainMenuResult: TMenuItem
       Text = 'Resultat'
       object resultMenuChart: TMenuItem
-        Enabled = False
         Locked = True
         Text = 'Diagram'
         OnClick = resultMenuChartClick
@@ -132,6 +131,7 @@ object Form1: TForm1
     end
   end
   object GeometryPanel: TPanel
+    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
@@ -935,6 +935,7 @@ object Form1: TForm1
       TabOrder = 16
       Cursor = crIBeam
       Value = 70.000000000000000000
+      TextAlign = taCenter
       Position.X = 384.000000000000000000
       Position.Y = 192.000000000000000000
       Width = 49.000000000000000000
@@ -947,6 +948,7 @@ object Form1: TForm1
       TabOrder = 17
       Cursor = crIBeam
       Value = 70.000000000000000000
+      TextAlign = taCenter
       Position.X = 464.000000000000000000
       Position.Y = 192.000000000000000000
       Width = 49.000000000000000000
@@ -959,6 +961,7 @@ object Form1: TForm1
       TabOrder = 18
       Cursor = crIBeam
       Value = 87.000000000000000000
+      TextAlign = taCenter
       Position.X = 384.000000000000000000
       Position.Y = 264.000000000000000000
       Width = 49.000000000000000000
@@ -971,6 +974,7 @@ object Form1: TForm1
       TabOrder = 19
       Cursor = crIBeam
       Value = 87.000000000000000000
+      TextAlign = taCenter
       Position.X = 464.000000000000000000
       Position.Y = 264.000000000000000000
       Width = 49.000000000000000000
@@ -1040,7 +1044,6 @@ object Form1: TForm1
     Top = 224
   end
   object EnergyPanel: TPanel
-    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
@@ -1051,6 +1054,7 @@ object Form1: TForm1
       TabOrder = 0
       Cursor = crIBeam
       Value = 25.000000000000000000
+      TextAlign = taCenter
       Position.X = 80.000000000000000000
       Position.Y = 120.000000000000000000
       Width = 41.000000000000000000
@@ -1064,6 +1068,7 @@ object Form1: TForm1
       Min = -20.000000000000000000
       Max = 80.000000000000000000
       Value = 20.000000000000000000
+      TextAlign = taCenter
       Position.X = 304.000000000000000000
       Position.Y = 120.000000000000000000
       Width = 41.000000000000000000
@@ -1076,6 +1081,7 @@ object Form1: TForm1
       Cursor = crIBeam
       Max = 100000.000000000000000000
       Value = 600.000000000000000000
+      TextAlign = taCenter
       Position.X = 432.000000000000000000
       Position.Y = 120.000000000000000000
       Width = 41.000000000000000000
@@ -1109,14 +1115,14 @@ object Form1: TForm1
       Height = 17.000000000000000000
       Position.X = 128.000000000000000000
       Position.Y = 120.000000000000000000
-      Text = 'C'#176
+      Text = #176'C'
       Width = 17.000000000000000000
     end
     object Label13: TLabel
       Height = 17.000000000000000000
       Position.X = 352.000000000000000000
       Position.Y = 120.000000000000000000
-      Text = 'C'#176
+      Text = #176'C'
       Width = 17.000000000000000000
     end
     object Label14: TLabel
@@ -1147,14 +1153,14 @@ object Form1: TForm1
       StyledSettings = [ssFamily, ssStyle, ssFontColor]
       Height = 33.000000000000000000
       Position.X = 240.000000000000000000
-      Position.Y = 168.000000000000000000
+      Position.Y = 152.000000000000000000
       Text = 'Ventilation'
       Width = 97.000000000000000000
     end
     object Label17: TLabel
       Height = 17.000000000000000000
       Position.X = 48.000000000000000000
-      Position.Y = 216.000000000000000000
+      Position.Y = 192.000000000000000000
       Text = 'Fl'#246'de:'
       Width = 49.000000000000000000
     end
@@ -1165,8 +1171,9 @@ object Form1: TForm1
       DecimalDigits = 1
       Value = 5.500000000000000000
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 200.000000000000000000
-      Position.Y = 216.000000000000000000
+      Position.Y = 192.000000000000000000
       Width = 41.000000000000000000
       Height = 17.000000000000000000
       VertIncrement = 5.000000000000000000
@@ -1174,7 +1181,7 @@ object Form1: TForm1
     object Label18: TLabel
       Height = 17.000000000000000000
       Position.X = 248.000000000000000000
-      Position.Y = 216.000000000000000000
+      Position.Y = 192.000000000000000000
       Text = 'l/s'
       Width = 33.000000000000000000
     end
@@ -1201,7 +1208,7 @@ object Form1: TForm1
     object Label9: TLabel
       Height = 17.000000000000000000
       Position.X = 48.000000000000000000
-      Position.Y = 248.000000000000000000
+      Position.Y = 224.000000000000000000
       Text = 'Effektivitet p'#229' v'#228'rmev'#228'xlare:'
       Width = 161.000000000000000000
     end
@@ -1212,8 +1219,9 @@ object Form1: TForm1
       DecimalDigits = 1
       Value = 50.000000000000000000
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 200.000000000000000000
-      Position.Y = 248.000000000000000000
+      Position.Y = 224.000000000000000000
       Width = 41.000000000000000000
       Height = 17.000000000000000000
       VertIncrement = 5.000000000000000000
@@ -1221,7 +1229,7 @@ object Form1: TForm1
     object Label19: TLabel
       Height = 17.000000000000000000
       Position.X = 248.000000000000000000
-      Position.Y = 248.000000000000000000
+      Position.Y = 224.000000000000000000
       Text = '%'
       Width = 33.000000000000000000
     end
@@ -1229,8 +1237,8 @@ object Form1: TForm1
       Font.Size = 15.000000000000000000
       StyledSettings = [ssFamily, ssStyle, ssFontColor]
       Height = 25.000000000000000000
-      Position.X = 416.000000000000000000
-      Position.Y = 208.000000000000000000
+      Position.X = 424.000000000000000000
+      Position.Y = 200.000000000000000000
       Text = 'L'#228'ckage'
       Width = 65.000000000000000000
     end
@@ -1246,6 +1254,7 @@ object Form1: TForm1
       TabOrder = 22
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 456.000000000000000000
       Position.Y = 248.000000000000000000
       Width = 41.000000000000000000
@@ -1257,6 +1266,7 @@ object Form1: TForm1
       TabOrder = 23
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 456.000000000000000000
       Position.Y = 280.000000000000000000
       Width = 41.000000000000000000
@@ -1269,6 +1279,7 @@ object Form1: TForm1
       TabOrder = 24
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 456.000000000000000000
       Position.Y = 312.000000000000000000
       Width = 41.000000000000000000
@@ -1281,6 +1292,7 @@ object Form1: TForm1
       TabOrder = 25
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 456.000000000000000000
       Position.Y = 344.000000000000000000
       Width = 41.000000000000000000
@@ -1293,6 +1305,7 @@ object Form1: TForm1
       TabOrder = 26
       Cursor = crIBeam
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 456.000000000000000000
       Position.Y = 376.000000000000000000
       Width = 41.000000000000000000
@@ -1367,7 +1380,7 @@ object Form1: TForm1
       Enabled = False
       Height = 19.000000000000000000
       Position.X = 80.000000000000000000
-      Position.Y = 360.000000000000000000
+      Position.Y = 312.000000000000000000
       TabOrder = 36
       Text = 'Automatisk '#246'ppning p'#229' inglasning'
       Width = 201.000000000000000000
@@ -1378,7 +1391,7 @@ object Form1: TForm1
       StyledSettings = [ssFamily, ssStyle, ssFontColor]
       Height = 25.000000000000000000
       Position.X = 152.000000000000000000
-      Position.Y = 296.000000000000000000
+      Position.Y = 256.000000000000000000
       Text = 'Inglasning'
       Width = 73.000000000000000000
     end
@@ -1386,7 +1399,7 @@ object Form1: TForm1
       Enabled = False
       Height = 19.000000000000000000
       Position.X = 80.000000000000000000
-      Position.Y = 328.000000000000000000
+      Position.Y = 288.000000000000000000
       TabOrder = 38
       Text = #214'ppet mellan inglasningsvolymer'
       Width = 193.000000000000000000
@@ -1412,9 +1425,10 @@ object Form1: TForm1
       TabOrder = 41
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 128.000000000000000000
-      Position.Y = 392.000000000000000000
-      Width = 41.000000000000000000
+      TextAlign = taCenter
+      Position.X = 216.000000000000000000
+      Position.Y = 376.000000000000000000
+      Width = 33.000000000000000000
       Height = 17.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -1422,10 +1436,46 @@ object Form1: TForm1
     object Label50: TLabel
       Enabled = False
       Height = 17.000000000000000000
-      Position.X = 176.000000000000000000
-      Position.Y = 392.000000000000000000
+      Position.X = 256.000000000000000000
+      Position.Y = 376.000000000000000000
       Text = 'oms/h'
       Width = 33.000000000000000000
+    end
+    object OpeningNrBox2: TNumberBox
+      Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+      TabOrder = 43
+      Cursor = crIBeam
+      TextAlign = taCenter
+      Position.X = 216.000000000000000000
+      Position.Y = 344.000000000000000000
+      Width = 33.000000000000000000
+      Height = 17.000000000000000000
+      VertIncrement = 5.000000000000000000
+      Enabled = False
+    end
+    object Label56: TLabel
+      Enabled = False
+      Height = 17.000000000000000000
+      Position.X = 256.000000000000000000
+      Position.Y = 344.000000000000000000
+      Text = #176'C'
+      Width = 17.000000000000000000
+    end
+    object Label57: TLabel
+      Enabled = False
+      Height = 17.000000000000000000
+      Position.X = 48.000000000000000000
+      Position.Y = 344.000000000000000000
+      Text = 'Gr'#228'ns f'#246'r automatisk '#246'ppning:'
+      Width = 153.000000000000000000
+    end
+    object Label58: TLabel
+      Enabled = False
+      Height = 17.000000000000000000
+      Position.X = 48.000000000000000000
+      Position.Y = 376.000000000000000000
+      Text = #214'kad ventilation vid '#246'ppning:'
+      Width = 161.000000000000000000
     end
   end
   object ClimatePanel: TPanel
@@ -1521,6 +1571,7 @@ object Form1: TForm1
       Min = -90.000000000000000000
       Max = 90.000000000000000000
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 440.000000000000000000
       Position.Y = 80.000000000000000000
       Width = 33.000000000000000000
@@ -1535,6 +1586,7 @@ object Form1: TForm1
       Min = -180.000000000000000000
       Max = 180.000000000000000000
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 440.000000000000000000
       Position.Y = 112.000000000000000000
       Width = 33.000000000000000000
@@ -1549,6 +1601,7 @@ object Form1: TForm1
       Min = -180.000000000000000000
       Max = 180.000000000000000000
       ValueType = vtFloat
+      TextAlign = taCenter
       Position.X = 440.000000000000000000
       Position.Y = 144.000000000000000000
       Width = 33.000000000000000000

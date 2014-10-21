@@ -212,6 +212,10 @@ type
     Label38: TLabel;
     OpeningNrBox: TNumberBox;
     Label50: TLabel;
+    OpeningNrBox2: TNumberBox;
+    Label56: TLabel;
+    Label57: TLabel;
+    Label58: TLabel;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -470,7 +474,8 @@ begin
   if IntGlazeCheckBox1.IsChecked then
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := True;
-    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:=OpeningNrBox.Value;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:= OpeningNrBox.Value;
+    DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'] := OpeningNrBox2.Value;
   end
   else
   begin
@@ -2247,11 +2252,19 @@ begin
     begin
       OpeningNrBox.Enabled := True;
       Label50.Enabled := True;
+      OpeningNrBox2.Enabled := True;
+      Label56.Enabled := True;
+      Label57.Enabled := True;
+      Label58.Enabled := True;
     end
   else
     begin
       OpeningNrBox.Enabled := False;
       Label50.Enabled := False;
+      OpeningNrBox2.Enabled := False;
+      Label56.Enabled := False;
+      Label57.Enabled := False;
+      Label58.Enabled := False;
     end;
 end;
 

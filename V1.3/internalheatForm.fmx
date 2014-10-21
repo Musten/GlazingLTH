@@ -37,6 +37,7 @@ object Form3: TForm3
     Cursor = crIBeam
     Max = 10000.000000000000000000
     CanFocus = False
+    TextAlign = taCenter
     Position.X = 160.000000000000000000
     Position.Y = 24.000000000000000000
     Width = 41.000000000000000000
@@ -75,6 +76,7 @@ object Form3: TForm3
     Cursor = crIBeam
     Max = 10000.000000000000000000
     CanFocus = False
+    TextAlign = taCenter
     Position.X = 160.000000000000000000
     Position.Y = 72.000000000000000000
     Width = 41.000000000000000000
@@ -112,6 +114,7 @@ object Form3: TForm3
     TabOrder = 10
     Cursor = crArrow
     Max = 10000.000000000000000000
+    TextAlign = taCenter
     Position.X = 160.000000000000000000
     Position.Y = 120.000000000000000000
     Width = 41.000000000000000000
@@ -146,6 +149,7 @@ object Form3: TForm3
     Cursor = crIBeam
     Max = 100000.000000000000000000
     CanFocus = False
+    TextAlign = taCenter
     Position.X = 160.000000000000000000
     Position.Y = 192.000000000000000000
     Width = 41.000000000000000000
