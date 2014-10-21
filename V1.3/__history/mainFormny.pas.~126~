@@ -1,8 +1,8 @@
 unit mainFormny;
-
 interface
-
+  //Hej        ?
 uses
+//Hallo
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
@@ -11,7 +11,7 @@ uses
   constructionForm, internalheatForm, AbsorptionEmissionForm, derob,
   diagramForm,
   FMX.Controls3D, FMX.Objects3D, FMX.Viewport3D, FMX.MaterialSources,
-  FMX.MagnifierGlass, derobConvert,System.IOUtils,
+  FMX.MagnifierGlass, derobConvert, System.IOUtils,
   Winapi.Messages;
 
 type
@@ -98,9 +98,7 @@ type
     WindowComboBox: TComboBox;
     PropWallLabel: TLabel;
     PropConstrButton: TButton;
-    PropSaveButton: TButton;
     fileMenuClose: TMenuItem;
-    GeoSaveButton: TButton;
     GeoClearButton: TButton;
     Viewport3D1: TViewport3D;
     ColorMaterialSource3: TColorMaterialSource;
@@ -189,8 +187,6 @@ type
     IntGlazeCheckBox1: TCheckBox;
     Label49: TLabel;
     IntGlazeCheckBox2: TCheckBox;
-    EnergySaveButton: TButton;
-    ClimateSaveButton: TButton;
     Image1: TImage;
     Label51: TLabel;
     Button1: TButton;
@@ -216,6 +212,8 @@ type
     Label36: TLabel;
     Label37: TLabel;
     Label38: TLabel;
+    OpeningNrBox: TNumberBox;
+    Label50: TLabel;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -229,21 +227,17 @@ type
     procedure PropConstrButtonClick(Sender: TObject);
     procedure fileMenuCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure GeoSaveButtonClick(Sender: TObject);
     procedure fileMenuSaveClick(Sender: TObject);
     procedure fileMenuLoadClick(Sender: TObject);
     procedure resultMenuChartClick(Sender: TObject);
     procedure simulateMenuCalculateClick(Sender: TObject);
-    procedure PropSaveButtonClick(Sender: TObject);
     procedure GeoClearButtonClick(Sender: TObject);
     procedure EnergyBalanceClick(Sender: TObject);
     procedure InternalHeatButtonClick(Sender: TObject);
     procedure ClimateClick(Sender: TObject);
     procedure OrientationTrackBarChange(Sender: TObject);
     procedure AbsorptionButtonClick(Sender: TObject);
-    procedure EnergySaveButtonClick(Sender: TObject);
     procedure AbsComboBoxChange(Sender: TObject);
-    procedure ClimateSaveButtonClick(Sender: TObject);
     procedure fileMenuNewClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -252,6 +246,7 @@ type
     procedure GlazeTempRadioButtonChange(Sender: TObject);
     procedure ClimateComboBoxChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure IntGlazeCheckBox1Change(Sender: TObject);
 
   private
     { Private declarations }
@@ -318,7 +313,8 @@ type
     property CurrentCategory: string read FCurrentCategory
       write SetCurrentCategory;
     property Surface: TSurface read FSurface write SetSurface;
-    property ConvertDerob:TDerobConvert read FConvertDerob write SetConvertDerob;
+    property ConvertDerob: TDerobConvert read FConvertDerob
+      write SetConvertDerob;
   end;
 
 var
@@ -344,9 +340,15 @@ begin
   DerobModel.HouseProperties.IntValue['FloorHolder'] := FloorComboBox.ItemIndex;
 
   DerobModel.HouseProperties.IntValue['WallHolder'] := WallComboBox.ItemIndex;
-  DerobModel.HouseProperties.IntValue['GlazeHolder'] := GlazeComboBox.ItemIndex;
-  DerobModel.HouseProperties.IntValue['WindowHolder'] :=
-    WindowComboBox.ItemIndex;
+
+  if GlazeComboBox.Enabled = True then
+    begin
+      DerobModel.HouseProperties.IntValue['GlazeHolder'] := GlazeComboBox.ItemIndex;
+    end;
+  if WindowComboBox.Enabled = True then
+    begin
+      DerobModel.HouseProperties.IntValue['WindowHolder'] := WindowComboBox.ItemIndex;
+    end;
 end;
 
 procedure TForm1.GeometryClear;
@@ -461,10 +463,12 @@ begin
   if IntGlazeCheckBox1.IsChecked then
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := True;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:=OpeningNrBox.Value;
   end
   else
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := False;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:= 0;
   end;
 
   if IntGlazeCheckBox2.IsChecked then
@@ -824,9 +828,9 @@ begin
   mainEnergySave;
   mainClimateSave;
   SaveConstructionNames;
+  UpdateClimate;
   // Spara filen i aktuellt case-mapp
-  SetCurrentDir('Cases/' + DerobModel.HouseProperties.StringValue
-    ['CaseName']);
+  SetCurrentDir('Cases/' + DerobModel.HouseProperties.StringValue['CaseName']);
   // Skapa en temporär sparfil om det blir något fel vid sparning
   DerobModel.Filename := 'Sparfil.bak';
   DerobModel.Save;
@@ -861,14 +865,12 @@ begin
 
   FExecThread.Start;
 
-  // Disable start button     }
+  // Disable start button
 
 end;
 
 procedure TForm1.fileMenuNewClick(Sender: TObject);
 begin
-  TreeView1.Enabled := True;
-  TreeView1.HitTest := True;
   DerobModel.Destroy;
   FDerobModel := TDerobModel.Create;
   DefaultAbsorption;
@@ -884,10 +886,12 @@ begin
       ShowMessage('Fallet existerar redan, v.v. ladda fallet istället.');
     end
     else
-      DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
+    DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
     CreateDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(StartDir);
+    TreeView1.Enabled := True;
+    TreeView1.HitTest := True;
   end;
 
   // ---------------------------------
@@ -915,6 +919,7 @@ begin
   mainPropertiesSave;
   mainEnergySave;
   mainClimateSave;
+  IntheatVent;
   DerobModel.Filename := 'Sparfil.dat';
   DerobModel.Save;
 
@@ -925,6 +930,7 @@ begin
   // Ändrad av Musten 17/7 - Öppnar "Cases" mappen och kan endast välja .dat filer
   SetCurrentDir(StartDir);
   SetCurrentDir('Cases');
+  OpenDialog.Filename := '';
   OpenDialog.InitialDir := GetCurrentDir;
   OpenDialog.Filter := 'Sparfiler (.dat)|*.dat';
   // -------------------------------
@@ -940,7 +946,6 @@ begin
     SetCurrentDir(StartDir);
     UpdateGeometryPanel;
     mainUpdateComboBox;
-    LoadClimateFiles;
     UpdatePropertiesPanel;
     UpdateEnergyPanel;
     UpdateAbsorption;
@@ -951,9 +956,9 @@ begin
     GeometryPanel.Visible := True;
     TreeView1.Enabled := True;
     TreeView1.HitTest := True;
-    DerobModel.HouseProperties.BoolValue['GlazeChange']:=false;
+    DerobModel.HouseProperties.BoolValue['GlazeChange'] := False;
   end;
-  OpenDialog.FileName:='';
+
 end;
 
 procedure TForm1.fileMenuCloseClick(Sender: TObject);
@@ -966,7 +971,6 @@ var
   ArgPath, KGKPath: String;
   iniFile: TextFile;
 begin
-  // Nytt Musten 19/7 - Kör KGKShow med Indata1.txt
   SetCurrentDir(StartDir);
   mainGeometrySave;
   VolumeCount;
@@ -992,21 +996,7 @@ begin
   ArgPath := GetCurrentDir + '\Winter\Indata1.txt';
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
-  KGKPath := GetCurrentDir + '\KGK_Show.exe';
-
-  // Skriver om .ini filen till KGK_Show så att den läser in rätt datafil till programmet.
-  AssignFile(iniFile, 'KGK_Show.ini');
-  ReWrite(iniFile);
-  WriteLn(iniFile, 'This file is created by the KGK_Show program.');
-  WriteLn(iniFile, 'Changing the content may result in serious error!');
-  WriteLn(iniFile, ArgPath); // Path till datafilen all annat är 'standard'
-  WriteLn(iniFile, ' F F T T');
-  WriteLn(iniFile, ' 420 175 1260 875');
-  WriteLn(iniFile, ' 0 0 0 0');
-  WriteLn(iniFile, ' 0 0 0 0');
-  WriteLn(iniFile, ' 0 0 0 0');
-  WriteLn(iniFile, ' 0 0 0 0');
-  CloseFile(iniFile);
+  KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "'+ArgPath+'"';
 
   ExecProcess(KGKPath, '', True);
   DeleteFile('KGK_Show.ini');
@@ -1037,14 +1027,6 @@ begin
   mainHide;
   IntheatVent;
   PropertiesPanel.Visible := True;
-end;
-
-procedure TForm1.PropSaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
 end;
 
 procedure TForm1.AbsComboBoxChange(Sender: TObject);
@@ -1122,14 +1104,6 @@ begin
   LoadClimateFiles;
 end;
 
-procedure TForm1.ClimateSaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
-end;
-
 procedure TForm1.ClimateComboBoxChange(Sender: TObject);
 begin
   UpdateClimate;
@@ -1171,18 +1145,6 @@ begin
   begin
     Window := WindowComboBox.Selected.Text;
   end;
-  // if DerobModel.Walls[1].Properties.BoolValue['HoleEast'] = True then
-  // begin
-  // EWindow := EWindowComboBox.Selected.Text;
-  // end;
-  // if DerobModel.Walls[2].Properties.BoolValue['HoleSouth'] = True then
-  // begin
-  // SWindow := SWindowComboBox.Selected.Text;
-  // end;
-  // if DerobModel.Walls[3].Properties.BoolValue['HoleWest'] = True then
-  // begin
-  // WWindow := WWindowComboBox.Selected.Text;
-  // end;
 
   Roof := RoofComboBox.Selected.Text;
   Floor := FloorComboBox.Selected.Text;
@@ -1234,8 +1196,6 @@ begin
   FWindowProperties := Value;
 end;
 
-
-
 procedure TForm1.OnExecute;
 var
   ExitCode: integer;
@@ -1247,23 +1207,35 @@ begin
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
 
-  for Idx := 1 to 3 do // Khoan
+  for Idx := 1 to 5 do
+ // IDX 1: Vinterfall, 2:3 Sommarfall, 3: Vinterfall med öppning, 4: Sommarfall med öppning, 5: Referensfall
   begin
     if Idx = 1 then
     begin
       season := 'Winter';
       datanumber := 'Indata1.txt';
-    end
-    else if Idx = 2 then
+    end;
+    if Idx = 2 then
     begin
       season := 'Summer';
       datanumber := 'Indata2.txt';
-    end
-    else if Idx = 3 then
+    end;
+    if Idx = 3 then
     begin
-      season := 'NoGlaze';
+      season := 'WinterOpen';
       datanumber := 'Indata3.txt';
     end;
+    if Idx = 4 then
+    begin
+      season := 'SummerOpen';
+      datanumber := 'Indata4.txt';
+    end;
+    if Idx = 5 then
+    begin
+      season := 'NoGlaze';
+      datanumber := 'Indata5.txt';
+    end;
+
     dig := GetCurrentDir + '\DIG.exe ' + '"' + CaseDir + '\' +
       DerobModel.HouseProperties.StringValue['CaseName'] + '\' + season + '\' +
       datanumber + '"';
@@ -1282,37 +1254,80 @@ begin
     tl := GetCurrentDir + '\TL.exe ' + '"' + CaseDir + '\' +
       DerobModel.HouseProperties.StringValue['CaseName'] + '\' + season + '\' +
       datanumber + '"';
-    // FRÅGA JONAS OM ATT GÅ TILL EXECUTE FINISHED
-    ExitCode := ExecProcess(dig, '', True);
-    if ExitCode <> 0 then
+
+ // FRÅGA JONAS OM ATT GÅ TILL EXECUTE FINISHED
+
+//De tre vanliga beräkningsfallen
+    if (Idx = 1) or (Idx = 2) or (Idx = 5) then
     begin
-      ShowMessage('Fel i DIG');
+      ExitCode := ExecProcess(dig, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i DIG');
+      end;
+      ExitCode := ExecProcess(wal, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i WAL');
+      end;
+      ExitCode := ExecProcess(gf, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i GF');
+      end;
+      ExitCode := ExecProcess(lum, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i LUM');
+      end;
+      ExitCode := ExecProcess(sol, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i SOL');
+      end;
+      ExitCode := ExecProcess(tl, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i TL');
+      end;
     end;
-    ExitCode := ExecProcess(wal, '', True);
-    if ExitCode <> 0 then
+
+    //Kollar om användaren har valt att göra beräkningar för automatisk öppning
+    if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True)
+      and ((Idx = 3) or (Idx = 4)) then
     begin
-      ShowMessage('Fel i WAL');
+      ExitCode := ExecProcess(dig, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i DIG');
+      end;
+      ExitCode := ExecProcess(wal, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i WAL');
+      end;
+      ExitCode := ExecProcess(gf, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i GF');
+      end;
+      ExitCode := ExecProcess(lum, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i LUM');
+      end;
+      ExitCode := ExecProcess(sol, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i SOL');
+      end;
+      ExitCode := ExecProcess(tl, '', True);
+      if ExitCode <> 0 then
+      begin
+        ShowMessage('Fel i TL');
+      end;
     end;
-    ExitCode := ExecProcess(gf, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i GF');
-    end;
-    ExitCode := ExecProcess(lum, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i LUM');
-    end;
-    ExitCode := ExecProcess(sol, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i SOL');
-    end;
-    ExitCode := ExecProcess(tl, '', True);
-    if ExitCode <> 0 then
-    begin
-      ShowMessage('Fel i TL');
-    end;
+
   end;
 end;
 
@@ -1371,6 +1386,8 @@ var
 begin
   sl := TStringList.Create;
   try
+    SetCurrentDir(StartDir);
+    SetCurrentDir('Cases');
     DerobModel.HouseProperties.StringValue['LocationPath'] := GetCurrentDir +
       '\' + ClimateComboBox.Selected.Text;
     sl.LoadFromFile(ClimateComboBox.Selected.Text);
@@ -1435,13 +1452,6 @@ begin
   UpdateClimate;
   OrientationNumberBox.Value := DerobModel.HouseProperties.IntValue['Rotation'];
   OrientationTrackBar.Value := OrientationNumberBox.Value;
-  // FromMonthComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
-  // ['FromMonth'];
-  // FromMonthComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
-  // ['FromMonth'];
-  // FromDayComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['FromDay'];
-  // ToMonthComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['ToMonth'];
-  // ToDayComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['ToDay'];
 end;
 
 procedure TForm1.UpdateConstructionList;
@@ -1499,8 +1509,9 @@ begin
   if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
   begin
     IntGlazeCheckBox1.IsChecked := True;
+    OpeningNrBox.Value:=DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'];
   end;
-  if DerobModel.VentilationProperties.BoolValue['VentilatedGlaze'] = True then
+  if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True then
   begin
     IntGlazeCheckBox2.IsChecked := True;
   end;
@@ -1742,8 +1753,8 @@ procedure TForm1.PropConstrButtonClick(Sender: TObject);
 begin
   Form2.DerobModel := Self.DerobModel;
   CurrentCategory := 'Wall';
-  Form2.CMenuItem1.IsSelected:=True;
-  Form2.CMenuItem1.IsChecked:=True;
+  Form2.CMenuItem1.IsSelected := True;
+  Form2.CMenuItem1.IsChecked := True;
   UpdateConstructionList;
   UpdateLayerList;
   UpdateMaterialList;
@@ -1778,7 +1789,7 @@ var
   holder: TStringList;
   Material: TMaterial;
 begin
- SetCurrentDir(StartDir);
+  SetCurrentDir(StartDir);
   Idx := 0;
   holder := TStringList.Create;
   AssignFile(SomeTxtFile, 'Library\Gas.lib');
@@ -2054,6 +2065,8 @@ begin
   FDerobModel := TDerobModel.Create;
   FConvertDerob := TDerobConvert.Create;
   FSurface := TSurface.Create;
+  // För att välja annan mapp än 'C:\Users\Public\Documents\' se länk
+  // http://docwiki.embarcadero.com/RADStudio/XE7/en/Standard_RTL_Path_Functions_across_the_Supported_Target_Platforms
   SetCurrentDir(TPath.GetSharedDocumentsPath);
   SetCurrentDir('Glazing-LTH');
   StartDir := GetCurrentDir;
@@ -2072,15 +2085,6 @@ begin
   Form1.Caption := 'Geometri';
   mainHide;
   GeometryPanel.Visible := True;
-end;
-
-procedure TForm1.GeoSaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
-  VolumeCount;
 end;
 
 procedure TForm1.GlazeCheckBox1Change(Sender: TObject);
@@ -2168,10 +2172,24 @@ begin
   Form3.Show;
 end;
 
+procedure TForm1.IntGlazeCheckBox1Change(Sender: TObject);
+begin
+  if IntGlazeCheckBox1.IsChecked then
+    begin
+      OpeningNrBox.Enabled := True;
+      Label50.Enabled := True;
+    end
+  else
+    begin
+      OpeningNrBox.Enabled := False;
+      Label50.Enabled := False;
+    end;
+end;
+
 procedure TForm1.IntheatVent;
 begin
   GlazeControlComboBox.Items.Clear;
-  GlazeControlComboBox.ItemIndex:=-3;
+  GlazeControlComboBox.ItemIndex := -3;
   if WindowCheckBox1.IsChecked or WindowCheckBox2.IsChecked or
     WindowCheckBox3.IsChecked or WindowCheckBox4.IsChecked then
   begin
@@ -2244,6 +2262,7 @@ begin
   else
   begin
     IntGlazeCheckBox2.Enabled := False;
+    IntGlazeCheckBox2.IsChecked := False;
   end;
 
   if (GlazeCheckBox1.IsChecked) or (GlazeCheckBox2.IsChecked) or
@@ -2264,7 +2283,8 @@ begin
   end
   else
   begin
-  DerobModel.HouseProperties.IntValue['ChosenGlaze']:=0;
+    DerobModel.HouseProperties.IntValue['ChosenGlaze'] := 0;
+    DerobModel.HouseProperties.BoolValue['GlazeChange'] := False;
   end;
 
 end;
@@ -2275,14 +2295,6 @@ begin
   mainHide;
   IntheatVent;
   EnergyPanel.Visible := True;
-end;
-
-procedure TForm1.EnergySaveButtonClick(Sender: TObject);
-begin
-  mainGeometrySave;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
 end;
 
 procedure TForm1.WindowCheckBox1Change(Sender: TObject);
