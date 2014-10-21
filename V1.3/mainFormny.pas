@@ -85,7 +85,6 @@ type
     GlazeLabel2: TLabel;
     GlazeLabel3: TLabel;
     GlazeLabel4: TLabel;
-    PropRoofLabel: TLabel;
     RoofLabel: TLabel;
     FloorLabel: TLabel;
     WallLabel: TLabel;
@@ -96,7 +95,6 @@ type
     WallComboBox: TComboBox;
     GlazeComboBox: TComboBox;
     WindowComboBox: TComboBox;
-    PropWallLabel: TLabel;
     PropConstrButton: TButton;
     fileMenuClose: TMenuItem;
     GeoClearButton: TButton;

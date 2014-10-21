@@ -19,7 +19,6 @@ object Form1: TForm1
   object TreeView1: TTreeView
     Enabled = False
     Height = 265.000000000000000000
-    HitTest = False
     TabOrder = 0
     Width = 193.000000000000000000
     object Geometry: TTreeViewItem
@@ -133,7 +132,6 @@ object Form1: TForm1
     end
   end
   object GeometryPanel: TPanel
-    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
@@ -335,7 +333,7 @@ object Form1: TForm1
       ValueType = vtFloat
       Position.X = 176.000000000000000000
       Position.Y = 64.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
     end
@@ -346,7 +344,7 @@ object Form1: TForm1
       ValueType = vtFloat
       Position.X = 176.000000000000000000
       Position.Y = 104.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
     end
@@ -357,27 +355,27 @@ object Form1: TForm1
       ValueType = vtFloat
       Position.X = 176.000000000000000000
       Position.Y = 144.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
     end
     object HousemLabel1: TLabel
       Height = 25.000000000000000000
-      Position.X = 280.000000000000000000
+      Position.X = 272.000000000000000000
       Position.Y = 64.000000000000000000
       Text = 'm'
       Width = 33.000000000000000000
     end
     object HousemLabel2: TLabel
       Height = 25.000000000000000000
-      Position.X = 280.000000000000000000
+      Position.X = 272.000000000000000000
       Position.Y = 104.000000000000000000
       Text = 'm'
       Width = 33.000000000000000000
     end
     object HousemLabel3: TLabel
       Height = 25.000000000000000000
-      Position.X = 280.000000000000000000
+      Position.X = 272.000000000000000000
       Position.Y = 144.000000000000000000
       Text = 'm'
       Width = 33.000000000000000000
@@ -459,9 +457,9 @@ object Form1: TForm1
       TabOrder = 21
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 88.000000000000000000
+      Position.X = 96.000000000000000000
       Position.Y = 248.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -471,9 +469,9 @@ object Form1: TForm1
       TabOrder = 22
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 88.000000000000000000
+      Position.X = 96.000000000000000000
       Position.Y = 288.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -483,9 +481,9 @@ object Form1: TForm1
       TabOrder = 23
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 88.000000000000000000
+      Position.X = 96.000000000000000000
       Position.Y = 328.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -495,9 +493,9 @@ object Form1: TForm1
       TabOrder = 24
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 88.000000000000000000
+      Position.X = 96.000000000000000000
       Position.Y = 368.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -507,9 +505,9 @@ object Form1: TForm1
       TabOrder = 25
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 224.000000000000000000
+      Position.X = 232.000000000000000000
       Position.Y = 248.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -519,9 +517,9 @@ object Form1: TForm1
       TabOrder = 26
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 224.000000000000000000
+      Position.X = 232.000000000000000000
       Position.Y = 288.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -531,9 +529,9 @@ object Form1: TForm1
       TabOrder = 27
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 224.000000000000000000
+      Position.X = 232.000000000000000000
       Position.Y = 328.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -543,9 +541,9 @@ object Form1: TForm1
       TabOrder = 28
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 224.000000000000000000
+      Position.X = 232.000000000000000000
       Position.Y = 368.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -555,9 +553,9 @@ object Form1: TForm1
       TabOrder = 29
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 464.000000000000000000
+      Position.X = 472.000000000000000000
       Position.Y = 248.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -567,9 +565,9 @@ object Form1: TForm1
       TabOrder = 30
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 464.000000000000000000
+      Position.X = 472.000000000000000000
       Position.Y = 288.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -579,9 +577,9 @@ object Form1: TForm1
       TabOrder = 31
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 464.000000000000000000
+      Position.X = 472.000000000000000000
       Position.Y = 328.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -591,9 +589,9 @@ object Form1: TForm1
       TabOrder = 32
       Cursor = crIBeam
       ValueType = vtFloat
-      Position.X = 464.000000000000000000
+      Position.X = 472.000000000000000000
       Position.Y = 368.000000000000000000
-      Width = 100.000000000000000000
+      Width = 89.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
       Enabled = False
@@ -749,130 +747,113 @@ object Form1: TForm1
     end
   end
   object PropertiesPanel: TPanel
+    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
     Width = 620.000000000000000000
     TabOrder = 3
-    object PropRoofLabel: TLabel
-      Font.Size = 17.000000000000000000
-      StyledSettings = [ssFamily, ssStyle, ssFontColor]
-      Height = 25.000000000000000000
-      Position.X = 176.000000000000000000
-      Position.Y = 24.000000000000000000
-      Text = 'Tak/Golv'
-      Width = 81.000000000000000000
-    end
     object RoofLabel: TLabel
       Height = 17.000000000000000000
-      Position.X = 112.000000000000000000
-      Position.Y = 80.000000000000000000
+      Position.X = 80.000000000000000000
+      Position.Y = 128.000000000000000000
       Text = 'Taktyp:'
       Width = 89.000000000000000000
     end
     object FloorLabel: TLabel
       Height = 17.000000000000000000
-      Position.X = 112.000000000000000000
-      Position.Y = 128.000000000000000000
+      Position.X = 80.000000000000000000
+      Position.Y = 184.000000000000000000
       Text = 'Golvtyp:'
       Width = 89.000000000000000000
     end
     object WallLabel: TLabel
       Height = 17.000000000000000000
-      Position.X = 104.000000000000000000
-      Position.Y = 280.000000000000000000
+      Position.X = 80.000000000000000000
+      Position.Y = 240.000000000000000000
       Text = 'V'#228'ggtyp:'
       Width = 89.000000000000000000
     end
     object GlazeLabel: TLabel
       Height = 17.000000000000000000
-      Position.X = 104.000000000000000000
-      Position.Y = 328.000000000000000000
+      Position.X = 80.000000000000000000
+      Position.Y = 296.000000000000000000
       Text = 'Inglasningstyp:'
       Width = 89.000000000000000000
     end
     object WindowLabel: TLabel
       Height = 17.000000000000000000
-      Position.X = 104.000000000000000000
-      Position.Y = 376.000000000000000000
+      Position.X = 80.000000000000000000
+      Position.Y = 352.000000000000000000
       Text = 'F'#246'nstertyp:'
       Width = 89.000000000000000000
     end
     object RoofComboBox: TComboBox
       DisableFocusEffect = False
       Height = 22.000000000000000000
-      Position.X = 216.000000000000000000
-      Position.Y = 80.000000000000000000
-      TabOrder = 6
+      Position.X = 184.000000000000000000
+      Position.Y = 128.000000000000000000
+      TabOrder = 5
       Width = 100.000000000000000000
     end
     object FloorComboBox: TComboBox
       DisableFocusEffect = False
       Height = 22.000000000000000000
-      Position.X = 216.000000000000000000
-      Position.Y = 128.000000000000000000
-      TabOrder = 7
+      Position.X = 184.000000000000000000
+      Position.Y = 184.000000000000000000
+      TabOrder = 6
       Width = 100.000000000000000000
     end
     object WallComboBox: TComboBox
       DisableFocusEffect = False
       Height = 22.000000000000000000
-      Position.X = 216.000000000000000000
-      Position.Y = 280.000000000000000000
-      TabOrder = 8
+      Position.X = 184.000000000000000000
+      Position.Y = 240.000000000000000000
+      TabOrder = 7
       Width = 100.000000000000000000
     end
     object GlazeComboBox: TComboBox
       DisableFocusEffect = False
       Enabled = False
       Height = 22.000000000000000000
-      Position.X = 216.000000000000000000
-      Position.Y = 328.000000000000000000
-      TabOrder = 9
+      Position.X = 184.000000000000000000
+      Position.Y = 296.000000000000000000
+      TabOrder = 8
       Width = 100.000000000000000000
     end
     object WindowComboBox: TComboBox
       DisableFocusEffect = False
       Enabled = False
       Height = 22.000000000000000000
-      Position.X = 216.000000000000000000
-      Position.Y = 376.000000000000000000
-      TabOrder = 10
-      Width = 100.000000000000000000
-    end
-    object PropWallLabel: TLabel
-      Font.Size = 17.000000000000000000
-      StyledSettings = [ssFamily, ssStyle, ssFontColor]
-      Height = 25.000000000000000000
       Position.X = 184.000000000000000000
-      Position.Y = 192.000000000000000000
-      Text = 'Fasad'
-      Width = 57.000000000000000000
+      Position.Y = 352.000000000000000000
+      TabOrder = 9
+      Width = 100.000000000000000000
     end
     object PropConstrButton: TButton
       Height = 33.000000000000000000
-      Position.X = 456.000000000000000000
-      Position.Y = 352.000000000000000000
-      TabOrder = 12
+      Position.X = 136.000000000000000000
+      Position.Y = 56.000000000000000000
+      TabOrder = 10
       Text = 'Bibliotek'
-      Width = 89.000000000000000000
+      Width = 97.000000000000000000
       OnClick = PropConstrButtonClick
     end
     object PropAbsLabel: TLabel
       Font.Size = 15.000000000000000000
       StyledSettings = [ssFamily, ssStyle, ssFontColor]
       Height = 25.000000000000000000
-      Position.X = 432.000000000000000000
-      Position.Y = 24.000000000000000000
-      Text = 'Absorption/Emittans'
+      Position.X = 384.000000000000000000
+      Position.Y = 72.000000000000000000
+      Text = 'Absorptans/Emittans'
       Width = 153.000000000000000000
     end
     object AbsComboBox: TComboBox
       DisableFocusEffect = False
       Height = 22.000000000000000000
-      Position.X = 480.000000000000000000
-      Position.Y = 64.000000000000000000
-      TabOrder = 14
+      Position.X = 440.000000000000000000
+      Position.Y = 120.000000000000000000
+      TabOrder = 12
       Width = 100.000000000000000000
       OnChange = AbsComboBoxChange
       object RoofListBoxItem: TListBoxItem
@@ -909,32 +890,32 @@ object Form1: TForm1
     end
     object Label1: TLabel
       Height = 25.000000000000000000
-      Position.X = 424.000000000000000000
-      Position.Y = 64.000000000000000000
+      Position.X = 376.000000000000000000
+      Position.Y = 120.000000000000000000
       Text = 'Husdel:'
       Width = 49.000000000000000000
     end
     object Label2: TLabel
       Height = 17.000000000000000000
-      Position.X = 448.000000000000000000
-      Position.Y = 104.000000000000000000
+      Position.X = 400.000000000000000000
+      Position.Y = 160.000000000000000000
       Text = 'Absorption (Fram - Bak)'
       Width = 121.000000000000000000
     end
     object Label3: TLabel
       Height = 17.000000000000000000
-      Position.X = 448.000000000000000000
-      Position.Y = 168.000000000000000000
+      Position.X = 400.000000000000000000
+      Position.Y = 232.000000000000000000
       Text = 'Emittans (Fram - Bak)'
       Width = 113.000000000000000000
     end
     object AbsNumberBox1: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 18
+      TabOrder = 16
       Cursor = crIBeam
       Value = 70.000000000000000000
-      Position.X = 432.000000000000000000
-      Position.Y = 136.000000000000000000
+      Position.X = 384.000000000000000000
+      Position.Y = 192.000000000000000000
       Width = 49.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
@@ -942,11 +923,11 @@ object Form1: TForm1
     end
     object AbsNumberBox2: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 19
+      TabOrder = 17
       Cursor = crIBeam
       Value = 70.000000000000000000
-      Position.X = 512.000000000000000000
-      Position.Y = 136.000000000000000000
+      Position.X = 464.000000000000000000
+      Position.Y = 192.000000000000000000
       Width = 49.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
@@ -954,11 +935,11 @@ object Form1: TForm1
     end
     object EmittNumberBox1: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 20
+      TabOrder = 18
       Cursor = crIBeam
       Value = 87.000000000000000000
-      Position.X = 432.000000000000000000
-      Position.Y = 200.000000000000000000
+      Position.X = 384.000000000000000000
+      Position.Y = 264.000000000000000000
       Width = 49.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
@@ -966,11 +947,11 @@ object Form1: TForm1
     end
     object EmittNumberBox2: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 21
+      TabOrder = 19
       Cursor = crIBeam
       Value = 87.000000000000000000
-      Position.X = 512.000000000000000000
-      Position.Y = 200.000000000000000000
+      Position.X = 464.000000000000000000
+      Position.Y = 264.000000000000000000
       Width = 49.000000000000000000
       Height = 22.000000000000000000
       VertIncrement = 5.000000000000000000
@@ -978,37 +959,37 @@ object Form1: TForm1
     end
     object Label4: TLabel
       Height = 17.000000000000000000
-      Position.X = 488.000000000000000000
-      Position.Y = 136.000000000000000000
+      Position.X = 440.000000000000000000
+      Position.Y = 192.000000000000000000
       Text = '%'
       Width = 17.000000000000000000
     end
     object Label5: TLabel
       Height = 17.000000000000000000
-      Position.X = 568.000000000000000000
-      Position.Y = 136.000000000000000000
+      Position.X = 520.000000000000000000
+      Position.Y = 192.000000000000000000
       Text = '%'
       Width = 17.000000000000000000
     end
     object Label6: TLabel
       Height = 17.000000000000000000
-      Position.X = 488.000000000000000000
-      Position.Y = 200.000000000000000000
+      Position.X = 440.000000000000000000
+      Position.Y = 264.000000000000000000
       Text = '%'
       Width = 17.000000000000000000
     end
     object Label7: TLabel
       Height = 17.000000000000000000
-      Position.X = 568.000000000000000000
-      Position.Y = 200.000000000000000000
+      Position.X = 520.000000000000000000
+      Position.Y = 264.000000000000000000
       Text = '%'
       Width = 17.000000000000000000
     end
     object AbsorptionButton: TButton
       Height = 22.000000000000000000
-      Position.X = 464.000000000000000000
-      Position.Y = 240.000000000000000000
-      TabOrder = 26
+      Position.X = 416.000000000000000000
+      Position.Y = 312.000000000000000000
+      TabOrder = 24
       Text = #196'ndra'
       Width = 80.000000000000000000
       OnClick = AbsorptionButtonClick
@@ -1038,6 +1019,7 @@ object Form1: TForm1
     Top = 224
   end
   object EnergyPanel: TPanel
+    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False

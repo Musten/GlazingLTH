@@ -217,6 +217,7 @@ begin
   UpdateConstructionList;
   UpdateLayerList;
   SetData;
+
 end;
 
 procedure TForm2.RemoveConstructionButtonClick(Sender: TObject);
@@ -321,7 +322,7 @@ begin
   Material.DoubleValue['Density'] :=
     StrToFloat(InputBox('Nytt Material', 'Densitet (kg/m3):', '0'));
   Material.DoubleValue['HeatCapacity'] :=
-    (StrToFloat(InputBox('Nytt Material', 'Spec.värmekapacitet (J/kg*K):',
+    (StrToFloat(InputBox('Nytt Material', 'Spec.Värmekap (J/kg*K):',
     '0'))) / 3600;
 
   // Add material to the DerobModel
