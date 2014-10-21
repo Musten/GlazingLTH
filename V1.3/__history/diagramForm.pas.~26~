@@ -25,6 +25,7 @@ type
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
+    procedure GlazeChart;
     procedure GlazeHistogram;
     procedure NoGlazeChart;
     procedure NoGlazeHistogram;

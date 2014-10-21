@@ -1,12 +1,13 @@
 object Form5: TForm5
   Left = 0
   Top = 0
-  Caption = 'Form5'
+  Caption = 'Resultat'
   ClientHeight = 480
   ClientWidth = 640
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [dkDesktop, dkiPhone, dkiPad]
+  OnClose = FormClose
   DesignerMobile = False
   DesignerWidth = 0
   DesignerHeight = 0
@@ -16,16 +17,18 @@ object Form5: TForm5
   object Chart1: TChart
     Height = 425.000000000000000000
     Position.X = 8.000000000000000000
-    Position.Y = 48.000000000000000000
+    Position.Y = 32.000000000000000000
     Width = 601.000000000000000000
     AllowPanning = pmNone
     Foot.Font.Brush.Color = claRed
-    Legend.Visible = False
+    Legend.Alignment = laBottom
+    Legend.LegendStyle = lsSeries
+    Legend.TopPos = 0
     SubFoot.Font.Brush.Color = claRed
     SubTitle.Font.Brush.Color = claBlue
     Title.Font.Brush.Color = claBlue
     Title.Text.Strings = (
-      'TChart')
+      'Resultat')
     BottomAxis.Grid.Fill.Color = claSilver
     BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.MinorTicks.Fill.Color = claDarkgray
@@ -41,13 +44,8 @@ object Form5: TForm5
     DepthTopAxis.MinorTicks.Fill.Color = claDarkgray
     DepthTopAxis.Ticks.Fill.Color = claDarkgray
     DepthTopAxis.TicksInner.Fill.Color = claDarkgray
-    LeftAxis.Automatic = False
-    LeftAxis.AutomaticMaximum = False
-    LeftAxis.AutomaticMinimum = False
     LeftAxis.Grid.Fill.Color = claSilver
     LeftAxis.LabelsFormat.TextAlignment = taCenter
-    LeftAxis.Maximum = 30.000000000000000000
-    LeftAxis.Minimum = 18.000000000000000000
     LeftAxis.MinorTicks.Fill.Color = claDarkgray
     LeftAxis.Ticks.Fill.Color = claDarkgray
     LeftAxis.TicksInner.Fill.Color = claDarkgray
@@ -70,26 +68,34 @@ object Form5: TForm5
     TabOrder = 0
     Anchors = [akLeft, akTop, akRight, akBottom]
     ColorPaletteIndex = 13
-    object Series1: TFastLineSeries
+    object Series1: TLineSeries
       Marks.Visible = False
       Marks.Arrow.Fill.Color = claWhite
       Marks.Callout.Arrow.Fill.Color = claWhite
       SeriesColor = xFFDE0000
+      Title = 'Inglasning'
       LinePen.Color = xFFDE0000
       LinePen.Fill.Color = xFFDE0000
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      Pointer.Visible = False
       XValues.Name = 'X'
       XValues.Order = loNone
       YValues.Name = 'Y'
       YValues.Order = loNone
       Data = {0000000000}
     end
-    object Series2: TFastLineSeries
+    object Series2: TLineSeries
       Marks.Visible = False
       Marks.Arrow.Fill.Color = claWhite
       Marks.Callout.Arrow.Fill.Color = claWhite
+      SeriesColor = xFF4466A3
+      Title = 'Utan Inglasning'
       LinePen.Color = xFF4466A3
       LinePen.Fill.Color = xFF4466A3
-      TreatNulls = tnDontPaint
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      Pointer.Visible = False
       XValues.Name = 'X'
       XValues.Order = loNone
       YValues.Name = 'Y'
@@ -98,40 +104,56 @@ object Form5: TForm5
     end
   end
   object GlazeDiagramButton: TButton
-    Anchors = [akTop, akRight]
+    Anchors = [akLeft, akRight, akBottom]
     Height = 22.000000000000000000
-    Position.X = 432.000000000000000000
-    Position.Y = 8.000000000000000000
+    Position.X = 272.000000000000000000
+    Position.Y = 456.000000000000000000
     TabOrder = 1
-    Text = 'Med Inglasning'
+    Text = 'Resultat'
     Width = 88.000000000000000000
     OnClick = GlazeDiagramButtonClick
-  end
-  object NonGlazeDiagramButton: TButton
-    Anchors = [akTop, akRight]
-    Height = 22.000000000000000000
-    Position.X = 520.000000000000000000
-    Position.Y = 8.000000000000000000
-    TabOrder = 2
-    Text = 'Utan Inglasning'
-    Width = 89.000000000000000000
   end
   object TempRadioButton: TRadioButton
     GroupName = 'DiagramRadioButton'
     Height = 19.000000000000000000
-    Position.X = 112.000000000000000000
     Position.Y = 8.000000000000000000
-    TabOrder = 3
-    Text = 'Temperature in vol1'
-    Width = 120.000000000000000000
+    TabOrder = 2
+    Text = 'Temperatur i vald volym'
+    Width = 145.000000000000000000
   end
   object HeatRadioButton: TRadioButton
     GroupName = 'DiagramRadioButton'
     Height = 19.000000000000000000
-    Position.X = 240.000000000000000000
+    Position.X = 144.000000000000000000
     Position.Y = 8.000000000000000000
-    TabOrder = 4
-    Text = 'Heating load'
+    TabOrder = 3
+    Text = 'Energianv'#228'ndning'
+    Width = 120.000000000000000000
+  end
+  object Label1: TLabel
+    Height = 17.000000000000000000
+    Position.X = 264.000000000000000000
+    Position.Y = 8.000000000000000000
+    Text = 'Energi, inglasning'
+    Width = 120.000000000000000000
+  end
+  object Label2: TLabel
+    Height = 17.000000000000000000
+    Position.X = 360.000000000000000000
+    Position.Y = 8.000000000000000000
+    Width = 81.000000000000000000
+  end
+  object Label3: TLabel
+    Height = 17.000000000000000000
+    Position.X = 456.000000000000000000
+    Position.Y = 8.000000000000000000
+    Text = 'Energi, utan inglasning'
+    Width = 120.000000000000000000
+  end
+  object Label4: TLabel
+    Height = 17.000000000000000000
+    Position.X = 576.000000000000000000
+    Position.Y = 8.000000000000000000
     Width = 120.000000000000000000
   end
 end
