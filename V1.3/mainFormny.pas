@@ -212,10 +212,6 @@ type
     Label38: TLabel;
     OpeningNrBox: TNumberBox;
     Label50: TLabel;
-    OpeningNrBox2: TNumberBox;
-    Label56: TLabel;
-    Label57: TLabel;
-    Label58: TLabel;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -249,12 +245,6 @@ type
     procedure ClimateComboBoxChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure IntGlazeCheckBox1Change(Sender: TObject);
-    procedure HouseNumberBox1Typing(Sender: TObject);
-    procedure HouseNumberBox2Typing(Sender: TObject);
-    procedure HouseNumberBox3Typing(Sender: TObject);
-    procedure HouseNumberBox1Change(Sender: TObject);
-    procedure HouseNumberBox2Change(Sender: TObject);
-    procedure HouseNumberBox3Change(Sender: TObject);
 
   private
     { Private declarations }
@@ -304,9 +294,6 @@ type
     procedure DefaultAbsorption;
     procedure LoadClimateFiles;
     procedure SetConvertDerob(const Value: TDerobConvert);
-    procedure SetWindowMaxDim;
-    procedure UncheckWindows;
-    procedure ResetWindowDims;
   public
     pressed: boolean;
     nvol, advec: integer;
@@ -474,8 +461,7 @@ begin
   if IntGlazeCheckBox1.IsChecked then
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := True;
-    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:= OpeningNrBox.Value;
-    DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'] := OpeningNrBox2.Value;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:=OpeningNrBox.Value;
   end
   else
   begin
@@ -1041,18 +1027,6 @@ begin
   PropertiesPanel.Visible := True;
 end;
 
-procedure TForm1.ResetWindowDims;
-begin
-  WindowNumberBox1.Value := 0;
-  WindowNumberBox2.Value := 0;
-  WindowNumberBox3.Value := 0;
-  WindowNumberBox4.Value := 0;
-  WindowNumberBox5.Value := 0;
-  WindowNumberBox6.Value := 0;
-  WindowNumberBox7.Value := 0;
-  WindowNumberBox8.Value := 0;
-end;
-
 procedure TForm1.AbsComboBoxChange(Sender: TObject);
 begin
   ChangeAbsCombo;
@@ -1215,18 +1189,6 @@ begin
   FWallProperties := Value;
 end;
 
-procedure TForm1.SetWindowMaxDim;
-begin
-  WindowNumberBox1.Max := HouseNumberBox2.Value - 0.05;
-  WindowNumberBox5.Max := HouseNumberBox2.Value - 0.05;
-  WindowNumberBox3.Max := HouseNumberBox1.Value - 0.05;
-  WindowNumberBox7.Max := HouseNumberBox1.Value - 0.05;
-  WindowNumberBox2.Max := HouseNumberBox3.Value - 0.05;
-  WindowNumberBox4.Max := HouseNumberBox3.Value - 0.05;
-  WindowNumberBox6.Max := HouseNumberBox3.Value - 0.05;
-  WindowNumberBox8.Max := HouseNumberBox3.Value - 0.05;
-end;
-
 procedure TForm1.SetWindowProperties(const Value: TWindowProperties);
 begin
   FWindowProperties := Value;
@@ -1380,14 +1342,6 @@ begin
   OrientationNumberBox.Value := OrientationTrackBar.Value;
   Rectangle1.RotationAngle := OrientationTrackBar.Value / 2;
   Viewport3D2.RotationAngle := OrientationTrackBar.Value / 2;
-end;
-
-procedure TForm1.UncheckWindows;
-begin
-  WindowCheckBox1.IsChecked := False;
-  WindowCheckBox2.IsChecked := False;
-  WindowCheckBox3.IsChecked := False;
-  WindowCheckBox4.IsChecked := False;
 end;
 
 procedure TForm1.UpdateAbsorption;
@@ -2211,36 +2165,6 @@ begin
   end;
 end;
 
-procedure TForm1.HouseNumberBox1Change(Sender: TObject);
-begin
-  UncheckWindows;
-end;
-
-procedure TForm1.HouseNumberBox1Typing(Sender: TObject);
-begin
-  UncheckWindows;
-end;
-
-procedure TForm1.HouseNumberBox2Change(Sender: TObject);
-begin
-  UncheckWindows;
-end;
-
-procedure TForm1.HouseNumberBox2Typing(Sender: TObject);
-begin
-  UncheckWindows;
-end;
-
-procedure TForm1.HouseNumberBox3Change(Sender: TObject);
-begin
-  UncheckWindows;
-end;
-
-procedure TForm1.HouseNumberBox3Typing(Sender: TObject);
-begin
-  UncheckWindows;
-end;
-
 procedure TForm1.InternalHeatButtonClick(Sender: TObject);
 begin
   Form3.Show;
@@ -2252,19 +2176,11 @@ begin
     begin
       OpeningNrBox.Enabled := True;
       Label50.Enabled := True;
-      OpeningNrBox2.Enabled := True;
-      Label56.Enabled := True;
-      Label57.Enabled := True;
-      Label58.Enabled := True;
     end
   else
     begin
       OpeningNrBox.Enabled := False;
       Label50.Enabled := False;
-      OpeningNrBox2.Enabled := False;
-      Label56.Enabled := False;
-      Label57.Enabled := False;
-      Label58.Enabled := False;
     end;
 end;
 
@@ -2381,7 +2297,6 @@ end;
 
 procedure TForm1.WindowCheckBox1Change(Sender: TObject);
 begin
-  SetWindowMaxDim;
   if WindowCheckBox1.IsChecked then
   begin
     WindowNumberBox1.Enabled := True;
@@ -2391,13 +2306,11 @@ begin
   begin
     WindowNumberBox1.Enabled := False;
     WindowNumberBox2.Enabled := False;
-    ResetWindowDims;
   end;
 end;
 
 procedure TForm1.WindowCheckBox2Change(Sender: TObject);
 begin
-  SetWindowMaxDim;
   if WindowCheckBox2.IsChecked then
   begin
     WindowNumberBox3.Enabled := True;
@@ -2407,13 +2320,11 @@ begin
   begin
     WindowNumberBox3.Enabled := False;
     WindowNumberBox4.Enabled := False;
-    ResetWindowDims;
   end;
 end;
 
 procedure TForm1.WindowCheckBox3Change(Sender: TObject);
 begin
-  SetWindowMaxDim;
   if WindowCheckBox3.IsChecked then
   begin
     WindowNumberBox5.Enabled := True;
@@ -2423,13 +2334,11 @@ begin
   begin
     WindowNumberBox5.Enabled := False;
     WindowNumberBox6.Enabled := False;
-    ResetWindowDims;
   end;
 end;
 
 procedure TForm1.WindowCheckBox4Change(Sender: TObject);
 begin
-  SetWindowMaxDim;
   if WindowCheckBox4.IsChecked then
   begin
     WindowNumberBox7.Enabled := True;
@@ -2439,7 +2348,6 @@ begin
   begin
     WindowNumberBox7.Enabled := False;
     WindowNumberBox8.Enabled := False;
-    ResetWindowDims;
   end;
 end;
 
