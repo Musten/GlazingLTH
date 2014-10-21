@@ -828,6 +828,7 @@ begin
   mainEnergySave;
   mainClimateSave;
   SaveConstructionNames;
+  UpdateClimate;
   // Spara filen i aktuellt case-mapp
   SetCurrentDir('Cases/' + DerobModel.HouseProperties.StringValue['CaseName']);
   // Skapa en temporär sparfil om det blir något fel vid sparning
@@ -945,7 +946,7 @@ begin
     SetCurrentDir(StartDir);
     UpdateGeometryPanel;
     mainUpdateComboBox;
-    LoadClimateFiles;
+    //LoadClimateFiles;
     UpdatePropertiesPanel;
     UpdateEnergyPanel;
     UpdateAbsorption;
@@ -1386,6 +1387,8 @@ var
 begin
   sl := TStringList.Create;
   try
+    SetCurrentDir(StartDir);
+    SetCurrentDir('Climate');
     DerobModel.HouseProperties.StringValue['LocationPath'] := GetCurrentDir +
       '\' + ClimateComboBox.Selected.Text;
     sl.LoadFromFile(ClimateComboBox.Selected.Text);
@@ -1450,13 +1453,6 @@ begin
   UpdateClimate;
   OrientationNumberBox.Value := DerobModel.HouseProperties.IntValue['Rotation'];
   OrientationTrackBar.Value := OrientationNumberBox.Value;
-  // FromMonthComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
-  // ['FromMonth'];
-  // FromMonthComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
-  // ['FromMonth'];
-  // FromDayComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['FromDay'];
-  // ToMonthComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['ToMonth'];
-  // ToDayComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['ToDay'];
 end;
 
 procedure TForm1.UpdateConstructionList;
