@@ -49,8 +49,8 @@ begin
   Label4.Text := '';
   HeatRadioButton.IsChecked := False;
   TempRadioButton.IsChecked := False;
-  Chart1.LeftAxis.Title.Caption:='';
-  Chart1.BottomAxis.Title.Caption:='';
+  Chart1.LeftAxis.Title.Caption := '';
+  Chart1.BottomAxis.Title.Caption := '';
 end;
 
 procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
@@ -62,7 +62,7 @@ end;
 
 procedure TForm5.GlazeHistogram;
 var
-  Summer, Winter,SummerOpen,WinterOpen:TextFile;
+  Summer, Winter, SummerOpen, WinterOpen: TextFile;
   DataFile: TStringList;
   VolPath: String;
   buffer: String;
@@ -78,18 +78,22 @@ var
     Cool3Winter, Sun3Winter, Temp4Winter, OpTemp4Winter, Heat4Winter,
     Cool4Winter, Sun4Winter, Temp5Winter, OpTemp5Winter, Heat5Winter,
     Cool5Winter, Sun5Winter: array of Real;
-    OutTempSummerOpen, GlobalRadiationSummerOpen, Temp1SummerOpen, OpTemp1SummerOpen, Heat1SummerOpen,
-    Cool1SummerOpen, Sun1SummerOpen, Temp2SummerOpen, OpTemp2SummerOpen, Heat2SummerOpen,
-    Cool2SummerOpen, Sun2SummerOpen, Temp3SummerOpen, OpTemp3SummerOpen, Heat3SummerOpen,
-    Cool3SummerOpen, Sun3SummerOpen, Temp4SummerOpen, OpTemp4SummerOpen, Heat4SummerOpen,
-    Cool4SummerOpen, Sun4SummerOpen, Temp5SummerOpen, OpTemp5SummerOpen, Heat5SummerOpen,
-    Cool5SummerOpen, Sun5SummerOpen: array of Real;
-  OutTempWinterOpen, GlobalRadiationWinterOpen, Temp1WinterOpen, OpTemp1WinterOpen, Heat1WinterOpen,
-    Cool1WinterOpen, Sun1WinterOpen, Temp2WinterOpen, OpTemp2WinterOpen, Heat2WinterOpen,
-    Cool2WinterOpen, Sun2WinterOpen, Temp3WinterOpen, OpTemp3WinterOpen, Heat3WinterOpen,
-    Cool3WinterOpen, Sun3WinterOpen, Temp4WinterOpen, OpTemp4WinterOpen, Heat4WinterOpen,
-    Cool4WinterOpen, Sun4WinterOpen, Temp5WinterOpen, OpTemp5WinterOpen, Heat5WinterOpen,
-    Cool5WinterOpen, Sun5WinterOpen: array of Real;
+  OutTempSummerOpen, GlobalRadiationSummerOpen, Temp1SummerOpen,
+    OpTemp1SummerOpen, Heat1SummerOpen, Cool1SummerOpen, Sun1SummerOpen,
+    Temp2SummerOpen, OpTemp2SummerOpen, Heat2SummerOpen, Cool2SummerOpen,
+    Sun2SummerOpen, Temp3SummerOpen, OpTemp3SummerOpen, Heat3SummerOpen,
+    Cool3SummerOpen, Sun3SummerOpen, Temp4SummerOpen, OpTemp4SummerOpen,
+    Heat4SummerOpen, Cool4SummerOpen, Sun4SummerOpen, Temp5SummerOpen,
+    OpTemp5SummerOpen, Heat5SummerOpen, Cool5SummerOpen, Sun5SummerOpen
+    : array of Real;
+  OutTempWinterOpen, GlobalRadiationWinterOpen, Temp1WinterOpen,
+    OpTemp1WinterOpen, Heat1WinterOpen, Cool1WinterOpen, Sun1WinterOpen,
+    Temp2WinterOpen, OpTemp2WinterOpen, Heat2WinterOpen, Cool2WinterOpen,
+    Sun2WinterOpen, Temp3WinterOpen, OpTemp3WinterOpen, Heat3WinterOpen,
+    Cool3WinterOpen, Sun3WinterOpen, Temp4WinterOpen, OpTemp4WinterOpen,
+    Heat4WinterOpen, Cool4WinterOpen, Sun4WinterOpen, Temp5WinterOpen,
+    OpTemp5WinterOpen, Heat5WinterOpen, Cool5WinterOpen, Sun5WinterOpen
+    : array of Real;
 
   i, SkipLine, intervall: integer;
   IgnoreText: Boolean;
@@ -126,7 +130,7 @@ begin
   SetLength(GlobalRadiationSummer, 8760);
   SetLength(GlobalRadiationWinter, 8760);
 
- SetLength(Temp1SummerOpen, 8760);
+  SetLength(Temp1SummerOpen, 8760);
   SetLength(OpTemp1SummerOpen, 8760);
   SetLength(Heat1SummerOpen, 8760);
   SetLength(Cool1SummerOpen, 8760);
@@ -185,7 +189,6 @@ begin
   SetLength(Heat5WinterOpen, 8760);
   SetLength(Cool5WinterOpen, 8760);
   SetLength(Sun5WinterOpen, 8760);
-
 
   SetLength(Temp, intervall);
   SetLength(Time, intervall);
@@ -249,13 +252,13 @@ begin
   AssignFile(Winter, VolPath);
   Reset(Winter);
   SetCurrentDir('../SummerOpen');
-  VolPath:=GetCurrentDir+'\Vol_Load.txt';
-  AssignFile(SummerOpen,VolPath);
+  VolPath := GetCurrentDir + '\Vol_Load.txt';
+  AssignFile(SummerOpen, VolPath);
   Reset(SummerOpen);
   SetCurrentDir('../WinterOpen');
-   VolPath:=GetCurrentDir+'\Vol_Load.txt';
-   AssignFile(WinterOpen,VolPath);
-   Reset(WinterOpen);
+  VolPath := GetCurrentDir + '\Vol_Load.txt';
+  AssignFile(WinterOpen, VolPath);
+  Reset(WinterOpen);
   while not Eof(Summer) do
   begin
     // Pass the first 12 lines that describes the variables in the text files
@@ -384,119 +387,135 @@ begin
           OpTemp5Winter[i - SkipLine], Heat5Winter[i - SkipLine],
           Cool5Winter[i - SkipLine], Sun5Winter[i - SkipLine]);
       end;
-      if DerobModel.VentilationProperties.BoolValue['AutoOpening']=True then
+      if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = true then
       begin
-              if DerobModel.HouseProperties.IntValue['nvol'] = 1 then
-      begin
-        ReadLn(SummerOpen, Hour[i - SkipLine], OutTempSummerOpen[i - SkipLine],
-          GlobalRadiationSummerOpen[i - SkipLine], Temp1SummerOpen[i - SkipLine],
-          OpTemp1SummerOpen[i - SkipLine], Heat1SummerOpen[i - SkipLine],
-          Cool1SummerOpen[i - SkipLine], Sun1SummerOpen[i - SkipLine]);
-        ReadLn(WinterOpen, Hour[i - SkipLine], OutTempWinterOpen[i - SkipLine],
-          GlobalRadiationWinterOpen[i - SkipLine], Temp1WinterOpen[i - SkipLine],
-          OpTemp1WinterOpen[i - SkipLine], Heat1WinterOpen[i - SkipLine],
-          Cool1WinterOpen[i - SkipLine], Sun1WinterOpen[i - SkipLine]);
-      end;
-      if DerobModel.HouseProperties.IntValue['nvol'] = 2 then
-      begin
-        ReadLn(SummerOpen, Hour[i - SkipLine], OutTempSummerOpen[i - SkipLine],
-          GlobalRadiationSummerOpen[i - SkipLine], Temp1SummerOpen[i - SkipLine],
-          OpTemp1SummerOpen[i - SkipLine], Heat1SummerOpen[i - SkipLine],
-          Cool1SummerOpen[i - SkipLine], Sun1SummerOpen[i - SkipLine],
-          Temp2SummerOpen[i - SkipLine], OpTemp2SummerOpen[i - SkipLine],
-          Heat2SummerOpen[i - SkipLine], Cool2SummerOpen[i - SkipLine],
-          Sun2SummerOpen[i - SkipLine]);
+        if DerobModel.HouseProperties.IntValue['nvol'] = 1 then
+        begin
+          ReadLn(SummerOpen, Hour[i - SkipLine],
+            OutTempSummerOpen[i - SkipLine],
+            GlobalRadiationSummerOpen[i - SkipLine],
+            Temp1SummerOpen[i - SkipLine], OpTemp1SummerOpen[i - SkipLine],
+            Heat1SummerOpen[i - SkipLine], Cool1SummerOpen[i - SkipLine],
+            Sun1SummerOpen[i - SkipLine]);
+          ReadLn(WinterOpen, Hour[i - SkipLine],
+            OutTempWinterOpen[i - SkipLine],
+            GlobalRadiationWinterOpen[i - SkipLine],
+            Temp1WinterOpen[i - SkipLine], OpTemp1WinterOpen[i - SkipLine],
+            Heat1WinterOpen[i - SkipLine], Cool1WinterOpen[i - SkipLine],
+            Sun1WinterOpen[i - SkipLine]);
+        end;
+        if DerobModel.HouseProperties.IntValue['nvol'] = 2 then
+        begin
+          ReadLn(SummerOpen, Hour[i - SkipLine],
+            OutTempSummerOpen[i - SkipLine],
+            GlobalRadiationSummerOpen[i - SkipLine],
+            Temp1SummerOpen[i - SkipLine], OpTemp1SummerOpen[i - SkipLine],
+            Heat1SummerOpen[i - SkipLine], Cool1SummerOpen[i - SkipLine],
+            Sun1SummerOpen[i - SkipLine], Temp2SummerOpen[i - SkipLine],
+            OpTemp2SummerOpen[i - SkipLine], Heat2SummerOpen[i - SkipLine],
+            Cool2SummerOpen[i - SkipLine], Sun2SummerOpen[i - SkipLine]);
 
-        ReadLn(WinterOpen, Hour[i - SkipLine], OutTempWinterOpen[i - SkipLine],
-          GlobalRadiationWinterOpen[i - SkipLine], Temp1WinterOpen[i - SkipLine],
-          OpTemp1WinterOpen[i - SkipLine], Heat1WinterOpen[i - SkipLine],
-          Cool1WinterOpen[i - SkipLine], Sun1WinterOpen[i - SkipLine],
-          Temp2WinterOpen[i - SkipLine], OpTemp2WinterOpen[i - SkipLine],
-          Heat2WinterOpen[i - SkipLine], Cool2WinterOpen[i - SkipLine],
-          Sun2WinterOpen[i - SkipLine]);
-      end;
-      if DerobModel.HouseProperties.IntValue['nvol'] = 3 then
-      begin
-        ReadLn(SummerOpen, Hour[i - SkipLine], OutTempSummerOpen[i - SkipLine],
-          GlobalRadiationSummerOpen[i - SkipLine], Temp1SummerOpen[i - SkipLine],
-          OpTemp1SummerOpen[i - SkipLine], Heat1SummerOpen[i - SkipLine],
-          Cool1SummerOpen[i - SkipLine], Sun1SummerOpen[i - SkipLine],
-          Temp2SummerOpen[i - SkipLine], OpTemp2SummerOpen[i - SkipLine],
-          Heat2SummerOpen[i - SkipLine], Cool2SummerOpen[i - SkipLine],
-          Sun2SummerOpen[i - SkipLine], Temp3SummerOpen[i - SkipLine],
-          OpTemp3SummerOpen[i - SkipLine], Heat3SummerOpen[i - SkipLine],
-          Cool3SummerOpen[i - SkipLine], Sun3SummerOpen[i - SkipLine]);
+          ReadLn(WinterOpen, Hour[i - SkipLine],
+            OutTempWinterOpen[i - SkipLine],
+            GlobalRadiationWinterOpen[i - SkipLine],
+            Temp1WinterOpen[i - SkipLine], OpTemp1WinterOpen[i - SkipLine],
+            Heat1WinterOpen[i - SkipLine], Cool1WinterOpen[i - SkipLine],
+            Sun1WinterOpen[i - SkipLine], Temp2WinterOpen[i - SkipLine],
+            OpTemp2WinterOpen[i - SkipLine], Heat2WinterOpen[i - SkipLine],
+            Cool2WinterOpen[i - SkipLine], Sun2WinterOpen[i - SkipLine]);
+        end;
+        if DerobModel.HouseProperties.IntValue['nvol'] = 3 then
+        begin
+          ReadLn(SummerOpen, Hour[i - SkipLine],
+            OutTempSummerOpen[i - SkipLine],
+            GlobalRadiationSummerOpen[i - SkipLine],
+            Temp1SummerOpen[i - SkipLine], OpTemp1SummerOpen[i - SkipLine],
+            Heat1SummerOpen[i - SkipLine], Cool1SummerOpen[i - SkipLine],
+            Sun1SummerOpen[i - SkipLine], Temp2SummerOpen[i - SkipLine],
+            OpTemp2SummerOpen[i - SkipLine], Heat2SummerOpen[i - SkipLine],
+            Cool2SummerOpen[i - SkipLine], Sun2SummerOpen[i - SkipLine],
+            Temp3SummerOpen[i - SkipLine], OpTemp3SummerOpen[i - SkipLine],
+            Heat3SummerOpen[i - SkipLine], Cool3SummerOpen[i - SkipLine],
+            Sun3SummerOpen[i - SkipLine]);
 
-        ReadLn(WinterOpen, Hour[i - SkipLine], OutTempWinterOpen[i - SkipLine],
-          GlobalRadiationWinterOpen[i - SkipLine], Temp1WinterOpen[i - SkipLine],
-          OpTemp1WinterOpen[i - SkipLine], Heat1WinterOpen[i - SkipLine],
-          Cool1WinterOpen[i - SkipLine], Sun1WinterOpen[i - SkipLine],
-          Temp2WinterOpen[i - SkipLine], OpTemp2WinterOpen[i - SkipLine],
-          Heat2WinterOpen[i - SkipLine], Cool2WinterOpen[i - SkipLine],
-          Sun2WinterOpen[i - SkipLine], Temp3WinterOpen[i - SkipLine],
-          OpTemp3WinterOpen[i - SkipLine], Heat3WinterOpen[i - SkipLine],
-          Cool3WinterOpen[i - SkipLine], Sun3WinterOpen[i - SkipLine]);
-      end;
-      if DerobModel.HouseProperties.IntValue['nvol'] = 4 then
-      begin
-        ReadLn(SummerOpen, Hour[i - SkipLine], OutTempSummerOpen[i - SkipLine],
-          GlobalRadiationSummerOpen[i - SkipLine], Temp1SummerOpen[i - SkipLine],
-          OpTemp1SummerOpen[i - SkipLine], Heat1SummerOpen[i - SkipLine],
-          Cool1SummerOpen[i - SkipLine], Sun1SummerOpen[i - SkipLine],
-          Temp2SummerOpen[i - SkipLine], OpTemp2SummerOpen[i - SkipLine],
-          Heat2SummerOpen[i - SkipLine], Cool2SummerOpen[i - SkipLine],
-          Sun2SummerOpen[i - SkipLine], Temp3SummerOpen[i - SkipLine],
-          OpTemp3SummerOpen[i - SkipLine], Heat3SummerOpen[i - SkipLine],
-          Cool3SummerOpen[i - SkipLine], Sun3SummerOpen[i - SkipLine],
-          Temp4SummerOpen[i - SkipLine], OpTemp4SummerOpen[i - SkipLine],
-          Heat4SummerOpen[i - SkipLine], Cool4SummerOpen[i - SkipLine],
-          Sun4SummerOpen[i - SkipLine]);
+          ReadLn(WinterOpen, Hour[i - SkipLine],
+            OutTempWinterOpen[i - SkipLine],
+            GlobalRadiationWinterOpen[i - SkipLine],
+            Temp1WinterOpen[i - SkipLine], OpTemp1WinterOpen[i - SkipLine],
+            Heat1WinterOpen[i - SkipLine], Cool1WinterOpen[i - SkipLine],
+            Sun1WinterOpen[i - SkipLine], Temp2WinterOpen[i - SkipLine],
+            OpTemp2WinterOpen[i - SkipLine], Heat2WinterOpen[i - SkipLine],
+            Cool2WinterOpen[i - SkipLine], Sun2WinterOpen[i - SkipLine],
+            Temp3WinterOpen[i - SkipLine], OpTemp3WinterOpen[i - SkipLine],
+            Heat3WinterOpen[i - SkipLine], Cool3WinterOpen[i - SkipLine],
+            Sun3WinterOpen[i - SkipLine]);
+        end;
+        if DerobModel.HouseProperties.IntValue['nvol'] = 4 then
+        begin
+          ReadLn(SummerOpen, Hour[i - SkipLine],
+            OutTempSummerOpen[i - SkipLine],
+            GlobalRadiationSummerOpen[i - SkipLine],
+            Temp1SummerOpen[i - SkipLine], OpTemp1SummerOpen[i - SkipLine],
+            Heat1SummerOpen[i - SkipLine], Cool1SummerOpen[i - SkipLine],
+            Sun1SummerOpen[i - SkipLine], Temp2SummerOpen[i - SkipLine],
+            OpTemp2SummerOpen[i - SkipLine], Heat2SummerOpen[i - SkipLine],
+            Cool2SummerOpen[i - SkipLine], Sun2SummerOpen[i - SkipLine],
+            Temp3SummerOpen[i - SkipLine], OpTemp3SummerOpen[i - SkipLine],
+            Heat3SummerOpen[i - SkipLine], Cool3SummerOpen[i - SkipLine],
+            Sun3SummerOpen[i - SkipLine], Temp4SummerOpen[i - SkipLine],
+            OpTemp4SummerOpen[i - SkipLine], Heat4SummerOpen[i - SkipLine],
+            Cool4SummerOpen[i - SkipLine], Sun4SummerOpen[i - SkipLine]);
 
-        ReadLn(WinterOpen, Hour[i - SkipLine], OutTempWinterOpen[i - SkipLine],
-          GlobalRadiationWinterOpen[i - SkipLine], Temp1WinterOpen[i - SkipLine],
-          OpTemp1WinterOpen[i - SkipLine], Heat1WinterOpen[i - SkipLine],
-          Cool1WinterOpen[i - SkipLine], Sun1WinterOpen[i - SkipLine],
-          Temp2WinterOpen[i - SkipLine], OpTemp2WinterOpen[i - SkipLine],
-          Heat2WinterOpen[i - SkipLine], Cool2WinterOpen[i - SkipLine],
-          Sun2WinterOpen[i - SkipLine], Temp3WinterOpen[i - SkipLine],
-          OpTemp3WinterOpen[i - SkipLine], Heat3WinterOpen[i - SkipLine],
-          Cool3WinterOpen[i - SkipLine], Sun3WinterOpen[i - SkipLine],
-          Temp4WinterOpen[i - SkipLine], OpTemp4WinterOpen[i - SkipLine],
-          Heat4WinterOpen[i - SkipLine], Cool4WinterOpen[i - SkipLine],
-          Sun4WinterOpen[i - SkipLine]);
-      end;
-      if DerobModel.HouseProperties.IntValue['nvol'] = 5 then
-      begin
-        ReadLn(SummerOpen, Hour[i - SkipLine], OutTempSummerOpen[i - SkipLine],
-          GlobalRadiationSummerOpen[i - SkipLine], Temp1SummerOpen[i - SkipLine],
-          OpTemp1SummerOpen[i - SkipLine], Heat1SummerOpen[i - SkipLine],
-          Cool1SummerOpen[i - SkipLine], Sun1SummerOpen[i - SkipLine],
-          Temp2SummerOpen[i - SkipLine], OpTemp2SummerOpen[i - SkipLine],
-          Heat2SummerOpen[i - SkipLine], Cool2SummerOpen[i - SkipLine],
-          Sun2SummerOpen[i - SkipLine], Temp3SummerOpen[i - SkipLine],
-          OpTemp3SummerOpen[i - SkipLine], Heat3SummerOpen[i - SkipLine],
-          Cool3SummerOpen[i - SkipLine], Sun3SummerOpen[i - SkipLine],
-          Temp4SummerOpen[i - SkipLine], OpTemp4SummerOpen[i - SkipLine],
-          Heat4SummerOpen[i - SkipLine], Cool4SummerOpen[i - SkipLine],
-          Sun4SummerOpen[i - SkipLine], Temp5SummerOpen[i - SkipLine],
-          OpTemp5SummerOpen[i - SkipLine], Heat5SummerOpen[i - SkipLine],
-          Cool5SummerOpen[i - SkipLine], Sun5SummerOpen[i - SkipLine]);
+          ReadLn(WinterOpen, Hour[i - SkipLine],
+            OutTempWinterOpen[i - SkipLine],
+            GlobalRadiationWinterOpen[i - SkipLine],
+            Temp1WinterOpen[i - SkipLine], OpTemp1WinterOpen[i - SkipLine],
+            Heat1WinterOpen[i - SkipLine], Cool1WinterOpen[i - SkipLine],
+            Sun1WinterOpen[i - SkipLine], Temp2WinterOpen[i - SkipLine],
+            OpTemp2WinterOpen[i - SkipLine], Heat2WinterOpen[i - SkipLine],
+            Cool2WinterOpen[i - SkipLine], Sun2WinterOpen[i - SkipLine],
+            Temp3WinterOpen[i - SkipLine], OpTemp3WinterOpen[i - SkipLine],
+            Heat3WinterOpen[i - SkipLine], Cool3WinterOpen[i - SkipLine],
+            Sun3WinterOpen[i - SkipLine], Temp4WinterOpen[i - SkipLine],
+            OpTemp4WinterOpen[i - SkipLine], Heat4WinterOpen[i - SkipLine],
+            Cool4WinterOpen[i - SkipLine], Sun4WinterOpen[i - SkipLine]);
+        end;
+        if DerobModel.HouseProperties.IntValue['nvol'] = 5 then
+        begin
+          ReadLn(SummerOpen, Hour[i - SkipLine],
+            OutTempSummerOpen[i - SkipLine],
+            GlobalRadiationSummerOpen[i - SkipLine],
+            Temp1SummerOpen[i - SkipLine], OpTemp1SummerOpen[i - SkipLine],
+            Heat1SummerOpen[i - SkipLine], Cool1SummerOpen[i - SkipLine],
+            Sun1SummerOpen[i - SkipLine], Temp2SummerOpen[i - SkipLine],
+            OpTemp2SummerOpen[i - SkipLine], Heat2SummerOpen[i - SkipLine],
+            Cool2SummerOpen[i - SkipLine], Sun2SummerOpen[i - SkipLine],
+            Temp3SummerOpen[i - SkipLine], OpTemp3SummerOpen[i - SkipLine],
+            Heat3SummerOpen[i - SkipLine], Cool3SummerOpen[i - SkipLine],
+            Sun3SummerOpen[i - SkipLine], Temp4SummerOpen[i - SkipLine],
+            OpTemp4SummerOpen[i - SkipLine], Heat4SummerOpen[i - SkipLine],
+            Cool4SummerOpen[i - SkipLine], Sun4SummerOpen[i - SkipLine],
+            Temp5SummerOpen[i - SkipLine], OpTemp5SummerOpen[i - SkipLine],
+            Heat5SummerOpen[i - SkipLine], Cool5SummerOpen[i - SkipLine],
+            Sun5SummerOpen[i - SkipLine]);
 
-        ReadLn(WinterOpen, Hour[i - SkipLine], OutTempWinterOpen[i - SkipLine],
-          GlobalRadiationWinterOpen[i - SkipLine], Temp1WinterOpen[i - SkipLine],
-          OpTemp1WinterOpen[i - SkipLine], Heat1WinterOpen[i - SkipLine],
-          Cool1WinterOpen[i - SkipLine], Sun1WinterOpen[i - SkipLine],
-          Temp2WinterOpen[i - SkipLine], OpTemp2WinterOpen[i - SkipLine],
-          Heat2WinterOpen[i - SkipLine], Cool2WinterOpen[i - SkipLine],
-          Sun2WinterOpen[i - SkipLine], Temp3WinterOpen[i - SkipLine],
-          OpTemp3WinterOpen[i - SkipLine], Heat3WinterOpen[i - SkipLine],
-          Cool3WinterOpen[i - SkipLine], Sun3WinterOpen[i - SkipLine],
-          Temp4WinterOpen[i - SkipLine], OpTemp4WinterOpen[i - SkipLine],
-          Heat4WinterOpen[i - SkipLine], Cool4WinterOpen[i - SkipLine],
-          Sun4WinterOpen[i - SkipLine], Temp5WinterOpen[i - SkipLine],
-          OpTemp5WinterOpen[i - SkipLine], Heat5WinterOpen[i - SkipLine],
-          Cool5WinterOpen[i - SkipLine], Sun5WinterOpen[i - SkipLine]);
-      end;
+          ReadLn(WinterOpen, Hour[i - SkipLine],
+            OutTempWinterOpen[i - SkipLine],
+            GlobalRadiationWinterOpen[i - SkipLine],
+            Temp1WinterOpen[i - SkipLine], OpTemp1WinterOpen[i - SkipLine],
+            Heat1WinterOpen[i - SkipLine], Cool1WinterOpen[i - SkipLine],
+            Sun1WinterOpen[i - SkipLine], Temp2WinterOpen[i - SkipLine],
+            OpTemp2WinterOpen[i - SkipLine], Heat2WinterOpen[i - SkipLine],
+            Cool2WinterOpen[i - SkipLine], Sun2WinterOpen[i - SkipLine],
+            Temp3WinterOpen[i - SkipLine], OpTemp3WinterOpen[i - SkipLine],
+            Heat3WinterOpen[i - SkipLine], Cool3WinterOpen[i - SkipLine],
+            Sun3WinterOpen[i - SkipLine], Temp4WinterOpen[i - SkipLine],
+            OpTemp4WinterOpen[i - SkipLine], Heat4WinterOpen[i - SkipLine],
+            Cool4WinterOpen[i - SkipLine], Sun4WinterOpen[i - SkipLine],
+            Temp5WinterOpen[i - SkipLine], OpTemp5WinterOpen[i - SkipLine],
+            Heat5WinterOpen[i - SkipLine], Cool5WinterOpen[i - SkipLine],
+            Sun5WinterOpen[i - SkipLine]);
+        end;
 
       end;
 
@@ -611,20 +630,20 @@ begin
 
   if HeatRadioButton.IsChecked = true then
   begin
-    Chart1.LeftAxis.Title.Caption :='Energibehov'; //'Energibehov/dag (kWh)';
+    Chart1.LeftAxis.Title.Caption := 'Energibehov'; // 'Energibehov/dag (kWh)';
     Chart1.BottomAxis.Title.Caption := 'Månad';
-    HeatJan := (HeatJan / 744)/1000;
-    HeatFeb := (HeatFeb / 672)/1000;
-    HeatMar := (HeatMar / 744)/1000;
-    HeatApr := (HeatApr / 720)/1000;
-    HeatMay := (HeatMay / 744)/1000;
-    HeatJun := (HeatJun / 720)/1000;
-    HeatJul := (HeatJul / 744)/1000;
-    HeatAug := (HeatAug / 744)/1000;
-    HeatSep := (HeatSep / 720)/1000;
-    HeatOct := (HeatOct / 744)/1000;
-    HeatNov := (HeatNov / 720)/1000;
-    HeatDec := (HeatDec / 744)/1000;
+    HeatJan := (HeatJan / 744) / 1000;
+    HeatFeb := (HeatFeb / 672) / 1000;
+    HeatMar := (HeatMar / 744) / 1000;
+    HeatApr := (HeatApr / 720) / 1000;
+    HeatMay := (HeatMay / 744) / 1000;
+    HeatJun := (HeatJun / 720) / 1000;
+    HeatJul := (HeatJul / 744) / 1000;
+    HeatAug := (HeatAug / 744) / 1000;
+    HeatSep := (HeatSep / 720) / 1000;
+    HeatOct := (HeatOct / 744) / 1000;
+    HeatNov := (HeatNov / 720) / 1000;
+    HeatDec := (HeatDec / 744) / 1000;
 
     With Chart1.Series[0] Do
     Begin
@@ -962,18 +981,18 @@ begin
 
   if HeatRadioButton.IsChecked = true then
   begin
-    HeatJan := (HeatJan / 744)/1000;
-    HeatFeb := (HeatFeb / 672)/1000;
-    HeatMar := (HeatMar / 744)/1000;
-    HeatApr := (HeatApr / 720)/1000;
-    HeatMay := (HeatMay / 744)/1000;
-    HeatJun := (HeatJun / 720)/1000;
-    HeatJul := (HeatJul / 744)/1000;
-    HeatAug := (HeatAug / 744)/1000;
-    HeatSep := (HeatSep / 720)/1000;
-    HeatOct := (HeatOct / 744)/1000;
-    HeatNov := (HeatNov / 720)/1000;
-    HeatDec := (HeatDec / 744)/1000;
+    HeatJan := (HeatJan / 744) / 1000;
+    HeatFeb := (HeatFeb / 672) / 1000;
+    HeatMar := (HeatMar / 744) / 1000;
+    HeatApr := (HeatApr / 720) / 1000;
+    HeatMay := (HeatMay / 744) / 1000;
+    HeatJun := (HeatJun / 720) / 1000;
+    HeatJul := (HeatJul / 744) / 1000;
+    HeatAug := (HeatAug / 744) / 1000;
+    HeatSep := (HeatSep / 720) / 1000;
+    HeatOct := (HeatOct / 744) / 1000;
+    HeatNov := (HeatNov / 720) / 1000;
+    HeatDec := (HeatDec / 744) / 1000;
 
     With Chart1.Series[1] Do
     Begin
