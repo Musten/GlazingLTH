@@ -1799,9 +1799,15 @@ begin
   Form2.CMenuItem1.IsSelected := True;
   Form2.CMenuItem1.IsChecked := True;
   UpdateConstructionList;
-  UpdateLayerList;
   UpdateMaterialList;
   Form2.Show;
+  Form2.MaterialListBox.ItemIndex := 0;
+  if DerobModel.ConstructionCount > 23 then
+    begin
+      Form2.ConstructionListBox.ItemIndex := 0;
+      UpdateLayerList;
+    end;
+
 end;
 
 procedure TForm1.LoadClimateFiles;

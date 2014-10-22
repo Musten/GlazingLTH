@@ -246,6 +246,7 @@ begin
 
     UpdateConstructionList;
     UpdateLayerList;
+    ConstructionIndex;
   end;
 end;
 
@@ -385,8 +386,7 @@ begin
     begin
   for i := 0 to ConstructionListBox.Count-1 do
     begin
-      Constructionnames[i] := ConstructionListBox.Items.
-      ShowMessage(ConstructionListBox.Items.Names[i]);
+      Constructionnames[i] := ConstructionListBox.ItemByIndex(i).Text;
       for j := 0 to DerobModel.ConstructionCount - 1 do
         begin
           if DerobModel.Constructions[j].Name = Constructionnames[i] then
