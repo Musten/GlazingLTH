@@ -510,12 +510,17 @@ begin
     Construction := ConstructionListBox.Items.Objects
       [ConstructionListBox.ItemIndex] as TConstruction;
 
-    for i := 0 to Construction.LayerCount - 1 do
-      Self.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
-        Construction.Layers[i]);
+    UNumberBox.Value := -999;
+    LayerThicknessNumberBox.Value := -999;
+    if Construction.LayerCount > 0 then
+    begin
+        for i := 0 to Construction.LayerCount - 1 do
+          Self.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
+          Construction.Layers[i]);
     LayerListBox.ItemIndex := Construction.LayerCount - 1;
     UpdateUValue;
     UpdateLayerThicknessBox;
+    end;
   end;
 end;
 
