@@ -375,7 +375,6 @@ begin
   // Update layer list
 
   UpdateLayerList;
-  UpdateUValue;
 
   SetData;
 end;
@@ -528,6 +527,8 @@ begin
     for i := 0 to Construction.LayerCount - 1 do
       Self.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
         Construction.Layers[i]);
+    LayerListBox.ItemIndex := Construction.LayerCount - 1;
+    UpdateUValue;
   end;
 end;
 

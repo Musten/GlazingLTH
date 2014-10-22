@@ -101,7 +101,7 @@
         <DCCReference Include="internalheatForm.pas">
             <Form>Form3</Form>
         </DCCReference>
-        <DCCReference Include="AbsorptionEmissionForm.pas">
+        <DCCReference Include="AbsorptanceEmittanceForm.pas">
             <Form>Form4</Form>
         </DCCReference>
         <DCCReference Include="derobConvert.pas">

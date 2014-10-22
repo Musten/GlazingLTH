@@ -1,14 +1,12 @@
 unit mainFormny;
 interface
-  //Hej        ?
 uses
-//Hallo
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Layouts, FMX.ListBox, FMX.Colors, FMX.Menus, FMX.TreeView,
   System.Actions, FMX.ActnList, FMX.Objects, FMX.Edit, ShellApi, Windows,
-  constructionForm, internalheatForm, AbsorptionEmissionForm, derob,
+  constructionForm, internalheatForm, AbsorptanceEmittanceForm, derob,
   diagramForm,
   FMX.Controls3D, FMX.Objects3D, FMX.Viewport3D, FMX.MaterialSources,
   FMX.MagnifierGlass, derobConvert, System.IOUtils,

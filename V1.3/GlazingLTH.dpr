@@ -6,7 +6,7 @@ uses
   derob in 'derob.pas',
   constructionForm in 'constructionForm.pas' {Form2},
   internalheatForm in 'internalheatForm.pas' {Form3},
-  AbsorptionEmissionForm in 'AbsorptionEmissionForm.pas' {Form4},
+  AbsorptanceEmittanceForm in 'AbsorptanceEmittanceForm.pas' {Form4},
   derobConvert in 'derobConvert.pas' {$R *.res},
   diagramForm in 'diagramForm.pas' {Form5};
 
