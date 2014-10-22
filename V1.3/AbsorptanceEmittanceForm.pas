@@ -1,4 +1,4 @@
-unit AbsorptionEmissionForm;
+unit AbsorptanceEmittanceForm;
 
 interface
 
