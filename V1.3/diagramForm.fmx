@@ -4,6 +4,7 @@ object Form5: TForm5
   Caption = 'Resultat'
   ClientHeight = 480
   ClientWidth = 809
+  WindowState = wsMaximized
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [dkDesktop, dkiPhone, dkiPad]

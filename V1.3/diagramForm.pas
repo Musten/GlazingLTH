@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  FMXTee.Engine, FMXTee.Procs, FMXTee.Chart, derob, FMXTee.Series, Math,ShellApi;
+  FMXTee.Engine, FMXTee.Procs, FMXTee.Chart, derob, FMXTee.Series, Math,
+  ShellApi;
 
 type
   TForm5 = class(TForm)
@@ -32,7 +33,6 @@ type
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
     procedure GlazeHistogram;
-    procedure NoGlazeChart;
     procedure NoGlazeHistogram;
     { Private declarations }
   public
@@ -63,7 +63,7 @@ end;
 
 procedure TForm5.FormShow(Sender: TObject);
 begin
-      Resultat := TStringList.Create;
+  Resultat := TStringList.Create;
 end;
 
 procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
@@ -344,14 +344,17 @@ begin
   VolPath := GetCurrentDir + '\Vol_Load.txt';
   AssignFile(Winter, VolPath);
   Reset(Winter);
-  SetCurrentDir('../SummerOpen');
-  VolPath := GetCurrentDir + '\Vol_Load.txt';
-  AssignFile(SummerOpen, VolPath);
-  Reset(SummerOpen);
-  SetCurrentDir('../WinterOpen');
-  VolPath := GetCurrentDir + '\Vol_Load.txt';
-  AssignFile(WinterOpen, VolPath);
-  Reset(WinterOpen);
+  if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
+  begin
+    SetCurrentDir('../SummerOpen');
+    VolPath := GetCurrentDir + '\Vol_Load.txt';
+    AssignFile(SummerOpen, VolPath);
+    Reset(SummerOpen);
+    SetCurrentDir('../WinterOpen');
+    VolPath := GetCurrentDir + '\Vol_Load.txt';
+    AssignFile(WinterOpen, VolPath);
+    Reset(WinterOpen);
+  end;
   while not Eof(Summer) do
   begin
     // Pass the first 12 lines that describes the variables in the text files
@@ -361,10 +364,13 @@ begin
       begin
         ReadLn(Summer, buffer);
         ReadLn(Winter, buffer);
-        ReadLn(SummerOpen, buffer);
-        ReadLn(WinterOpen, buffer);
+        if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
+        begin
+          ReadLn(SummerOpen, buffer);
+          ReadLn(WinterOpen, buffer);
+        end;
       end;
-      IgnoreText := true;
+      IgnoreText := True;
     end;
     for i := 12 to 8772 do
     begin
@@ -482,7 +488,8 @@ begin
           OpTemp5Winter[i - SkipLine], Heat5Winter[i - SkipLine],
           Cool5Winter[i - SkipLine], Sun5Winter[i - SkipLine]);
       end;
-      if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = true then
+      // Inläsning av indata för automatisk öppning
+      if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
       begin
         if DerobModel.HouseProperties.IntValue['nvol'] = 1 then
         begin
@@ -613,8 +620,8 @@ begin
         end;
 
       end;
-
-      if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = true then
+      // Koll om temperaturen regleras med avseende på inglasningen
+      if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
       begin
         if DerobModel.HouseProperties.IntValue['ChosenGlaze'] = 2 then
         begin
@@ -671,6 +678,11 @@ begin
   end;
   CloseFile(Summer);
   CloseFile(Winter);
+  if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
+  begin
+    CloseFile(SummerOpen);
+    CloseFile(WinterOpen);
+  end;
 
   Resultat.Add('  Hour  From start of calculation period  [hr]');
   Resultat.Add(' Tmp_O  Outdoor temperature               [DegreeC]');
@@ -681,8 +693,25 @@ begin
   Resultat.Add('Cool_i  Cooling load in volume i          [Wh/h]');
   Resultat.Add(' Sun_i  Sun absorbed in volume i          [Wh/h]');
   Resultat.Add('');
-  Resultat.Add
-    ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2');
+  if (DerobModel.HouseProperties.IntValue['nvol'] = 2) then
+  begin
+    Resultat.Add('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2');
+  end
+  else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
+  begin
+    Resultat.Add
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3');
+  end
+  else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
+  begin
+    Resultat.Add
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_4 Opt_4 Sun_4')
+  end
+  else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
+  begin
+    Resultat.Add
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_5 Opt_5 Sun_5')
+  end;
 
   for i := 0 to 8759 do
   begin
@@ -690,25 +719,103 @@ begin
     begin
       YearlyTemp[i] := TempSummer[i];
       Heat[i] := Heat1Summer[i];
-      Resultat.Add(FloatToStr(i + 1) + '  ' +
-        FloatToStr(OutTempSummer[i]) + '  ' +
-        FloatToStr(GlobalRadiationSummer[i]) + '  ' +
-        FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
-        ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i])
-        + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
-        FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]));
+      if (DerobModel.HouseProperties.IntValue['nvol'] = 2) and
+        (Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp']) then
+      begin
+        Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummerOpen[i])
+          + '  ' + FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+          FloatToStr(Temp1SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp1SummerOpen[i]) + ' ' + FloatToStr(Heat1SummerOpen[i]
+          ) + '  ' + FloatToStr(Sun1SummerOpen[i]) + ' ' +
+          FloatToStr(Temp2SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+          FloatToStr(Sun2SummerOpen[i]));
+      end
+      else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) and
+        ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp']) or
+        (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp'])) then
+      begin
+        Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummerOpen[i])
+          + '  ' + FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+          FloatToStr(Temp1SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp1SummerOpen[i]) + ' ' + FloatToStr(Heat1SummerOpen[i]
+          ) + '  ' + FloatToStr(Sun1SummerOpen[i]) + ' ' +
+          FloatToStr(Temp2SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp2SummerOpen[i]) + '  ' + FloatToStr(Sun2SummerOpen[i]
+          ) + ' ' + FloatToStr(Temp3SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
+          FloatToStr(Sun3SummerOpen[i]));
+      end
+      else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) and
+        ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp']) or
+        (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp']) or
+        (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp'])) then
+      begin
+        Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummerOpen[i])
+          + '  ' + FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+          FloatToStr(Temp1SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp1SummerOpen[i]) + ' ' + FloatToStr(Heat1SummerOpen[i]
+          ) + '  ' + FloatToStr(Sun1SummerOpen[i]) + ' ' +
+          FloatToStr(Temp2SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp2SummerOpen[i]) + '  ' + FloatToStr(Sun2SummerOpen[i]
+          ) + ' ' + FloatToStr(Temp3SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp3SummerOpen[i]) + '  ' + FloatToStr(Sun3SummerOpen[i]
+          ) + ' ' + FloatToStr(Temp4SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
+          FloatToStr(Sun4SummerOpen[i]));
+      end
+      else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) and
+        ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp']) or
+        (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp']) or
+        (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp']) or
+        (Temp5Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+        ['OpeningMaxTemp'])) then
+      begin
+        Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummerOpen[i])
+          + '  ' + FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+          FloatToStr(Temp1SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp1SummerOpen[i]) + ' ' + FloatToStr(Heat1SummerOpen[i]
+          ) + '  ' + FloatToStr(Sun1SummerOpen[i]) + ' ' +
+          FloatToStr(Temp2SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp2SummerOpen[i]) + '  ' + FloatToStr(Sun2SummerOpen[i]
+          ) + ' ' + FloatToStr(Temp3SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp3SummerOpen[i]) + '  ' + FloatToStr(Sun3SummerOpen[i]
+          ) + ' ' + FloatToStr(Temp4SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp4SummerOpen[i]) + '  ' + FloatToStr(Sun4SummerOpen[i]
+          ) + ' ' + FloatToStr(Temp5SummerOpen[i]) + '  ' +
+          FloatToStr(OpTemp5SummerOpen[i]) + '  ' +
+          FloatToStr(Sun5SummerOpen[i]));
+      end
+      else
+      begin
+        Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i]) +
+          '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+          FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) + ' '
+          + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]) + ' '
+          + FloatToStr(Temp2Summer[i]) + '  ' + FloatToStr(OpTemp2Summer[i]) +
+          '  ' + FloatToStr(Sun2Summer[i]));
+      end;
+
     end
     else
     begin
       YearlyTemp[i] := TempWinter[i];
       Heat[i] := Heat1Winter[i];
-        Resultat.Add(FloatToStr(i + 1) + '  ' +
-        FloatToStr(OutTempWinter[i]) + '  ' +
-        FloatToStr(GlobalRadiationWinter[i]) + '  ' +
-        FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
-        ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i])
-        + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
-        FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+      Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i]) +
+        '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+        FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) + ' ' +
+        FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]) + ' ' +
+        FloatToStr(Temp2Winter[i]) + '  ' + FloatToStr(OpTemp2Winter[i]) + '  '
+        + FloatToStr(Sun2Winter[i]));
 
     end;
   end;
@@ -775,7 +882,7 @@ begin
   totalHeat := HeatJan + HeatFeb + HeatMar + HeatApr + HeatMay + HeatJun +
     HeatJul + HeatAug + HeatSep + HeatOct + HeatNov + HeatDec;
 
-  if HeatRadioButton.IsChecked = true then
+  if HeatRadioButton.IsChecked = True then
   begin
     Chart1.LeftAxis.Title.Caption := 'Energibehov'; // 'Energibehov/dag (kWh)';
     Chart1.BottomAxis.Title.Caption := 'Månad';
@@ -808,7 +915,7 @@ begin
       AddXY(12, HeatDec, '', clTeeColor);
     end;
   end
-  else if TempRadioButton.IsChecked = true then
+  else if TempRadioButton.IsChecked = True then
   begin
     Chart1.LeftAxis.Title.Caption := 'Timmar';
     Chart1.BottomAxis.Title.Caption := 'Temperatur';
@@ -826,185 +933,8 @@ end;
 
 procedure TForm5.HeatRadioButtonChange(Sender: TObject);
 begin
-GlazeHistogram;
-NoGlazeHistogram;
-end;
-
-procedure TForm5.NoGlazeChart;
-var
-  NoGlaze: TextFile;
-  DataFile: TStringList;
-  VolPath, StartDir: String;
-  buffer: String;
-  Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1: array of Real;
-  Temp: Array of double;
-  i: integer;
-  IgnoreText: Boolean;
-  meanJan, meanFeb, meanMar, meanApr, meanMay, meanJun, meanJul, meanAug,
-    meanSep, meanOct, meanNov, meanDec: Real;
-  HeatJan, HeatFeb, HeatMar, HeatApr, HeatMay, HeatJun, HeatJul, HeatAug,
-    HeatSep, HeatOct, HeatNov, HeatDec, totalHeat: Real;
-begin
-  // Definering av vektorer och variabler
-  SetLength(Hour, 8760);
-  SetLength(OutTemp, 8760);
-  SetLength(GlobalRadiation, 8760);
-  SetLength(Temp1, 8760);
-  SetLength(OpTemp1, 8760);
-  SetLength(Heat1, 8760);
-  IgnoreText := False;
-  // Flagga för att inte läsa texten som finns i början av filen
-  Chart1.Series[1].Clear; // Ta bort tidigare värden i diagramet
-  SetCurrentDir('../NoGlaze/');
-  VolPath := GetCurrentDir + '\Vol_Load.txt';
-  AssignFile(NoGlaze, VolPath);
-  Reset(NoGlaze);
-  // While-loop över hela Vol_Load-filen
-  while not Eof(NoGlaze) do
-  begin
-    // Koll ifall while-loopen befinner sig över de 12 första raderna som inte ska läsas in
-    if IgnoreText = False then
-    begin
-      for i := 0 to 11 do
-      begin
-        ReadLn(NoGlaze, buffer);
-      end;
-      IgnoreText := true;
-    end;
-    // Loopar över värdena i filen
-    for i := 12 to 8772 do
-    begin
-      ReadLn(NoGlaze, Hour[i - 12], OutTemp[i - 12], GlobalRadiation[i - 12],
-        Temp1[i - 12], OpTemp1[i - 12], Heat1[i - 12]);
-    end;
-  end;
-  CloseFile(NoGlaze);
-  for i := 0 to 743 do
-  begin
-    meanJan := meanJan + Temp1[i];
-    HeatJan := HeatJan + Heat1[i];
-  end;
-  for i := 744 to 1415 do
-  begin
-    meanFeb := meanFeb + Temp1[i];
-    HeatFeb := HeatFeb + Heat1[i];
-  end;
-  for i := 1416 to 2159 do
-  begin
-    meanMar := meanMar + Temp1[i];
-    HeatMar := HeatMar + Heat1[i];
-  end;
-  for i := 2160 to 2879 do
-  begin
-    meanApr := meanApr + Temp1[i];
-    HeatApr := HeatApr + Heat1[i];
-  end;
-  for i := 2880 to 3623 do
-  begin
-    meanMay := meanMay + Temp1[i];
-    HeatMay := HeatMay + Heat1[i];
-  end;
-  for i := 3624 to 4343 do
-  begin
-    meanJun := meanJun + Temp1[i];
-    HeatJun := HeatJun + Heat1[i];
-  end;
-  for i := 4344 to 5087 do
-  begin
-    meanJul := meanJul + Temp1[i];
-    HeatJul := HeatJul + Heat1[i];
-  end;
-  for i := 5088 to 5831 do
-  begin
-    meanAug := meanAug + Temp1[i];
-    HeatAug := HeatAug + Heat1[i];
-  end;
-  for i := 5832 to 6551 do
-  begin
-    meanSep := meanSep + Temp1[i];
-    HeatSep := HeatSep + Heat1[i];
-  end;
-  for i := 6552 to 7295 do
-  begin
-    meanOct := meanOct + Temp1[i];
-    HeatOct := HeatOct + Heat1[i];
-  end;
-  for i := 7296 to 8015 do
-  begin
-    meanNov := meanNov + Temp1[i];
-    HeatNov := HeatNov + Heat1[i];
-  end;
-  for i := 8016 to 8759 do
-  begin
-    meanDec := meanDec + Temp1[i];
-    HeatDec := HeatDec + Heat1[i];
-  end;
-
-  totalHeat := HeatJan + HeatFeb + HeatMar + HeatApr + HeatMay + HeatJun +
-    HeatJul + HeatAug + HeatSep + HeatOct + HeatNov + HeatDec;
-
-  if TempRadioButton.IsChecked = true then
-  begin
-    meanJan := meanJan / 744;
-    meanFeb := meanFeb / 672;
-    meanMar := meanMar / 744;
-    meanApr := meanApr / 720;
-    meanMay := meanMay / 744;
-    meanJun := meanJun / 720;
-    meanJul := meanJul / 744;
-    meanAug := meanAug / 744;
-    meanSep := meanSep / 720;
-    meanOct := meanOct / 744;
-    meanNov := meanNov / 720;
-    meanDec := meanDec / 744;
-    With Chart1.Series[1] Do
-    Begin
-      AddXY(1, meanJan, '', clTeeColor);
-      AddXY(2, meanFeb, '', clTeeColor);
-      AddXY(3, meanMar, '', clTeeColor);
-      AddXY(4, meanApr, '', clTeeColor);
-      AddXY(5, meanMay, '', clTeeColor);
-      AddXY(6, meanJun, '', clTeeColor);
-      AddXY(7, meanJul, '', clTeeColor);
-      AddXY(8, meanAug, '', clTeeColor);
-      AddXY(9, meanSep, '', clTeeColor);
-      AddXY(10, meanOct, '', clTeeColor);
-      AddXY(11, meanNov, '', clTeeColor);
-      AddXY(12, meanDec, '', clTeeColor);
-    end;
-  end
-  else if HeatRadioButton.IsChecked = true then
-  begin
-    HeatJan := HeatJan / 744;
-    HeatFeb := HeatFeb / 672;
-    HeatMar := HeatMar / 744;
-    HeatApr := HeatApr / 720;
-    HeatMay := HeatMay / 744;
-    HeatJun := HeatJun / 720;
-    HeatJul := HeatJul / 744;
-    HeatAug := HeatAug / 744;
-    HeatSep := HeatSep / 720;
-    HeatOct := HeatOct / 744;
-    HeatNov := HeatNov / 720;
-    HeatDec := HeatDec / 744;
-
-    With Chart1.Series[1] Do
-    Begin
-      AddXY(1, HeatJan, '', clTeeColor);
-      AddXY(2, HeatFeb, '', clTeeColor);
-      AddXY(3, HeatMar, '', clTeeColor);
-      AddXY(4, HeatApr, '', clTeeColor);
-      AddXY(5, HeatMay, '', clTeeColor);
-      AddXY(6, HeatJun, '', clTeeColor);
-      AddXY(7, HeatJul, '', clTeeColor);
-      AddXY(8, HeatAug, '', clTeeColor);
-      AddXY(9, HeatSep, '', clTeeColor);
-      AddXY(10, HeatOct, '', clTeeColor);
-      AddXY(11, HeatNov, '', clTeeColor);
-      AddXY(12, HeatDec, '', clTeeColor);
-    end;
-  end;
-
+  GlazeHistogram;
+  NoGlazeHistogram;
 end;
 
 procedure TForm5.NoGlazeHistogram;
@@ -1059,7 +989,7 @@ begin
       begin
         ReadLn(NoGlaze, buffer);
       end;
-      IgnoreText := true;
+      IgnoreText := True;
     end;
     // Loopar över värdena i filen
     for i := 12 to 8772 do
@@ -1132,7 +1062,7 @@ begin
   totalHeat := HeatJan + HeatFeb + HeatMar + HeatApr + HeatMay + HeatJun +
     HeatJul + HeatAug + HeatSep + HeatOct + HeatNov + HeatDec;
 
-  if HeatRadioButton.IsChecked = true then
+  if HeatRadioButton.IsChecked = True then
   begin
     HeatJan := (HeatJan / 744) / 1000;
     HeatFeb := (HeatFeb / 672) / 1000;
@@ -1163,7 +1093,7 @@ begin
       AddXY(12, HeatDec, '', clTeeColor);
     end;
   end
-  else if TempRadioButton.IsChecked = true then
+  else if TempRadioButton.IsChecked = True then
   begin
     With Chart1.Series[1] Do
     Begin
@@ -1178,11 +1108,11 @@ end;
 
 procedure TForm5.ResultTxtBtnClick(Sender: TObject);
 var
-ResultatPath:String;
+  ResultatPath: String;
 begin
-SetCurrentDir('../');
-ResultatPath:=GetCurrentDir+'\Resultat.txt';
-ShellExecute(0, 'open', PChar(ResultatPath), nil, '', 1);
+  SetCurrentDir('../');
+  ResultatPath := GetCurrentDir + '\Resultat.txt';
+  ShellExecute(0, 'open', PChar(ResultatPath), nil, '', 1);
 end;
 
 procedure TForm5.SetDerobModel(const Value: TDerobModel);
@@ -1191,9 +1121,10 @@ begin
 end;
 
 procedure TForm5.TempRadioButtonChange(Sender: TObject);
-begin
-GlazeHistogram;
-NoGlazeHistogram;
+
+begin
+  GlazeHistogram;
+  NoGlazeHistogram;
 end;
 
 end.
