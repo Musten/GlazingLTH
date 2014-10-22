@@ -1801,12 +1801,6 @@ begin
   UpdateConstructionList;
   UpdateMaterialList;
   Form2.Show;
-  Form2.MaterialListBox.ItemIndex := 0;
-  if DerobModel.ConstructionCount > 23 then
-    begin
-      Form2.ConstructionListBox.ItemIndex := 0;
-      UpdateLayerList;
-    end;
 
 end;
 

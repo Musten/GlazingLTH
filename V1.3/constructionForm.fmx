@@ -207,6 +207,9 @@ object Form2: TForm2
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 5
       Cursor = crIBeam
+      Min = -1000.000000000000000000
+      Max = 1000.000000000000000000
+      Value = -999.000000000000000000
       ValueType = vtFloat
       TextAlign = taCenter
       Position.X = 464.000000000000000000
@@ -220,7 +223,9 @@ object Form2: TForm2
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 6
       Cursor = crIBeam
+      Min = -1000.000000000000000000
       Max = 10000.000000000000000000
+      Value = -999.000000000000000000
       ValueType = vtFloat
       TextAlign = taCenter
       Position.X = 464.000000000000000000
@@ -234,7 +239,9 @@ object Form2: TForm2
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 7
       Cursor = crIBeam
+      Min = -1000.000000000000000000
       Max = 100000.000000000000000000
+      Value = -999.000000000000000000
       ValueType = vtFloat
       TextAlign = taCenter
       Position.X = 464.000000000000000000

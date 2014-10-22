@@ -172,9 +172,9 @@ begin
   MaterialListBox.Enabled := False;
   UNumberBox.Value := -999;
   LayerThicknessNumberBox.Value := -999;
-  CWallNumberBox1.Value := 0.00;
-  CWallNumberBox2.Value := 0.00;
-  CWallNumberBox3.Value := 0.00;
+  CWallNumberBox1.Value := -999;
+  CWallNumberBox2.Value := -999;
+  CWallNumberBox3.Value := -999;
 
 end;
 
@@ -189,9 +189,9 @@ begin
   MaterialListBox.Enabled := True;
   UNumberBox.Value := -999;
   LayerThicknessNumberBox.Value := -999;
-  CWallNumberBox1.Value := 0.00;
-  CWallNumberBox2.Value := 0.00;
-  CWallNumberBox3.Value := 0.00;
+  CWallNumberBox1.Value := -999;
+  CWallNumberBox2.Value := -999;
+  CWallNumberBox3.Value := -999;
 end;
 
 procedure TForm2.CreateConstructionButtonClick(Sender: TObject);
@@ -673,6 +673,10 @@ begin
   CurrentCategory := 'Wall';
   Form2.Caption := 'Konstruktioner - Väggar';
   UpdateConstructionList;
+  if ConstructionListBox.Count > 0 then
+    begin
+      ConstructionListBox.ItemIndex := 0;
+    end;
   UpdateLayerList;
   UpdateMaterialList;
   CWallLabel.Text := 'Väggar';
@@ -689,6 +693,10 @@ begin
   CurrentCategory := 'Roof';
   Form2.Caption := 'Konstruktioner - Tak';
   UpdateConstructionList;
+  if ConstructionListBox.Count > 0 then
+    begin
+      ConstructionListBox.ItemIndex := 0;
+    end;
   UpdateLayerList;
   UpdateMaterialList;
   CWallLabel.Text := 'Tak';
@@ -705,6 +713,10 @@ begin
   CurrentCategory := 'Floor';
   Form2.Caption := 'Konstruktioner - Golv';
   UpdateConstructionList;
+  if ConstructionListBox.Count > 0 then
+    begin
+      ConstructionListBox.ItemIndex := 0;
+    end;
   UpdateLayerList;
   UpdateMaterialList;
   CWallLabel.Text := 'Golv';
@@ -721,6 +733,7 @@ begin
   CurrentCategory := 'Glaze';
   Form2.Caption := 'Konstruktioner - Inglasningar';
   UpdateConstructionList;
+  ConstructionListBox.ItemIndex := 0;
   UpdateLayerList;
   UpdateMaterialList;
   CWallLabel.Text := 'Inglasning';
@@ -737,6 +750,7 @@ begin
   CurrentCategory := 'Window';
   Form2.Caption := 'Konstruktioner - Fönster';
   UpdateConstructionList;
+  ConstructionListBox.ItemIndex := 0;
   UpdateLayerList;
   UpdateMaterialList;
   CWallLabel.Text := 'Fönster';
