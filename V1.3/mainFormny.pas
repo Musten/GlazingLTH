@@ -858,7 +858,7 @@ begin
   ConvertDerob.ConvertForInput;
   ConvertDerob.writeInputFile;
 
-  // Khoan, körning av exe filer
+  // Körning av exe filer
 
   // Start an execution thread instance
 

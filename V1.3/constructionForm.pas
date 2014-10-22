@@ -83,6 +83,7 @@ type
     procedure UpdateUValue;
     procedure UpdateMaterialConstants;
     procedure UpdateLayerThicknessBox;
+    procedure ConstructionIndex;
 
 //    procedure SetData;
     procedure SetCurrentCategory(const Value: string);
@@ -219,6 +220,7 @@ begin
 
   UpdateConstructionList;
   UpdateLayerList;
+  ConstructionIndex;
 //  SetData;
 
 end;
@@ -368,6 +370,32 @@ begin
     UpdateMaterialList;
     MaterialListbox.ItemIndex := DerobModel.MaterialCount - 29;
     UpdateMaterialConstants;
+  end;
+end;
+
+procedure TForm2.ConstructionIndex;
+var
+  j: Integer;
+  f: Boolean;
+  Constructionnames : array of string;
+begin
+  f := False;
+  SetLength(Constructionnames, ConstructionListBox.Count);
+  while f = False do
+    begin
+  for i := 0 to ConstructionListBox.Count-1 do
+    begin
+      Constructionnames[i] := ConstructionListBox.Items.
+      ShowMessage(ConstructionListBox.Items.Names[i]);
+      for j := 0 to DerobModel.ConstructionCount - 1 do
+        begin
+          if DerobModel.Constructions[j].Name = Constructionnames[i] then
+            begin
+              ConstructionListBox.ItemIndex := i;
+              f := True;
+            end;
+        end;
+    end;
   end;
 end;
 
