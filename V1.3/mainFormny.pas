@@ -840,6 +840,7 @@ begin
   SaveConstructionNames;
   UpdateClimate;
   // Spara filen i aktuellt case-mapp
+  SetCurrentDir(StartDir);
   SetCurrentDir('Cases/' + DerobModel.HouseProperties.StringValue['CaseName']);
   // Skapa en temporär sparfil om det blir något fel vid sparning
   DerobModel.Filename := 'Sparfil.bak';

@@ -110,13 +110,15 @@ object Form2: TForm2
       Position.X = 616.000000000000000000
       Position.Y = 208.000000000000000000
       Text = 'Lagertjocklek:'
-      Width = 81.000000000000000000
+      Width = 73.000000000000000000
     end
     object LayerThicknessNumberBox: TNumberBox
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 7
       Cursor = crIBeam
+      Min = -1000.000000000000000000
       Max = 10000.000000000000000000
+      Value = -999.000000000000000000
       ValueType = vtFloat
       TextAlign = taCenter
       Position.X = 688.000000000000000000
@@ -132,6 +134,22 @@ object Form2: TForm2
       Position.Y = 208.000000000000000000
       Text = 'mm'
       Width = 33.000000000000000000
+    end
+    object UNumberBox: TNumberBox
+      Touch.InteractiveGestures = [igLongTap, igDoubleTap]
+      TabOrder = 9
+      Cursor = crIBeam
+      Min = -1000.000000000000000000
+      Max = 1000.000000000000000000
+      Value = -999.000000000000000000
+      ValueType = vtFloat
+      TextAlign = taCenter
+      Position.X = 336.000000000000000000
+      Position.Y = 208.000000000000000000
+      Width = 49.000000000000000000
+      Height = 22.000000000000000000
+      VertIncrement = 5.000000000000000000
+      Enabled = False
     end
   end
   object WallPanel2: TPanel
@@ -264,20 +282,6 @@ object Form2: TForm2
       Text = 'U-v'#228'rde:'
       Width = 49.000000000000000000
     end
-    object UNumberBox: TNumberBox
-      Touch.InteractiveGestures = [igLongTap, igDoubleTap]
-      TabOrder = 13
-      Cursor = crIBeam
-      Max = 999.000000000000000000
-      ValueType = vtFloat
-      TextAlign = taCenter
-      Position.X = 336.000000000000000000
-      Position.Y = -40.000000000000000000
-      Width = 57.000000000000000000
-      Height = 22.000000000000000000
-      VertIncrement = 5.000000000000000000
-      Enabled = False
-    end
     object CLabel5: TLabel
       Height = 17.000000000000000000
       Position.X = 544.000000000000000000
@@ -301,7 +305,7 @@ object Form2: TForm2
     end
     object CLabel8: TLabel
       Height = 17.000000000000000000
-      Position.X = 400.000000000000000000
+      Position.X = 392.000000000000000000
       Position.Y = -40.000000000000000000
       Text = 'W/m2'#8729'K'
       Width = 57.000000000000000000
