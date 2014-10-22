@@ -25,7 +25,6 @@ type
     Panel2: TPanel;
     procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormShow(Sender: TObject);
     procedure TempRadioButtonChange(Sender: TObject);
     procedure HeatRadioButtonChange(Sender: TObject);
     procedure ResultTxtBtnClick(Sender: TObject);
@@ -58,12 +57,6 @@ begin
   TempRadioButton.IsChecked := False;
   Chart1.LeftAxis.Title.Caption := '';
   Chart1.BottomAxis.Title.Caption := '';
-  Resultat.Free;
-end;
-
-procedure TForm5.FormShow(Sender: TObject);
-begin
-  Resultat := TStringList.Create;
 end;
 
 procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
@@ -683,7 +676,7 @@ begin
     CloseFile(SummerOpen);
     CloseFile(WinterOpen);
   end;
-
+  Resultat:=TStringList.Create;
   Resultat.Add('  Hour  From start of calculation period  [hr]');
   Resultat.Add(' Tmp_O  Outdoor temperature               [DegreeC]');
   Resultat.Add('   Igl  Global radiation                  [W/m2]');
@@ -820,6 +813,7 @@ begin
     end;
   end;
   Resultat.SaveToFile('../Resultat.txt');
+  Resultat.Free;
   for i := 0 to 743 do
   begin
     HeatJan := HeatJan + Heat[i];
