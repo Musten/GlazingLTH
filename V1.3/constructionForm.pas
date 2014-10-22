@@ -81,6 +81,7 @@ type
     procedure DisableButton;
     procedure EnableButton;
     procedure UpdateUValue;
+    procedure UpdateMaterialConstants;
 
     procedure SetData;
     procedure GetData;
@@ -340,6 +341,8 @@ begin
   // Update the material list box
 
   UpdateMaterialList;
+  MaterialListbox.ItemIndex := DerobModel.MaterialCount - 29;
+  UpdateMaterialConstants;
 end;
 
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
@@ -361,6 +364,8 @@ begin
     // Update list boxes to reflect changes in the model
 
     UpdateMaterialList;
+    MaterialListbox.ItemIndex := DerobModel.MaterialCount - 29;
+    UpdateMaterialConstants;
   end;
 end;
 
@@ -377,43 +382,8 @@ end;
 
 procedure TForm2.MaterialListBoxItemClick(const Sender: TCustomListBox;
   const Item: TListBoxItem);
-var
-  Material: TMaterial;
 begin
-  CWallNumberBox1.Value := 0.00;
-  CWallNumberBox2.Value := 0.00;
-  CWallNumberBox3.Value := 0.00;
-
-  if MaterialListBox.ItemIndex > -1 then
-  begin
-
-    GlassMatCount := 0;
-    GasMatCount := 0;
-    OpaqueMatCount := 0;
-    // Ta reda på hur många det finns av varje materialtyp
-    for i := 0 to DerobModel.MaterialCount - 1 do
-    begin
-      if DerobModel.Materials[i].StringValue['MaterialType'] = 'Glass' then
-      begin
-        GlassMatCount := GlassMatCount + 1;
-      end
-      else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Gas' then
-      begin
-        GasMatCount := GasMatCount + 1;
-      end
-      else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Opaque'
-      then
-      begin
-        OpaqueMatCount := OpaqueMatCount + 1;
-      end;
-    end;
-
-    Material := DerobModel.Materials[MaterialListBox.ItemIndex +
-      (GlassMatCount + GasMatCount)];
-    CWallNumberBox1.Value := Material.DoubleValue['Lambda'];
-    CWallNumberBox2.Value := Material.DoubleValue['Density'];
-    CWallNumberBox3.Value := 3600 * Material.DoubleValue['HeatCapacity'];
-  end;
+  UpdateMaterialConstants;
 end;
 
 procedure TForm2.menuSelected;
@@ -558,6 +528,46 @@ begin
     for i := 0 to Construction.LayerCount - 1 do
       Self.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
         Construction.Layers[i]);
+  end;
+end;
+
+procedure TForm2.UpdateMaterialConstants;
+var
+  Material: TMaterial;
+begin
+  CWallNumberBox1.Value := 0.00;
+  CWallNumberBox2.Value := 0.00;
+  CWallNumberBox3.Value := 0.00;
+
+  if MaterialListBox.ItemIndex > -1 then
+  begin
+
+    GlassMatCount := 0;
+    GasMatCount := 0;
+    OpaqueMatCount := 0;
+    // Ta reda på hur många det finns av varje materialtyp
+    for i := 0 to DerobModel.MaterialCount - 1 do
+    begin
+      if DerobModel.Materials[i].StringValue['MaterialType'] = 'Glass' then
+      begin
+        GlassMatCount := GlassMatCount + 1;
+      end
+      else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Gas' then
+      begin
+        GasMatCount := GasMatCount + 1;
+      end
+      else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Opaque'
+      then
+      begin
+        OpaqueMatCount := OpaqueMatCount + 1;
+      end;
+    end;
+
+    Material := DerobModel.Materials[MaterialListBox.ItemIndex +
+      (GlassMatCount + GasMatCount)];
+    CWallNumberBox1.Value := Material.DoubleValue['Lambda'];
+    CWallNumberBox2.Value := Material.DoubleValue['Density'];
+    CWallNumberBox3.Value := 3600 * Material.DoubleValue['HeatCapacity'];
   end;
 end;
 

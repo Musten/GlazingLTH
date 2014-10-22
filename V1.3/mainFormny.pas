@@ -1010,7 +1010,7 @@ begin
   SetCurrentDir('Derob');
   KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "'+ArgPath+'"';
 
-  ExecProcess(KGKPath, '', True);
+  ExecProcess(KGKPath, '', False);
   DeleteFile('KGK_Show.ini');
 end;
 

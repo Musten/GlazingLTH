@@ -1563,19 +1563,19 @@ begin
         begin
           v1 := LeakRoom;
         end;
-        if (LeakNorth <> 0) and (i = NorthVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = True) and (i = NorthVol-1) then
         begin
           v1 := LeakNorth + NLeakOpening;
         end;
-        if (LeakEast <> 0) and (i = EastVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingEast'] = True) and (i = EastVol-1) then
         begin
           v1 := LeakEast + ELeakOpening;
         end;
-        if (LeakSouth <> 0) and (i = SouthVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = True) and (i = SouthVol-1) then
         begin
           v1 := LeakSouth + SLeakOpening;
         end;
-        if (LeakWest <> 0) and (i = WestVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingWest'] = True) and (i = WestVol-1) then
         begin
           v1 := LeakWest + WLeakOpening;
         end;
