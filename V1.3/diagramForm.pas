@@ -6,12 +6,11 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  FMXTee.Engine, FMXTee.Procs, FMXTee.Chart, derob, FMXTee.Series, Math;
+  FMXTee.Engine, FMXTee.Procs, FMXTee.Chart, derob, FMXTee.Series, Math,ShellApi;
 
 type
   TForm5 = class(TForm)
     Chart1: TChart;
-    GlazeDiagramButton: TButton;
     TempRadioButton: TRadioButton;
     HeatRadioButton: TRadioButton;
     Label1: TLabel;
@@ -20,9 +19,15 @@ type
     Label4: TLabel;
     Series2: TLineSeries;
     Series1: TLineSeries;
+    ResultTxtBtn: TButton;
+    Panel1: TPanel;
+    Panel2: TPanel;
     procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure TempRadioButtonChange(Sender: TObject);
+    procedure HeatRadioButtonChange(Sender: TObject);
+    procedure ResultTxtBtnClick(Sender: TObject);
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
@@ -53,11 +58,12 @@ begin
   TempRadioButton.IsChecked := False;
   Chart1.LeftAxis.Title.Caption := '';
   Chart1.BottomAxis.Title.Caption := '';
+  Resultat.Free;
 end;
 
-procedure TForm5.FormCreate(Sender: TObject);
+procedure TForm5.FormShow(Sender: TObject);
 begin
-  Resultat := TStringList.Create;
+      Resultat := TStringList.Create;
 end;
 
 procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
@@ -706,7 +712,7 @@ begin
 
     end;
   end;
-  Resultat.SaveToFile('Test.txt');
+  Resultat.SaveToFile('../Resultat.txt');
   for i := 0 to 743 do
   begin
     HeatJan := HeatJan + Heat[i];
@@ -816,6 +822,12 @@ begin
   end;
   Label2.Text := FloatToStr(Round(totalHeat / 1000)) + ' kWh/år';
 
+end;
+
+procedure TForm5.HeatRadioButtonChange(Sender: TObject);
+begin
+GlazeHistogram;
+NoGlazeHistogram;
 end;
 
 procedure TForm5.NoGlazeChart;
@@ -1164,9 +1176,24 @@ begin
   Label4.Text := FloatToStr(Round(totalHeat / 1000)) + ' kWh/år';
 end;
 
+procedure TForm5.ResultTxtBtnClick(Sender: TObject);
+var
+ResultatPath:String;
+begin
+SetCurrentDir('../');
+ResultatPath:=GetCurrentDir+'\Resultat.txt';
+ShellExecute(0, 'open', PChar(ResultatPath), nil, '', 1);
+end;
+
 procedure TForm5.SetDerobModel(const Value: TDerobModel);
 begin
   FDerobModel := Value;
+end;
+
+procedure TForm5.TempRadioButtonChange(Sender: TObject);
+begin
+GlazeHistogram;
+NoGlazeHistogram;
 end;
 
 end.
