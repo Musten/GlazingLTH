@@ -48,7 +48,6 @@ type
     LayerThicknessNumberBox: TNumberBox;
     Label2: TLabel;
     UNumberBox: TNumberBox;
-    Button1: TButton;
     procedure ConstrExitButtonClick(Sender: TObject);
     procedure CMenuItem1Click(Sender: TObject);
     procedure CMenuItem2Click(Sender: TObject);
@@ -70,6 +69,7 @@ type
     procedure LayerListBoxItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
     procedure Button1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     FDerobModel: TDerobModel;
@@ -248,8 +248,11 @@ begin
     UpdateConstructionList;
     ConstructionListBox.ItemIndex := ConstructionListBox.Count-1;
     UpdateLayerList;
+    if (ConstructionListBox.Count > 0) then
+    begin
     LayerListBox.ItemIndex := 0;
     UpdateLayerThicknessBox;
+    end;
   end;
 end;
 
@@ -300,9 +303,13 @@ begin
       [ConstructionListBox.ItemIndex] as TConstruction;
 
     // Add material as a layer in the construction instance.
-
+    Thickness:='';
     Thickness := InputBox('Lagertjocklek', 'Tjocklek (mm):', Thickness);
+    if Thickness<>'' then
+    begin
+
     Construction.AddLayer(Material, StrToFloat(Thickness));
+    end;
     // Update layer list box
 
     UpdateLayerList;
@@ -419,6 +426,23 @@ end;
 procedure TForm2.FormCreate(Sender: TObject);
 begin
   CurrentCategory := 'Wall';
+end;
+
+procedure TForm2.FormShow(Sender: TObject);
+begin
+  if ConstructionListBox.Count > 0 then
+    begin
+      ConstructionListBox.ItemIndex := 0;
+      UpdateLayerList;
+      if DerobModel.Constructions[23].LayerCount > 0 then
+        begin
+          Form2.LayerListBox.ItemIndex := 0;
+        end;
+    end;
+  MaterialListBox.ItemIndex := 0;
+  UpdateMaterialConstants;
+  UpdateLayerThicknessBox;
+
 end;
 
 procedure TForm2.LayerListBoxItemClick(const Sender: TCustomListBox;

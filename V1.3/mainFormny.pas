@@ -253,6 +253,7 @@ type
     procedure HouseNumberBox1Change(Sender: TObject);
     procedure HouseNumberBox2Change(Sender: TObject);
     procedure HouseNumberBox3Change(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -1073,6 +1074,11 @@ begin
   OrientationTrackBar.Value := OrientationTrackBar.Value - 1;
 end;
 
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  //Does nothing, Just makes sure that information in number boxes that has been changed are submitted as the new value
+end;
+
 procedure TForm1.ChangeAbsCombo;
 begin
   if AbsComboBox.ItemIndex = 0 then
@@ -1802,16 +1808,6 @@ begin
   UpdateConstructionList;
   UpdateMaterialList;
   Form2.Show;
-  if DerobModel.ConstructionCount > 23 then
-    begin
-      Form2.ConstructionListBox.ItemIndex := 0;
-      if DerobModel.Constructions[23].LayerCount > 0 then
-        begin
-          Form2.LayerListBox.ItemIndex := 0;
-        end;
-    end;
-  Form2.MaterialListBox.ItemIndex := 0;
-  Form2.Button1Click(Self);
 end;
 
 procedure TForm1.LoadClimateFiles;
