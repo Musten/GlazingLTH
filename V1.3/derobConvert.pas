@@ -1316,7 +1316,7 @@ begin
     inclw := 1;
     nrpm := 20; // Default value,minimum
     rsoil := 1.87;
-    hco := 15;
+    hco := 11;
     hci := -1;
     gvr := 20;
     intld := 0;

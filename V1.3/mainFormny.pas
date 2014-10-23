@@ -1802,7 +1802,16 @@ begin
   UpdateConstructionList;
   UpdateMaterialList;
   Form2.Show;
-
+  if DerobModel.ConstructionCount > 23 then
+    begin
+      Form2.ConstructionListBox.ItemIndex := 0;
+      if DerobModel.Constructions[23].LayerCount > 0 then
+        begin
+          Form2.LayerListBox.ItemIndex := 0;
+        end;
+    end;
+  Form2.MaterialListBox.ItemIndex := 0;
+  Form2.Button1Click(Self);
 end;
 
 procedure TForm1.LoadClimateFiles;

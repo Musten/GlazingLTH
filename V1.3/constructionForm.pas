@@ -48,6 +48,7 @@ type
     LayerThicknessNumberBox: TNumberBox;
     Label2: TLabel;
     UNumberBox: TNumberBox;
+    Button1: TButton;
     procedure ConstrExitButtonClick(Sender: TObject);
     procedure CMenuItem1Click(Sender: TObject);
     procedure CMenuItem2Click(Sender: TObject);
@@ -68,6 +69,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure LayerListBoxItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     FDerobModel: TDerobModel;
@@ -83,7 +85,6 @@ type
     procedure UpdateUValue;
     procedure UpdateMaterialConstants;
     procedure UpdateLayerThicknessBox;
-    procedure ConstructionIndex;
 
 //    procedure SetData;
     procedure SetCurrentCategory(const Value: string);
@@ -219,8 +220,8 @@ begin
   // Update list boxes to reflect changes
 
   UpdateConstructionList;
+  ConstructionListBox.ItemIndex := ConstructionListBox.Count-1;
   UpdateLayerList;
-  ConstructionIndex;
 //  SetData;
 
 end;
@@ -245,8 +246,10 @@ begin
     // Update list boxes to reflect changes in the DerobModel
 
     UpdateConstructionList;
+    ConstructionListBox.ItemIndex := ConstructionListBox.Count-1;
     UpdateLayerList;
-    ConstructionIndex;
+    LayerListBox.ItemIndex := 0;
+    UpdateLayerThicknessBox;
   end;
 end;
 
@@ -266,6 +269,7 @@ begin
 
     UpdateLayerList;
     UpdateUValue;
+    UpdateLayerThicknessBox;
   end
   else
   begin
@@ -303,6 +307,7 @@ begin
 
     UpdateLayerList;
     UpdateUValue;
+    UpdateLayerThicknessBox;
   end
   else
   begin
@@ -346,8 +351,16 @@ begin
   // Update the material list box
 
   UpdateMaterialList;
-  MaterialListbox.ItemIndex := DerobModel.MaterialCount - 29;
+  MaterialListbox.ItemIndex := MaterialListBox.Count-1;
   UpdateMaterialConstants;
+end;
+
+procedure TForm2.Button1Click(Sender: TObject);
+begin
+  UpdateMaterialConstants;
+  UpdateLayerList;
+  LayerListBox.ItemIndex := 0;
+  UpdateLayerThicknessBox;
 end;
 
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
@@ -369,33 +382,8 @@ begin
     // Update list boxes to reflect changes in the model
 
     UpdateMaterialList;
-    MaterialListbox.ItemIndex := DerobModel.MaterialCount - 29;
+    MaterialListbox.ItemIndex := MaterialListBox.Count-1;
     UpdateMaterialConstants;
-  end;
-end;
-
-procedure TForm2.ConstructionIndex;
-var
-  j: Integer;
-  f: Boolean;
-  Constructionnames : array of string;
-begin
-  f := False;
-  SetLength(Constructionnames, ConstructionListBox.Count);
-  while f = False do
-    begin
-  for i := 0 to ConstructionListBox.Count-1 do
-    begin
-      Constructionnames[i] := ConstructionListBox.ItemByIndex(i).Text;
-      for j := 0 to DerobModel.ConstructionCount - 1 do
-        begin
-          if DerobModel.Constructions[j].Name = Constructionnames[i] then
-            begin
-              ConstructionListBox.ItemIndex := i;
-              f := True;
-            end;
-        end;
-    end;
   end;
 end;
 
@@ -545,9 +533,11 @@ begin
         for i := 0 to Construction.LayerCount - 1 do
           Self.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
           Construction.Layers[i]);
-    LayerListBox.ItemIndex := Construction.LayerCount - 1;
+    if CurrentCategory <> 'Window' then
+      begin
+        LayerListBox.ItemIndex := Construction.LayerCount - 1;
+      end;
     UpdateUValue;
-    UpdateLayerThicknessBox;
     end;
   end;
 end;
@@ -678,7 +668,14 @@ begin
       ConstructionListBox.ItemIndex := 0;
     end;
   UpdateLayerList;
+  if LayerListBox.Count > 0 then
+    begin
+      LayerListBox.ItemIndex := 0;
+    end;
+  UpdateLayerThicknessBox;
   UpdateMaterialList;
+  MaterialListBox.ItemIndex := 0;
+  UpdateMaterialConstants;
   CWallLabel.Text := 'Väggar';
   LayerListBox.Enabled := True;
   CMenuItem1.IsSelected := True;
@@ -698,7 +695,14 @@ begin
       ConstructionListBox.ItemIndex := 0;
     end;
   UpdateLayerList;
+  if LayerListBox.Count > 0 then
+    begin
+      LayerListBox.ItemIndex := 0;
+    end;
+  UpdateLayerThicknessBox;
   UpdateMaterialList;
+  MaterialListBox.ItemIndex := 0;
+  UpdateMaterialConstants;
   CWallLabel.Text := 'Tak';
   LayerListBox.Enabled := True;
   CMenuItem2.IsSelected := True;
@@ -718,7 +722,14 @@ begin
       ConstructionListBox.ItemIndex := 0;
     end;
   UpdateLayerList;
+  if LayerListBox.Count > 0 then
+    begin
+      LayerListBox.ItemIndex := 0;
+    end;
+  UpdateLayerThicknessBox;
   UpdateMaterialList;
+  MaterialListBox.ItemIndex := 0;
+  UpdateMaterialConstants;
   CWallLabel.Text := 'Golv';
   LayerListBox.Enabled := True;
   CMenuItem3.IsSelected := True;
