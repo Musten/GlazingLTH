@@ -942,7 +942,7 @@ begin
   SetCurrentDir(StartDir);
   SetCurrentDir('Cases');
   OpenDialog.Filename := '';
-  OpenDialog.InitialDir := GetCurrentDir;
+  OpenDialog.InitialDir := TPath.GetSharedDocumentsPath+'\Glazing-LTH\Cases\';
   OpenDialog.Filter := 'Sparfiler (.dat)|*.dat';
   // -------------------------------
   if OpenDialog.Execute then
