@@ -858,7 +858,7 @@ begin
   ConvertDerob.ConvertForInput;
   ConvertDerob.writeInputFile;
 
-  // Khoan, körning av exe filer
+  // Körning av exe filer ..
 
   // Start an execution thread instance
 
@@ -1799,9 +1799,9 @@ begin
   Form2.CMenuItem1.IsSelected := True;
   Form2.CMenuItem1.IsChecked := True;
   UpdateConstructionList;
-  UpdateLayerList;
   UpdateMaterialList;
   Form2.Show;
+
 end;
 
 procedure TForm1.LoadClimateFiles;
