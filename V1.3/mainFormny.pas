@@ -1553,6 +1553,7 @@ begin
   begin
     IntGlazeCheckBox1.IsChecked := True;
     OpeningNrBox.Value:=DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'];
+    OpeningNrBox2.Value:=DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'];
   end;
   if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True then
   begin
