@@ -9,6 +9,7 @@ object Form5: TForm5
   FormFactor.Height = 480
   FormFactor.Devices = [dkDesktop, dkiPhone, dkiPad]
   OnClose = FormClose
+  OnShow = FormShow
   DesignerMobile = False
   DesignerWidth = 0
   DesignerHeight = 0
