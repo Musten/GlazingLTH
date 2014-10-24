@@ -437,11 +437,11 @@ begin
       if DerobModel.Constructions[23].LayerCount > 0 then
         begin
           Form2.LayerListBox.ItemIndex := 0;
+          UpdateLayerThicknessBox;
         end;
     end;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
-  UpdateLayerThicknessBox;
 
 end;
 
@@ -695,8 +695,8 @@ begin
   if LayerListBox.Count > 0 then
     begin
       LayerListBox.ItemIndex := 0;
+      UpdateLayerThicknessBox;
     end;
-  UpdateLayerThicknessBox;
   UpdateMaterialList;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
@@ -722,8 +722,8 @@ begin
   if LayerListBox.Count > 0 then
     begin
       LayerListBox.ItemIndex := 0;
+      UpdateLayerThicknessBox;
     end;
-  UpdateLayerThicknessBox;
   UpdateMaterialList;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
@@ -749,8 +749,8 @@ begin
   if LayerListBox.Count > 0 then
     begin
       LayerListBox.ItemIndex := 0;
+      UpdateLayerThicknessBox;
     end;
-  UpdateLayerThicknessBox;
   UpdateMaterialList;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;

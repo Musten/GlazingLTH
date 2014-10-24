@@ -445,8 +445,7 @@ begin
     DerobModel.HouseProperties.IntValue['ChosenGlaze'] :=
       GlazeControlComboBox.ItemIndex + 2;
     DerobModel.HouseProperties.BoolValue['GlazeTemp'] := True;
-    DerobModel.HouseProperties.IntValue['TMaxGlaze'] :=
-      Round(TempMaxNumberBox.Value);
+    DerobModel.HouseProperties.IntValue['TMaxGlaze'] := Round(TempMaxNumberBox.Value);
   end
   else
   begin
@@ -833,6 +832,7 @@ procedure TForm1.simulateMenuCalculateClick(Sender: TObject);
 begin
   SetCurrentDir(StartDir); // NY
   DerobModel.HouseProperties.BoolValue['KGK'] := False;
+  GeometryClick(Self);
   mainGeometrySave;
   VolumeCount;
   mainPropertiesSave;
@@ -927,6 +927,7 @@ begin
   SaveDialog.Filter := 'Sparfiler (.dat)|*.dat';
   // ------------------------------------
 
+  GeometryClick(Self);
   mainGeometrySave;
   mainPropertiesSave;
   mainEnergySave;
@@ -984,6 +985,7 @@ var
   iniFile: TextFile;
 begin
   SetCurrentDir(StartDir);
+  GeometryClick(Self);
   mainGeometrySave;
   VolumeCount;
   mainPropertiesSave;
@@ -1538,10 +1540,12 @@ begin
     GlazeTempRadioButton.IsChecked := True;
     TempMaxNumberBox.Value := DerobModel.HouseProperties.IntValue['TMaxGlaze'];
     TempMinNumberBox.Value := DerobModel.HouseProperties.IntValue['TMinGlaze'];
+    GlazeControlComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['ChosenGlaze'] - 2;
   end;
   TempMinNumberBox.Value := DerobModel.HouseProperties.IntValue['TMinRoom'];
   IntHeatNumberBox.Value := DerobModel.HouseProperties.IntValue['IntHeat'];
 
+  Form3.SumNumberBox.Value := DerobModel.HouseProperties.IntValue['IntHeat'];
   Form3.PersonSpinBox.Value := DerobModel.HouseProperties.IntValue['Persons'];
   Form3.PersonNumberBox.Value := Form3.PersonSpinBox.Value * 117;
 
