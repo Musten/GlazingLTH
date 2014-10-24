@@ -582,11 +582,6 @@ begin
           TempWinter[i - SkipLine] := Temp2Winter[i - SkipLine];
           TempSummerOpen[i - SkipLine] := Temp2SummerOpen[i - SkipLine];
           TempWinterOpen[i - SkipLine] := Temp2WinterOpen[i - SkipLine];
-
-          // OpTempSummer[i - SkipLine] := OpTemp2Summer[i - SkipLine];
-          // OpTempWinter[i - SkipLine] := OpTemp2Winter[i - SkipLine];
-          // SunSummer[i - SkipLine] := Sun2Summer[i - SkipLine];
-          // SunWinter[i - SkipLine] := Sun2Winter[i - SkipLine];
         end;
         if DerobModel.HouseProperties.IntValue['ChosenGlaze'] = 3 then
         begin
@@ -594,12 +589,6 @@ begin
           TempWinter[i - SkipLine] := Temp3Winter[i - SkipLine];
           TempSummerOpen[i - SkipLine] := Temp3SummerOpen[i - SkipLine];
           TempWinterOpen[i - SkipLine] := Temp3WinterOpen[i - SkipLine];
-
-          // OpTempSummer[i - SkipLine] := OpTemp3Summer[i - SkipLine];
-          // OpTempWinter[i - SkipLine] := OpTemp3Winter[i - SkipLine];
-          // SunSummer[i - SkipLine] := Sun3Summer[i - SkipLine];
-          // SunWinter[i - SkipLine] := Sun3Winter[i - SkipLine];
-
         end;
         if DerobModel.HouseProperties.IntValue['ChosenGlaze'] = 4 then
         begin
@@ -607,12 +596,6 @@ begin
           TempWinter[i - SkipLine] := Temp4Winter[i - SkipLine];
           TempSummerOpen[i - SkipLine] := Temp4SummerOpen[i - SkipLine];
           TempWinterOpen[i - SkipLine] := Temp4WinterOpen[i - SkipLine];
-
-          // OpTempSummer[i - SkipLine] := OpTemp4Summer[i - SkipLine];
-          // OpTempWinter[i - SkipLine] := OpTemp4Winter[i - SkipLine];
-          // SunSummer[i - SkipLine] := Sun4Summer[i - SkipLine];
-          // SunWinter[i - SkipLine] := Sun4Winter[i - SkipLine];
-
         end;
         if DerobModel.HouseProperties.IntValue['ChosenGlaze'] = 5 then
         begin
@@ -620,12 +603,6 @@ begin
           TempWinter[i - SkipLine] := Temp5Winter[i - SkipLine];
           TempSummerOpen[i - SkipLine] := Temp5SummerOpen[i - SkipLine];
           TempWinterOpen[i - SkipLine] := Temp5WinterOpen[i - SkipLine];
-
-          // OpTempSummer[i - SkipLine] := OpTemp5Summer[i - SkipLine];
-          // OpTempWinter[i - SkipLine] := OpTemp5Winter[i - SkipLine];
-          // SunSummer[i - SkipLine] := Sun5Summer[i - SkipLine];
-          // SunWinter[i - SkipLine] := Sun5Winter[i - SkipLine];
-
         end;
       end
       else
@@ -634,11 +611,6 @@ begin
         TempWinter[i - SkipLine] := Temp1Winter[i - SkipLine];
         TempSummerOpen[i - SkipLine] := Temp1SummerOpen[i - SkipLine];
         TempWinterOpen[i - SkipLine] := Temp1WinterOpen[i - SkipLine];
-        // OpTempSummer[i - SkipLine] := OpTemp1Summer[i - SkipLine];
-        // OpTempWinter[i - SkipLine] := OpTemp1Winter[i - SkipLine];
-        // SunSummer[i - SkipLine] := Sun1Summer[i - SkipLine];
-        // SunWinter[i - SkipLine] := Sun1Winter[i - SkipLine];
-
       end;
     end;
 
