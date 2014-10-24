@@ -77,6 +77,23 @@ object Form5: TForm5
       Width = 153.000000000000000000
       OnChange = TempRadioButtonChange
     end
+    object Button1: TButton
+      Height = 22.000000000000000000
+      Position.X = 40.000000000000000000
+      Position.Y = 384.000000000000000000
+      TabOrder = 7
+      Text = 'Button1'
+      Width = 80.000000000000000000
+      OnClick = Button1Click
+    end
+    object Memo1: TMemo
+      Touch.InteractiveGestures = [igPan, igLongTap, igDoubleTap]
+      Height = 50.000000000000000000
+      Position.X = 32.000000000000000000
+      Position.Y = 280.000000000000000000
+      TabOrder = 8
+      Width = 100.000000000000000000
+    end
   end
   object Panel2: TPanel
     Align = alFitLeft

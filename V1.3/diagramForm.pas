@@ -7,7 +7,7 @@ uses
   System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMXTee.Engine, FMXTee.Procs, FMXTee.Chart, derob, FMXTee.Series, Math,
-  ShellApi;
+  ShellApi, FMX.Layouts, FMX.Memo;
 
 type
   TForm5 = class(TForm)
@@ -23,12 +23,15 @@ type
     ResultTxtBtn: TButton;
     Panel1: TPanel;
     Panel2: TPanel;
+    Button1: TButton;
+    Memo1: TMemo;
     procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure TempRadioButtonChange(Sender: TObject);
     procedure HeatRadioButtonChange(Sender: TObject);
     procedure ResultTxtBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
@@ -42,12 +45,57 @@ type
 
 var
   Form5: TForm5;
-  Resultat: TStrings;
+  Resultat, Test: TStrings;
   GlazeTemp: TLineSeries;
 
 implementation
 
 {$R *.fmx}
+                     //TEstar här
+procedure TForm5.Button1Click(Sender: TObject);
+var
+  FileName, hej: String;
+  FileStream: TFilestream;
+  i, TempLine: Integer;
+  StringList: TStringList;
+  val: array of Real;
+begin
+  SetLength(val, DerobModel.HouseProperties.IntValue['nvol'] * 8);
+  Test := TStringList.Create;
+  StringList := TStringList.Create;
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
+  SetCurrentDir('Cases/');
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  SetCurrentDir('Winter');
+  FileName := 'TL.log';
+  FileStream := TFilestream.Create(FileName, fmShareDenyNone);
+
+  Test.LoadFromStream(FileStream);
+
+  // while not EOF(FileStream) do
+  // begin
+  for i := Test.Count - 1 downto 0 do
+  begin
+    if Test.Strings[i] = '   Yearly summary :' then
+    begin
+      TempLine := i;
+      Break;
+    end;
+  end;
+  for i := TempLine + 1 to Test.Count - 1 do
+  begin
+    StringList.Delimiter := ':';
+    StringList.StrictDelimiter := True;
+    StringList.DelimitedText := Test.Strings[i];
+    // Memo1.Text:=StringList[0];
+    if (i>(TempLine)) and (i<(TempLine+4)) then
+    begin
+    ShowMessage(STringList[1]+' '+ StringList[2]);
+    end;
+  end;
+end;
+
+// end;
 
 procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -67,7 +115,7 @@ end;
 
 procedure TForm5.FormShow(Sender: TObject);
 begin
-Chart1.Legend.Visible:=False;
+  Chart1.Legend.Visible := False;
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
     GlazeTemp := TLineSeries.Create(Chart1);
@@ -122,7 +170,7 @@ var
   TempSummerOpen, TempWinterOpen, OpTempSummerOpen, OpTempWinterOpen,
     SunSummerOpen, SunWinterOpen: Array of Real;
 
-  i, j, SkipLine, intervall: integer;
+  i, j, SkipLine, intervall: Integer;
   IgnoreText: Boolean;
 
   Temp, Hour, Time, TimeGlaze, YearlyTemp, YearlyTempGlaze, Heat, TempSummer,
@@ -328,7 +376,7 @@ begin
     AssignFile(WinterOpen, VolPath);
     Reset(WinterOpen);
   end;
-  while not Eof(Summer) do
+  while not EOF(Summer) do
   begin
     // Pass the first 12 lines that describes the variables in the text files
     if IgnoreText = False then
@@ -1238,7 +1286,7 @@ end;
 
 procedure TForm5.HeatRadioButtonChange(Sender: TObject);
 begin
-Chart1.Legend.Visible:=True;
+  Chart1.Legend.Visible := True;
   Chart1.Series[2].Clear;
   GlazeTemp.ShowInLegend := False;
   GlazeHistogram;
@@ -1253,7 +1301,7 @@ var
   buffer: String;
   Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1, Time: array of Real;
   Temp: array of double;
-  i,j, intervall: integer;
+  i, j, intervall: Integer;
   IgnoreText: Boolean;
   meanJan, meanFeb, meanMar, meanApr, meanMay, meanJun, meanJul, meanAug,
     meanSep, meanOct, meanNov, meanDec: Real;
@@ -1262,7 +1310,7 @@ var
 begin
   // Definering av vektorer och variabler
   intervall := (40 - DerobModel.HouseProperties.IntValue['TMinRoom']) * 10;
-  intervall:=intervall+1;
+  intervall := intervall + 1;
   SetLength(Hour, 8760);
   SetLength(OutTemp, 8760);
   SetLength(GlobalRadiation, 8760);
@@ -1287,7 +1335,7 @@ begin
   AssignFile(NoGlaze, VolPath);
   Reset(NoGlaze);
   // While-loop över hela Vol_Load-filen
-  while not Eof(NoGlaze) do
+  while not EOF(NoGlaze) do
   begin
     // Koll ifall while-loopen befinner sig över de 12 första raderna som inte ska läsas in
     if IgnoreText = False then
@@ -1429,8 +1477,8 @@ end;
 
 procedure TForm5.TempRadioButtonChange(Sender: TObject);
 begin
-Chart1.Legend.Visible:=true;
-GlazeTemp.ShowInLegend:=True;
+  Chart1.Legend.Visible := True;
+  GlazeTemp.ShowInLegend := True;
   GlazeHistogram;
   NoGlazeHistogram;
 end;
