@@ -275,7 +275,6 @@ type
     procedure SetSurface(const Value: TSurface);
     procedure UpdatePropertiesPanel;
     procedure UpdateConstructionList;
-    procedure UpdateLayerList;
     procedure UpdateMaterialList;
     procedure UpdateEnergyPanel;
     procedure UpdateAbsorption;
@@ -306,6 +305,7 @@ type
     procedure SetWindowMaxDim;
     procedure UncheckWindows;
     procedure ResetWindowDims;
+    procedure UpdateLayerList;
   public
     pressed: boolean;
     nvol, advec: integer;
@@ -418,8 +418,6 @@ begin
   DerobModel.HouseProperties.IntValue['ToYear'] := StrToInt(ToYearLabel.Text);
   DerobModel.HouseProperties.IntValue['ToMonth'] := StrToInt(ToMonthLabel.Text);
   DerobModel.HouseProperties.IntValue['ToDay'] := StrToInt(ToDayLabel.Text);
-  // OBS tänk på att månader och dagar börjar på 0. ItemIndex 0 = Januari
-  // ItemIndex 30 = 31:a
 
 end;
 
@@ -982,7 +980,6 @@ end;
 procedure TForm1.resultMenuVisualizationClick(Sender: TObject);
 var
   ArgPath, KGKPath: String;
-  iniFile: TextFile;
 begin
   SetCurrentDir(StartDir);
   GeometryClick(Self);
@@ -1244,7 +1241,7 @@ var
   ExitCode: integer;
   dig, wal, gf, lum, sol, tl: string;
   CaseDir, season, datanumber: String;
-  i, Idx: integer;
+  Idx: integer;
 begin
   CaseDir := DerobModel.HouseProperties.StringValue['CaseDir'];
   SetCurrentDir(StartDir);
@@ -1433,7 +1430,6 @@ var
   sl: TStringList;
   Latitude, Longitude, TimeMeridian: string;
   Year: string;
-  i: integer;
 begin
   sl := TStringList.Create;
   try
@@ -1838,12 +1834,10 @@ procedure TForm1.LoadGas;
 var
   SomeTxtFile: TextFile;
   buffer: string;
-  Idx: integer;
   holder: TStringList;
   Material: TMaterial;
 begin
   SetCurrentDir(StartDir);
-  Idx := 0;
   holder := TStringList.Create;
   AssignFile(SomeTxtFile, 'Library\Gas.lib');
   Reset(SomeTxtFile);
@@ -1856,7 +1850,6 @@ begin
     holder.DelimitedText := buffer;
     Material.Name := holder[0];
     Material.StringValue['MaterialType'] := 'Gas';
-    Idx := Idx + 1; // Make sure that all the Materials are added
     Material.DoubleValue['Conductivity'] := StrToFloat(holder[1]);
     // Assign the proper values for the Material
     Material.DoubleValue['dC/dT'] := StrToFloat(holder[2]);
@@ -1875,14 +1868,12 @@ procedure TForm1.LoadGlassConstructions;
 var
   SomeTxtFile: TextFile;
   buffer: string;
-  Idx: integer;
   holder: TStringList;
   Construction: TConstruction;
-  Material: TMaterial;
+//  Material: TMaterial;
   i: integer;
 begin
   SetCurrentDir(StartDir);
-  Idx := 0;
   holder := TStringList.Create;
   AssignFile(SomeTxtFile, 'Library\WindowConstructions.lib');
   Reset(SomeTxtFile);
@@ -2044,12 +2035,10 @@ procedure TForm1.LoadGlasses;
 var
   SomeTxtFile: TextFile;
   buffer: string;
-  Idx: integer;
   holder: TStringList;
   Material: TMaterial;
 begin
   SetCurrentDir(StartDir);
-  Idx := 0;
   holder := TStringList.Create;
   AssignFile(SomeTxtFile, 'Library/Glass.lib');
   Reset(SomeTxtFile);
@@ -2062,7 +2051,6 @@ begin
     holder.DelimitedText := buffer;
     Material.Name := holder[0];
     Material.StringValue['MaterialType'] := 'Glass';
-    Idx := Idx + 1; // Make sure that all the Materials are added
     Material.DoubleValue['FrontEmittance'] := StrToFloat(holder[1]);
     // Assign the proper values for the Material
     Material.DoubleValue['BackEmittance'] := StrToFloat(holder[2]);
@@ -2077,11 +2065,10 @@ procedure TForm1.LoadMaterials;
 var
   SomeTxtFile: TextFile;
   buffer: string;
-  Idx: integer;
   holder: TStringList;
   Material: TMaterial;
 begin
-  Idx := 0;
+//  Idx := 0;
   holder := TStringList.Create;
   SetCurrentDir(StartDir);
   AssignFile(SomeTxtFile, 'Library/WallMaterial.lib');
@@ -2095,7 +2082,6 @@ begin
     holder.DelimitedText := buffer;
     Material.Name := holder[1];
     Material.StringValue['MaterialType'] := 'Opaque';
-    Idx := Idx + 1; // Make sure that all the materials are added
     Material.DoubleValue['Density'] := StrToFloat(holder[4]);
     // Assign the proper values for the material
     Material.DoubleValue['Lambda'] := StrToFloat(holder[2]);

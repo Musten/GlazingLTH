@@ -253,7 +253,6 @@ end;
 procedure TDerobConvert.writeLibFile;
 var
   LibraryFile: TextFile;
-  text: string;
   i: integer;
   j: integer;
 begin

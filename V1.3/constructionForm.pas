@@ -68,7 +68,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure LayerListBoxItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
-    procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
@@ -362,13 +361,6 @@ begin
   UpdateMaterialConstants;
 end;
 
-procedure TForm2.Button1Click(Sender: TObject);
-begin
-  UpdateMaterialConstants;
-  UpdateLayerList;
-  LayerListBox.ItemIndex := 0;
-  UpdateLayerThicknessBox;
-end;
 
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
 var
@@ -588,6 +580,7 @@ end;
 procedure TForm2.UpdateMaterialConstants;
 var
   Material: TMaterial;
+  i : integer;
 begin
   CWallNumberBox1.Value := 0.00;
   CWallNumberBox2.Value := 0.00;
