@@ -48,6 +48,7 @@ type
     LayerThicknessNumberBox: TNumberBox;
     Label2: TLabel;
     UNumberBox: TNumberBox;
+    Button1: TButton;
     procedure ConstrExitButtonClick(Sender: TObject);
     procedure CMenuItem1Click(Sender: TObject);
     procedure CMenuItem2Click(Sender: TObject);
@@ -802,3 +803,4 @@ begin
 end;
 
 end.
+

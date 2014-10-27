@@ -1295,7 +1295,6 @@ begin
       DerobModel.HouseProperties.StringValue['CaseName'] + '\' + season + '\' +
       datanumber + '"';
 
- // FRÅGA JONAS OM ATT GÅ TILL EXECUTE FINISHED
 
 //De tre vanliga beräkningsfallen
     if (Idx = 1) or (Idx = 2) or (Idx = 5) then
