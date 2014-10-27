@@ -1361,8 +1361,11 @@ end;
 procedure TForm5.HeatRadioButtonChange(Sender: TObject);
 begin
   Chart1.Legend.Visible := True;
-  Chart1.Series[2].Clear;
-  GlazeTemp.ShowInLegend := False;
+  if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+  begin
+    Chart1.Series[2].Clear;
+    GlazeTemp.ShowInLegend := False;
+  end;
   GlazeHistogram;
   NoGlazeHistogram;
 end;
@@ -1552,7 +1555,10 @@ end;
 procedure TForm5.TempRadioButtonChange(Sender: TObject);
 begin
   Chart1.Legend.Visible := True;
-  GlazeTemp.ShowInLegend := True;
+  if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+  begin
+    GlazeTemp.ShowInLegend := True;
+  end;
   GlazeHistogram;
   NoGlazeHistogram;
 end;
@@ -1571,7 +1577,6 @@ var
 
   UteT, RumT, RumEnergi, Ball: array of double;
 
-
   avgRumT, avgUteT, avgRumEnergi: double;
 
 begin
@@ -1583,23 +1588,21 @@ begin
   SetLength(RumEnergi, 8760);
   SetLength(Ball, 8760);
 
-
   TLPath := GetCurrentDir + '\Resultat.txt';
   AssignFile(TLResult, TLPath);
   Reset(TLResult);
-      for i := 0 to 9 do
-      begin
-        ReadLn(TLResult, buffer);
-      end;
-    for i := 10 to 8769 do
-    begin
+  for i := 0 to 9 do
+  begin
+    ReadLn(TLResult, buffer);
+  end;
+  for i := 10 to 8769 do
+  begin
 
-      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
+    ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
       Ball[i - 10], RumEnergi[i - 10]);
-    end;
+  end;
 
   CloseFile(TLResult);
-
 
 end;
 
