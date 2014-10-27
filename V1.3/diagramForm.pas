@@ -31,6 +31,7 @@ type
     RadioButton2: TRadioButton;
     RadioButton3: TRadioButton;
     RadioButton4: TRadioButton;
+    Button3: TButton;
     procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure TempRadioButtonChange(Sender: TObject);
@@ -39,11 +40,13 @@ type
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
     procedure GlazeHistogram;
     procedure NoGlazeHistogram;
+    procedure TLSumValues;
     { Private declarations }
   public
     { Public declarations }
@@ -63,7 +66,7 @@ implementation
 procedure TForm5.Button1Click(Sender: TObject);
 var
   FileName: String;
-  VolLoadFileStream,NoGlazeFileStream: TFilestream;
+  VolLoadFileStream, NoGlazeFileStream: TFilestream;
   i, LineCount, TempLine, colCount: Integer;
   TLStrings, RefStrings: TStringList;
   val: array of Real;
@@ -108,10 +111,10 @@ begin
     begin
       col.Header := 'Referens';
     end
-    else if j=1 then
-         begin
-           col.Header:='Rum';
-         end;
+    else if j = 1 then
+    begin
+      col.Header := 'Rum';
+    end;
     begin
       col.Header := 'Vol ' + IntToStr(j + 1);
     end;
@@ -160,6 +163,11 @@ var
 begin
   Grid := TGrid.Create(self);
   Grid.Visible := True;
+end;
+
+procedure TForm5.Button3Click(Sender: TObject);
+begin
+  TLSumValues;
 end;
 
 procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -1547,6 +1555,52 @@ begin
   GlazeTemp.ShowInLegend := True;
   GlazeHistogram;
   NoGlazeHistogram;
+end;
+
+procedure TForm5.TLSumValues;
+
+var
+
+  i: Integer;
+
+  TLPath, buffer: string;
+
+  TLResult: TextFile;
+
+  IgnoreText: Boolean;
+
+  UteT, RumT, RumEnergi, Ball: array of double;
+
+
+  avgRumT, avgUteT, avgRumEnergi: double;
+
+begin
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
+  SetCurrentDir('Cases/');
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  SetLength(UteT, 8760);
+  SetLength(RumT, 8760);
+  SetLength(RumEnergi, 8760);
+  SetLength(Ball, 8760);
+
+
+  TLPath := GetCurrentDir + '\Resultat.txt';
+  AssignFile(TLResult, TLPath);
+  Reset(TLResult);
+      for i := 0 to 9 do
+      begin
+        ReadLn(TLResult, buffer);
+      end;
+    for i := 10 to 8769 do
+    begin
+
+      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
+      Ball[i - 10], RumEnergi[i - 10]);
+    end;
+
+  CloseFile(TLResult);
+
+
 end;
 
 end.
