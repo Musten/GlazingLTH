@@ -1344,8 +1344,6 @@ end;
 { TDerobModel }
 
 constructor TDerobModel.Create;
-var
-  i: integer;
 begin
   inherited;
   FFilename := 'Noname.dat';
@@ -1664,7 +1662,6 @@ end;
 procedure TDerobModel.Open;
 var
   f: TextFile;
-  DerobModel: TDerobModel;
   Wall: TWall;
   Roof: TRoof;
   Floor: TFloor;

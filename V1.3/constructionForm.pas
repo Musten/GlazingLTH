@@ -113,7 +113,6 @@ end;
 procedure TForm2.ConstrSaveButtonClick(Sender: TObject);
 begin
   CUpdateComboBox;
-//  SetData;
   Form2.Close;
 end;
 
@@ -121,7 +120,15 @@ procedure TForm2.CUpdateComboBox;
 var
   Construction: TConstruction;
   i: Integer;
+  ItemIndex : array of integer;
 begin
+
+  SetLength(ItemIndex, 5);
+  ItemIndex[0] := Form1.RoofComboBox.ItemIndex;
+  ItemIndex[1] := Form1.FloorComboBox.ItemIndex;
+  ItemIndex[2] := Form1.WallComboBox.ItemIndex;
+  ItemIndex[3] := Form1.GlazeComboBox.ItemIndex;
+  ItemIndex[4] := Form1.WindowComboBox.ItemIndex;
 
   Form1.RoofComboBox.Clear;
   Form1.FloorComboBox.Clear;
@@ -158,6 +165,12 @@ begin
         DerobModel.Constructions[i]);
     end;
   end;
+
+  Form1.RoofComboBox.ItemIndex := ItemIndex[0];
+  Form1.FloorComboBox.ItemIndex := ItemIndex[1];
+  Form1.WallComboBox.ItemIndex := ItemIndex[2];
+  Form1.GlazeComboBox.ItemIndex := ItemIndex[3];
+  Form1.WindowComboBox.ItemIndex := ItemIndex[4];
 
 end;
 
