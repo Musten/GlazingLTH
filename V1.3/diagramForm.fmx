@@ -2,7 +2,7 @@ object Form5: TForm5
   Left = 0
   Top = 0
   Caption = 'Resultat'
-  ClientHeight = 480
+  ClientHeight = 900
   ClientWidth = 809
   WindowState = wsMaximized
   FormFactor.Width = 320
@@ -18,9 +18,9 @@ object Form5: TForm5
   DesignerOSVersion = ''
   object Panel1: TPanel
     Align = alFitRight
-    Height = 480.000000000000000000
-    Position.X = 616.000000000000000000
-    Width = 193.000000000000000000
+    Height = 900.000000000000000000
+    Position.X = 447.125061035156300000
+    Width = 361.874938964843800000
     TabOrder = 0
     object HeatRadioButton: TRadioButton
       GroupName = 'DiagramRadioButton'
@@ -60,8 +60,8 @@ object Form5: TForm5
     end
     object ResultTxtBtn: TButton
       Height = 24.000000000000000000
-      Position.X = 40.000000000000000000
-      Position.Y = 432.000000000000000000
+      Position.X = 32.000000000000000000
+      Position.Y = 840.000000000000000000
       TabOrder = 5
       Text = 'Spara resultat'
       Width = 137.000000000000000000
@@ -79,25 +79,72 @@ object Form5: TForm5
     end
     object Button1: TButton
       Height = 22.000000000000000000
-      Position.X = 40.000000000000000000
-      Position.Y = 384.000000000000000000
+      Position.X = 32.000000000000000000
+      Position.Y = 792.000000000000000000
       TabOrder = 7
       Text = 'Button1'
       Width = 80.000000000000000000
       OnClick = Button1Click
     end
-    object Memo1: TMemo
-      Touch.InteractiveGestures = [igPan, igLongTap, igDoubleTap]
-      Height = 50.000000000000000000
+    object Label5: TLabel
+      Height = 17.000000000000000000
       Position.X = 32.000000000000000000
-      Position.Y = 280.000000000000000000
-      TabOrder = 8
-      Width = 100.000000000000000000
+      Position.Y = 256.000000000000000000
+      Text = 'Label5'
+      Width = 120.000000000000000000
+    end
+    object ResultGrid: TStringGrid
+      Height = 161.000000000000000000
+      Position.X = 8.000000000000000000
+      Position.Y = 528.000000000000000000
+      TabOrder = 9
+      Width = 305.000000000000000000
+      RowCount = 6
+      RowHeight = 22.000000000000000000
+      object StringColumn1: TStringColumn
+        Height = 132.000000000000000000
+        TabOrder = 0
+        Width = 100.000000000000000000
+      end
+    end
+    object RadioButton1: TRadioButton
+      Height = 19.000000000000000000
+      Position.X = 16.000000000000000000
+      Position.Y = 472.000000000000000000
+      TabOrder = 10
+      Text = 'RadioButton1'
+      Width = 120.000000000000000000
+    end
+    object RadioButton2: TRadioButton
+      Height = 19.000000000000000000
+      Position.X = 16.000000000000000000
+      Position.Y = 496.000000000000000000
+      TabOrder = 11
+      Text = 'RadioButton2'
+      Width = 120.000000000000000000
+    end
+    object RadioButton3: TRadioButton
+      Height = 19.000000000000000000
+      Position.X = 128.000000000000000000
+      Position.Y = 472.000000000000000000
+      TabOrder = 12
+      Text = 'RadioButton3'
+      Width = 120.000000000000000000
+    end
+    object RadioButton4: TRadioButton
+      Height = 19.000000000000000000
+      Position.X = 128.000000000000000000
+      Position.Y = 496.000000000000000000
+      TabOrder = 13
+      Text = 'RadioButton4'
+      Width = 120.000000000000000000
     end
   end
   object Panel2: TPanel
     Align = alFitLeft
+    DesignVisible = False
     Height = 480.000000000000000000
+    Visible = False
     Width = 616.000000000000000000
     TabOrder = 1
     object Chart1: TChart

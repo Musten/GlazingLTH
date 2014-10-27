@@ -7,7 +7,7 @@ uses
   System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMXTee.Engine, FMXTee.Procs, FMXTee.Chart, derob, FMXTee.Series, Math,
-  ShellApi, FMX.Layouts, FMX.Memo;
+  ShellApi, FMX.Layouts, FMX.Memo, System.Rtti, FMX.Grid;
 
 type
   TForm5 = class(TForm)
@@ -24,7 +24,13 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Button1: TButton;
-    Memo1: TMemo;
+    Label5: TLabel;
+    ResultGrid: TStringGrid;
+    StringColumn1: TStringColumn;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    RadioButton3: TRadioButton;
+    RadioButton4: TRadioButton;
     procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure TempRadioButtonChange(Sender: TObject);
@@ -32,6 +38,7 @@ type
     procedure ResultTxtBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
@@ -45,57 +52,115 @@ type
 
 var
   Form5: TForm5;
-  Resultat, Test: TStrings;
+  Resultat, ResVolLoad, ResNoGlaze: TStrings;
   GlazeTemp: TLineSeries;
 
 implementation
 
 {$R *.fmx}
-                     //TEstar här
+
+// TEstar här
 procedure TForm5.Button1Click(Sender: TObject);
 var
-  FileName, hej: String;
-  FileStream: TFilestream;
-  i, TempLine: Integer;
-  StringList: TStringList;
+  FileName: String;
+  VolLoadFileStream,NoGlazeFileStream: TFilestream;
+  i, LineCount, TempLine, colCount: Integer;
+  TLStrings, RefStrings: TStringList;
   val: array of Real;
+  j, VolLine: Integer;
+  col: TStringColumn;
 begin
+  colCount := ResultGrid.ColumnCount;
+  for i := colCount - 1 downto 1 do
+  begin
+    ResultGrid.Columns[i].Free;
+  end;
+
   SetLength(val, DerobModel.HouseProperties.IntValue['nvol'] * 8);
-  Test := TStringList.Create;
-  StringList := TStringList.Create;
+  ResVolLoad := TStringList.Create;
+  TLStrings := TStringList.Create;
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Cases/');
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
   SetCurrentDir('Winter');
   FileName := 'TL.log';
-  FileStream := TFilestream.Create(FileName, fmShareDenyNone);
+  VolLoadFileStream := TFilestream.Create(FileName, fmShareDenyNone);
+  ResVolLoad.LoadFromStream(VolLoadFileStream);
 
-  Test.LoadFromStream(FileStream);
-
-  // while not EOF(FileStream) do
-  // begin
-  for i := Test.Count - 1 downto 0 do
+  ResultGrid.Cells[0, 0] := 'MedelTemp';
+  ResultGrid.Cells[0, 1] := 'MinTemp';
+  ResultGrid.Cells[0, 2] := 'MaxTemp';
+  ResultGrid.Cells[0, 3] := 'MedelEnergi';
+  ResultGrid.Cells[0, 4] := 'MinEnergi';
+  ResultGrid.Cells[0, 5] := 'MaxEnergi';
+  for i := ResVolLoad.Count - 1 downto 0 do
   begin
-    if Test.Strings[i] = '   Yearly summary :' then
+    if ResVolLoad.Strings[i] = '   Yearly summary :' then
     begin
       TempLine := i;
       Break;
     end;
   end;
-  for i := TempLine + 1 to Test.Count - 1 do
+  for j := 0 to DerobModel.HouseProperties.IntValue['nvol'] - 1 do
   begin
-    StringList.Delimiter := ':';
-    StringList.StrictDelimiter := True;
-    StringList.DelimitedText := Test.Strings[i];
-    // Memo1.Text:=StringList[0];
-    if (i>(TempLine)) and (i<(TempLine+4)) then
+    col := TStringColumn.Create(self);
+    if j = 0 then
     begin
-    ShowMessage(STringList[1]+' '+ StringList[2]);
+      col.Header := 'Referens';
+    end
+    else if j=1 then
+         begin
+           col.Header:='Rum';
+         end;
+    begin
+      col.Header := 'Vol ' + IntToStr(j + 1);
+    end;
+    ResultGrid.AddObject(col);
+    VolLine := TempLine + (j * 9);
+    LineCount := 0;
+    for i := VolLine + 1 to VolLine + 6 do
+    begin
+      LineCount := LineCount + 1;
+      TLStrings.Delimiter := ':';
+      TLStrings.StrictDelimiter := True;
+      TLStrings.DelimitedText := ResVolLoad.Strings[i];
+      case LineCount of
+        1:
+          begin
+            ResultGrid.Cells[j + 1, 0] := TLStrings[2];
+          end;
+        2:
+          begin
+            ResultGrid.Cells[j + 1, 1] := TLStrings[1];
+          end;
+        3:
+          begin
+            ResultGrid.Cells[j + 1, 2] := TLStrings[1];
+          end;
+        4:
+          begin
+            ResultGrid.Cells[j + 1, 3] := TLStrings[1];
+          end;
+        5:
+          begin
+            ResultGrid.Cells[j + 1, 4] := TLStrings[1];
+          end;
+        6:
+          begin
+            ResultGrid.Cells[j + 1, 5] := TLStrings[1];
+          end;
+      end;
     end;
   end;
 end;
 
-// end;
+procedure TForm5.Button2Click(Sender: TObject);
+var
+  Grid: TGrid;
+begin
+  Grid := TGrid.Create(self);
+  Grid.Visible := True;
+end;
 
 procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -1225,7 +1290,8 @@ begin
 
   if HeatRadioButton.IsChecked = True then
   begin
-    Chart1.LeftAxis.Title.Caption := 'Energibehov'; // 'Energibehov/dag (kWh)';
+    Chart1.LeftAxis.Title.Caption := 'Energibehov';
+    // 'Energibehov/dag (kWh)';
     Chart1.BottomAxis.Title.Caption := 'Månad';
     HeatJan := (HeatJan / 744) / 1000;
     HeatFeb := (HeatFeb / 672) / 1000;
