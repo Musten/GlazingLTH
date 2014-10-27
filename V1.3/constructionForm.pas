@@ -70,6 +70,7 @@ type
     procedure LayerListBoxItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
     procedure FormShow(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     FDerobModel: TDerobModel;
@@ -86,7 +87,7 @@ type
     procedure UpdateMaterialConstants;
     procedure UpdateLayerThicknessBox;
 
-//    procedure SetData;
+    // procedure SetData;
     procedure SetCurrentCategory(const Value: string);
     procedure menuSelected;
   public
@@ -121,7 +122,7 @@ procedure TForm2.CUpdateComboBox;
 var
   Construction: TConstruction;
   i: Integer;
-  ItemIndex : array of integer;
+  ItemIndex: array of Integer;
 begin
 
   SetLength(ItemIndex, 5);
@@ -233,9 +234,9 @@ begin
   // Update list boxes to reflect changes
 
   UpdateConstructionList;
-  ConstructionListBox.ItemIndex := ConstructionListBox.Count-1;
+  ConstructionListBox.ItemIndex := ConstructionListBox.Count - 1;
   UpdateLayerList;
-//  SetData;
+  // SetData;
 
 end;
 
@@ -259,12 +260,12 @@ begin
     // Update list boxes to reflect changes in the DerobModel
 
     UpdateConstructionList;
-    ConstructionListBox.ItemIndex := ConstructionListBox.Count-1;
+    ConstructionListBox.ItemIndex := ConstructionListBox.Count - 1;
     UpdateLayerList;
     if (ConstructionListBox.Count > 0) then
     begin
-    LayerListBox.ItemIndex := 0;
-    UpdateLayerThicknessBox;
+      LayerListBox.ItemIndex := 0;
+      UpdateLayerThicknessBox;
     end;
   end;
 end;
@@ -316,12 +317,12 @@ begin
       [ConstructionListBox.ItemIndex] as TConstruction;
 
     // Add material as a layer in the construction instance.
-    Thickness:='';
+    Thickness := '';
     Thickness := InputBox('Lagertjocklek', 'Tjocklek (mm):', Thickness);
-    if Thickness<>'' then
+    if Thickness <> '' then
     begin
 
-    Construction.AddLayer(Material, StrToFloat(Thickness));
+      Construction.AddLayer(Material, StrToFloat(Thickness));
     end;
     // Update layer list box
 
@@ -331,7 +332,7 @@ begin
   end
   else
   begin
-  ShowMessage('Välj en konstruktion och det material ni vill lägga till');
+    ShowMessage('Välj en konstruktion och det material ni vill lägga till');
   end;
 end;
 
@@ -371,10 +372,17 @@ begin
   // Update the material list box
 
   UpdateMaterialList;
-  MaterialListbox.ItemIndex := MaterialListBox.Count-1;
+  MaterialListBox.ItemIndex := MaterialListBox.Count - 1;
   UpdateMaterialConstants;
 end;
 
+procedure TForm2.Button1Click(Sender: TObject);
+begin
+  SetCurrentDir('../');
+  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
+  DerobModel.Filename := 'test.txt';
+  DerobModel.Save;
+end;
 
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
 var
@@ -395,7 +403,7 @@ begin
     // Update list boxes to reflect changes in the model
 
     UpdateMaterialList;
-    MaterialListbox.ItemIndex := MaterialListBox.Count-1;
+    MaterialListBox.ItemIndex := MaterialListBox.Count - 1;
     UpdateMaterialConstants;
   end;
 end;
@@ -405,7 +413,7 @@ procedure TForm2.ConstructionListBoxItemClick(const Sender: TCustomListBox;
 begin
 
   UpdateLayerList;
-//  SetData;
+  // SetData;
 end;
 
 procedure TForm2.MaterialListBoxItemClick(const Sender: TCustomListBox;
@@ -437,15 +445,15 @@ end;
 procedure TForm2.FormShow(Sender: TObject);
 begin
   if ConstructionListBox.Count > 0 then
+  begin
+    ConstructionListBox.ItemIndex := 0;
+    UpdateLayerList;
+    if DerobModel.Constructions[23].LayerCount > 0 then
     begin
-      ConstructionListBox.ItemIndex := 0;
-      UpdateLayerList;
-      if DerobModel.Constructions[23].LayerCount > 0 then
-        begin
-          Form2.LayerListBox.ItemIndex := 0;
-          UpdateLayerThicknessBox;
-        end;
+      Form2.LayerListBox.ItemIndex := 0;
+      UpdateLayerThicknessBox;
     end;
+  end;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
 
@@ -462,52 +470,52 @@ begin
   FCurrentCategory := Value;
 end;
 
-//procedure TForm2.SetData;
-//var
-//  Construction: TConstruction;
-//  Material: TMaterial;
+// procedure TForm2.SetData;
+// var
+// Construction: TConstruction;
+// Material: TMaterial;
 //
-//begin
+// begin
 //
-//  // Is there a construction selected?
+// // Is there a construction selected?
 //
-//  if ConstructionListBox.ItemIndex <> -1 then
-//  begin
+// if ConstructionListBox.ItemIndex <> -1 then
+// begin
 //
-//    // Is there a layer selected?
+// // Is there a layer selected?
 //
-//    if LayerListBox.ItemIndex <> -1 then
-//    begin
+// if LayerListBox.ItemIndex <> -1 then
+// begin
 //
-//      // Extract selected construction and material
+// // Extract selected construction and material
 //
-//      Construction := ConstructionListBox.Items.Objects
-//        [ConstructionListBox.ItemIndex] as TConstruction;
-//      Material := Construction.Layers[LayerListBox.ItemIndex];
+// Construction := ConstructionListBox.Items.Objects
+// [ConstructionListBox.ItemIndex] as TConstruction;
+// Material := Construction.Layers[LayerListBox.ItemIndex];
 //
-//      // Convert value in edit box to a double and assign to
-//      // layer thickness.
+// // Convert value in edit box to a double and assign to
+// // layer thickness.
 //
-//      Construction.LayerThickness[LayerListBox.ItemIndex] :=
-//        (Self.CWallNumberBox3.Value);
-//    end;
-//  end;
+// Construction.LayerThickness[LayerListBox.ItemIndex] :=
+// (Self.CWallNumberBox3.Value);
+// end;
+// end;
 //
-//  // Is there a material selected?
+// // Is there a material selected?
 //
-//  if MaterialListBox.ItemIndex <> -1 then
-//  begin
+// if MaterialListBox.ItemIndex <> -1 then
+// begin
 //
-//    // Extract material instance
+// // Extract material instance
 //
-//    Material := DerobModel.Materials[MaterialListBox.ItemIndex];
+// Material := DerobModel.Materials[MaterialListBox.ItemIndex];
 //
-//    // Assign material properties from edit boxes.
+// // Assign material properties from edit boxes.
 //
-//    Material.DoubleValue['Density'] := Self.CWallNumberBox2.Value;
-//    Material.DoubleValue['Lambda'] := Self.CWallNumberBox1.Value;
-//  end;
-//end;
+// Material.DoubleValue['Density'] := Self.CWallNumberBox2.Value;
+// Material.DoubleValue['Lambda'] := Self.CWallNumberBox1.Value;
+// end;
+// end;
 
 procedure TForm2.SetDerobModel(const Value: TDerobModel);
 begin
@@ -560,41 +568,42 @@ begin
     LayerThicknessNumberBox.Value := -999;
     if Construction.LayerCount > 0 then
     begin
-        for i := 0 to Construction.LayerCount - 1 do
-          Self.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
+      for i := 0 to Construction.LayerCount - 1 do
+        Self.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
           Construction.Layers[i]);
-    if CurrentCategory <> 'Window' then
+      if CurrentCategory <> 'Window' then
       begin
         LayerListBox.ItemIndex := Construction.LayerCount - 1;
       end;
-    UpdateUValue;
+      UpdateUValue;
     end;
   end;
 end;
 
 procedure TForm2.UpdateLayerThicknessBox;
 var
-  i : Integer;
+  i: Integer;
 begin
   LayerThicknessNumberBox.Value := -999;
-  if (CurrentCategory = 'Wall') or (CurrentCategory = 'Roof') or (CurrentCategory = 'Floor') then
+  if (CurrentCategory = 'Wall') or (CurrentCategory = 'Roof') or
+    (CurrentCategory = 'Floor') then
   begin
-  for i := 0 to DerobModel.ConstructionCount - 1 do
-  begin
-    if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions[i].Name
-    then
+    for i := 0 to DerobModel.ConstructionCount - 1 do
     begin
-      LayerThicknessNumberBox.Value := DerobModel.Constructions[i]
-        .LayerThickness[LayerListBox.ItemIndex];
+      if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions[i].Name
+      then
+      begin
+        LayerThicknessNumberBox.Value := DerobModel.Constructions[i]
+          .LayerThickness[LayerListBox.ItemIndex];
+      end;
     end;
-  end;
   end;
 end;
 
 procedure TForm2.UpdateMaterialConstants;
 var
   Material: TMaterial;
-  i : integer;
+  i: Integer;
 begin
   CWallNumberBox1.Value := 0.00;
   CWallNumberBox2.Value := 0.00;
@@ -665,25 +674,26 @@ var
 
 begin
   UNumberBox.Value := -999;
-  if (CurrentCategory = 'Wall') or (CurrentCategory = 'Roof') or (CurrentCategory = 'Floor') then
+  if (CurrentCategory = 'Wall') or (CurrentCategory = 'Roof') or
+    (CurrentCategory = 'Floor') then
   begin
-  for i := 0 to DerobModel.ConstructionCount - 1 do
-  begin
-    if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions[i].Name
-    then
+    for i := 0 to DerobModel.ConstructionCount - 1 do
     begin
-      if DerobModel.Constructions[i].LayerCount > 0 then
+      if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions[i].Name
+      then
       begin
-        SetLength(RValue, DerobModel.Constructions[i].LayerCount);
-        for j := 0 to DerobModel.Constructions[i].LayerCount - 1 do
+        if DerobModel.Constructions[i].LayerCount > 0 then
         begin
-          RValue[j] := DerobModel.Constructions[i].LayerThickness[j] / 1000 /
-            DerobModel.Constructions[i].Layers[j].DoubleValue['Lambda'];
+          SetLength(RValue, DerobModel.Constructions[i].LayerCount);
+          for j := 0 to DerobModel.Constructions[i].LayerCount - 1 do
+          begin
+            RValue[j] := DerobModel.Constructions[i].LayerThickness[j] / 1000 /
+              DerobModel.Constructions[i].Layers[j].DoubleValue['Lambda'];
+          end;
+          UNumberBox.Value := 1 / (0.04 + 0.13 + Sum(RValue));
         end;
-        UNumberBox.Value := 1 / (0.04 + 0.13 + Sum(RValue));
       end;
     end;
-  end;
   end;
 end;
 
@@ -695,15 +705,15 @@ begin
   Form2.Caption := 'Konstruktioner - Väggar';
   UpdateConstructionList;
   if ConstructionListBox.Count > 0 then
-    begin
-      ConstructionListBox.ItemIndex := 0;
-    end;
+  begin
+    ConstructionListBox.ItemIndex := 0;
+  end;
   UpdateLayerList;
   if LayerListBox.Count > 0 then
-    begin
-      LayerListBox.ItemIndex := 0;
-      UpdateLayerThicknessBox;
-    end;
+  begin
+    LayerListBox.ItemIndex := 0;
+    UpdateLayerThicknessBox;
+  end;
   UpdateMaterialList;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
@@ -722,15 +732,15 @@ begin
   Form2.Caption := 'Konstruktioner - Tak';
   UpdateConstructionList;
   if ConstructionListBox.Count > 0 then
-    begin
-      ConstructionListBox.ItemIndex := 0;
-    end;
+  begin
+    ConstructionListBox.ItemIndex := 0;
+  end;
   UpdateLayerList;
   if LayerListBox.Count > 0 then
-    begin
-      LayerListBox.ItemIndex := 0;
-      UpdateLayerThicknessBox;
-    end;
+  begin
+    LayerListBox.ItemIndex := 0;
+    UpdateLayerThicknessBox;
+  end;
   UpdateMaterialList;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
@@ -749,15 +759,15 @@ begin
   Form2.Caption := 'Konstruktioner - Golv';
   UpdateConstructionList;
   if ConstructionListBox.Count > 0 then
-    begin
-      ConstructionListBox.ItemIndex := 0;
-    end;
+  begin
+    ConstructionListBox.ItemIndex := 0;
+  end;
   UpdateLayerList;
   if LayerListBox.Count > 0 then
-    begin
-      LayerListBox.ItemIndex := 0;
-      UpdateLayerThicknessBox;
-    end;
+  begin
+    LayerListBox.ItemIndex := 0;
+    UpdateLayerThicknessBox;
+  end;
   UpdateMaterialList;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
@@ -803,4 +813,3 @@ begin
 end;
 
 end.
-

@@ -1606,7 +1606,7 @@ begin
 
   AssignFile(f, FFilename);
   Rewrite(f);
-
+ 
   i := 0;
 
   Writeln(f, FMaterials.Count);
@@ -1625,7 +1625,8 @@ begin
     Construction.Idx := i;
     Construction.SaveToFile(f);
   end;
-
+  if HouseProperties.BoolValue['ConstructionLib']=False then
+  begin
   Writeln(f, FWalls.Count);
   for Wall in FWalls do
     Wall.SaveToFile(f);
@@ -1655,6 +1656,7 @@ begin
   FVentilationProperties.SaveToFile(f);
 
   FGlazingProperties.SaveToFile(f); // Ändrat
+  end;
 
   CloseFile(f);
 end;
