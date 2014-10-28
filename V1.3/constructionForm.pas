@@ -7,8 +7,7 @@ uses
   System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Edit, FMX.Layouts, FMX.ListBox, System.Actions, FMX.ActnList, FMX.Menus,
-  derob,
-  System.Rtti, FMX.Grid, Math, FMX.ExtCtrls;
+  derob, System.Rtti, FMX.Grid, Math, FMX.ExtCtrls;
 
 type
   TForm2 = class(TForm)
@@ -72,6 +71,7 @@ type
       const Item: TListBoxItem);
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure PopupBox1Change(Sender: TObject);
   private
     { Private declarations }
     FDerobModel: TDerobModel;
@@ -379,35 +379,50 @@ end;
 
 procedure TForm2.Button1Click(Sender: TObject);
 var
-  val: Integer;
+  val, FileReWrite: Integer;
   FileName: string;
 begin
   val := 0;
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Constructions');
   DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
-   DerobModel.Filename := InputBox('Spara konstruktionsbibliotek',
-   'Biblioteksnamn: ', '');
-//  if not InputQuery('Spara konstruktionsbibliotek', 'Biblioteksnamn: ', FileName)
-//  then;
-//  DerobModel.Filename:=FileName;
-  // Sparar konstruktionsbiblioteket med namnet användaren har fyllt i
-  if DerobModel.FileName <> '' then
+  // DerobModel.Filename := InputBox('Spara konstruktionsbibliotek',
+  // 'Biblioteksnamn: ', '');
+  if InputQuery('Spara konstruktionsbibliotek', 'Biblioteksnamn: ', FileName)
+  then
   begin
-    DerobModel.FileName := DerobModel.FileName + '.con';
-    DerobModel.Save;
-  end
-  // Om användaren inte fyller i något
-  else
-  begin
-    DerobModel.FileName := DateToStr(Now) + '.con';
-    repeat
+    DerobModel.FileName := FileName;
+    // Sparar konstruktionsbiblioteket med namnet användaren har fyllt i
+    if DerobModel.FileName <> '' then
+    begin
+      DerobModel.FileName := DerobModel.FileName + '.con';
       if FilEexists(DerobModel.FileName) then
-        inc(val);
-      DerobModel.FileName := DateToStr(Now) + '(' + IntToStr(val) + ').con';
+      begin
+        FileReWrite :=
+          MessageDlg('Konstruktionsbibliotek existerar redan, skriv över?',
+          TMsgDlgType.mtWarning, mbYesNo, 0);
+        if FileReWrite = mrYes then
+        begin
+          DerobModel.Save;
+        end;
+      end
+      else
+      begin
+        DerobModel.Save;
+      end;
+    end
+    // Om användaren inte fyller i något
+    else
+    begin
+      DerobModel.FileName := DateToStr(Now) + '.con';
+      repeat
+        if FilEexists(DerobModel.FileName) then
+          inc(val);
+        DerobModel.FileName := DateToStr(Now) + '(' + IntToStr(val) + ').con';
 
-    until FilEexists(DerobModel.FileName) = False;
-    DerobModel.Save;
+      until FilEexists(DerobModel.FileName) = False;
+      DerobModel.Save;
+    end;
   end;
 end;
 
@@ -440,6 +455,7 @@ procedure TForm2.ConstructionListBoxItemClick(const Sender: TCustomListBox;
 begin
 
   UpdateLayerList;
+  UpdateLayerThicknessBox;
   // SetData;
 end;
 
@@ -462,6 +478,26 @@ begin
   CMenuItem5.IsSelected := False;
   CMenuItem5.IsChecked := False;
 
+end;
+
+procedure TForm2.PopupBox1Change(Sender: TObject);
+begin
+  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
+  DerobModel.FileName := PopupBox1.Text;
+  DerobModel.Open;
+  UpdateConstructionList;
+    if ConstructionListBox.Count > 0 then
+  begin
+    ConstructionListBox.ItemIndex := 0;
+    UpdateLayerList;
+    if DerobModel.Constructions[23].LayerCount > 0 then
+    begin
+      Form2.LayerListBox.ItemIndex := 0;
+      UpdateLayerThicknessBox;
+    end;
+  end;
+  MaterialListBox.ItemIndex := 0;
+  UpdateMaterialConstants;
 end;
 
 procedure TForm2.FormCreate(Sender: TObject);
@@ -492,12 +528,10 @@ begin
   begin
     repeat
     begin
-      // Lägger till filnamnen i Comboboxen
+      // Lägger till filnamnen i Popupboxen
       PopupBox1.Items.Add(searchResult.Name);
     end;
     until FindNext(searchResult) <> 0;
-    // Must free up resources used by these successful finds
-    // FindClose(searchResult); FUNKAR INTE?     FRÅGA JONAS
   end;
 end;
 

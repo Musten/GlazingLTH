@@ -213,7 +213,7 @@ object Form2: TForm2
       Value = -999.000000000000000000
       ValueType = vtFloat
       TextAlign = taCenter
-      Position.X = 464.000000000000000000
+      Position.X = 368.000000000000000000
       Position.Y = 64.000000000000000000
       Width = 73.000000000000000000
       Height = 22.000000000000000000
@@ -229,7 +229,7 @@ object Form2: TForm2
       Value = -999.000000000000000000
       ValueType = vtFloat
       TextAlign = taCenter
-      Position.X = 464.000000000000000000
+      Position.X = 368.000000000000000000
       Position.Y = 104.000000000000000000
       Width = 73.000000000000000000
       Height = 22.000000000000000000
@@ -245,7 +245,7 @@ object Form2: TForm2
       Value = -999.000000000000000000
       ValueType = vtFloat
       TextAlign = taCenter
-      Position.X = 464.000000000000000000
+      Position.X = 368.000000000000000000
       Position.Y = 144.000000000000000000
       Width = 73.000000000000000000
       Height = 22.000000000000000000
@@ -254,14 +254,14 @@ object Form2: TForm2
     end
     object CLabel1: TLabel
       Height = 17.000000000000000000
-      Position.X = 400.000000000000000000
+      Position.X = 304.000000000000000000
       Position.Y = 64.000000000000000000
       Text = 'Lambda:'
       Width = 65.000000000000000000
     end
     object CLabel2: TLabel
       Height = 17.000000000000000000
-      Position.X = 400.000000000000000000
+      Position.X = 304.000000000000000000
       Position.Y = 104.000000000000000000
       Text = 'Densitet:'
       Width = 65.000000000000000000
@@ -269,7 +269,7 @@ object Form2: TForm2
     object CLabel3: TLabel
       StyledSettings = [ssFamily, ssStyle, ssFontColor]
       Height = 17.000000000000000000
-      Position.X = 400.000000000000000000
+      Position.X = 304.000000000000000000
       Position.Y = 144.000000000000000000
       Text = 'C-v'#228'rde:'
       Width = 57.000000000000000000
@@ -292,21 +292,21 @@ object Form2: TForm2
     end
     object CLabel5: TLabel
       Height = 17.000000000000000000
-      Position.X = 544.000000000000000000
+      Position.X = 448.000000000000000000
       Position.Y = 64.000000000000000000
       Text = 'W/m'#8729'K'
       Width = 49.000000000000000000
     end
     object CLabel6: TLabel
       Height = 17.000000000000000000
-      Position.X = 544.000000000000000000
+      Position.X = 448.000000000000000000
       Position.Y = 104.000000000000000000
       Text = 'kg/m3'
       Width = 49.000000000000000000
     end
     object CLabel7: TLabel
       Height = 17.000000000000000000
-      Position.X = 544.000000000000000000
+      Position.X = 448.000000000000000000
       Position.Y = 144.000000000000000000
       Text = 'J/kg'#8729'K'
       Width = 49.000000000000000000
@@ -329,10 +329,11 @@ object Form2: TForm2
     end
     object PopupBox1: TPopupBox
       Height = 22.000000000000000000
-      Position.X = 512.000000000000000000
+      Position.X = 520.000000000000000000
       Position.Y = 200.000000000000000000
       TabOrder = 18
       Width = 80.000000000000000000
+      OnChange = PopupBox1Change
     end
   end
   object ConstrSaveButton: TButton

@@ -214,7 +214,6 @@ type
     Label56: TLabel;
     Label57: TLabel;
     Label58: TLabel;
-    Button3: TButton;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -843,6 +842,7 @@ begin
   SetCurrentDir('Cases/' + DerobModel.HouseProperties.StringValue['CaseName']);
   // Skapa en temporär sparfil om det blir något fel vid sparning
   DerobModel.Filename := 'Sparfil.bak';
+  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
   DerobModel.Save;
   // Ta bort den gamla filen om det inte är något fel
   DeleteFile('Sparfil.dat');
@@ -932,6 +932,7 @@ begin
   mainClimateSave;
   IntheatVent;
   DerobModel.Filename := 'Sparfil.dat';
+  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
   DerobModel.Save;
 
 end;
@@ -948,6 +949,7 @@ begin
   begin
     GeometryClear;
     DerobModel.Filename := OpenDialog.Filename;
+    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := false;
     DerobModel.Open;
     pressed := True;
     SetCurrentDir('../');
