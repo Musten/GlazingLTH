@@ -8,7 +8,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Edit, FMX.Layouts, FMX.ListBox, System.Actions, FMX.ActnList, FMX.Menus,
   derob,
-  System.Rtti, FMX.Grid, Math;
+  System.Rtti, FMX.Grid, Math, FMX.ExtCtrls;
 
 type
   TForm2 = class(TForm)
@@ -49,6 +49,7 @@ type
     Label2: TLabel;
     UNumberBox: TNumberBox;
     Button1: TButton;
+    PopupBox1: TPopupBox;
     procedure ConstrExitButtonClick(Sender: TObject);
     procedure CMenuItem1Click(Sender: TObject);
     procedure CMenuItem2Click(Sender: TObject);
@@ -377,11 +378,37 @@ begin
 end;
 
 procedure TForm2.Button1Click(Sender: TObject);
+var
+  val: Integer;
+  FileName: string;
 begin
-  SetCurrentDir('../');
+  val := 0;
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
+  SetCurrentDir('Constructions');
   DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
-  DerobModel.Filename := 'test.txt';
-  DerobModel.Save;
+   DerobModel.Filename := InputBox('Spara konstruktionsbibliotek',
+   'Biblioteksnamn: ', '');
+//  if not InputQuery('Spara konstruktionsbibliotek', 'Biblioteksnamn: ', FileName)
+//  then;
+//  DerobModel.Filename:=FileName;
+  // Sparar konstruktionsbiblioteket med namnet användaren har fyllt i
+  if DerobModel.FileName <> '' then
+  begin
+    DerobModel.FileName := DerobModel.FileName + '.con';
+    DerobModel.Save;
+  end
+  // Om användaren inte fyller i något
+  else
+  begin
+    DerobModel.FileName := DateToStr(Now) + '.con';
+    repeat
+      if FilEexists(DerobModel.FileName) then
+        inc(val);
+      DerobModel.FileName := DateToStr(Now) + '(' + IntToStr(val) + ').con';
+
+    until FilEexists(DerobModel.FileName) = False;
+    DerobModel.Save;
+  end;
 end;
 
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
@@ -443,6 +470,8 @@ begin
 end;
 
 procedure TForm2.FormShow(Sender: TObject);
+var
+  searchResult: TSearchRec;
 begin
   if ConstructionListBox.Count > 0 then
   begin
@@ -456,7 +485,20 @@ begin
   end;
   MaterialListBox.ItemIndex := 0;
   UpdateMaterialConstants;
-
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
+  SetCurrentDir('Constructions');
+  PopupBox1.Items.Clear;
+  if FindFirst('*.*', faReadOnly, searchResult) = 0 then
+  begin
+    repeat
+    begin
+      // Lägger till filnamnen i Comboboxen
+      PopupBox1.Items.Add(searchResult.Name);
+    end;
+    until FindNext(searchResult) <> 0;
+    // Must free up resources used by these successful finds
+    // FindClose(searchResult); FUNKAR INTE?     FRÅGA JONAS
+  end;
 end;
 
 procedure TForm2.LayerListBoxItemClick(const Sender: TCustomListBox;

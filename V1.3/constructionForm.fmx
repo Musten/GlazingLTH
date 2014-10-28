@@ -320,12 +320,19 @@ object Form2: TForm2
     end
     object Button1: TButton
       Height = 22.000000000000000000
-      Position.X = 648.000000000000000000
-      Position.Y = 88.000000000000000000
+      Position.X = 608.000000000000000000
+      Position.Y = 200.000000000000000000
       TabOrder = 17
       Text = 'Button1'
       Width = 80.000000000000000000
       OnClick = Button1Click
+    end
+    object PopupBox1: TPopupBox
+      Height = 22.000000000000000000
+      Position.X = 512.000000000000000000
+      Position.Y = 200.000000000000000000
+      TabOrder = 18
+      Width = 80.000000000000000000
     end
   end
   object ConstrSaveButton: TButton

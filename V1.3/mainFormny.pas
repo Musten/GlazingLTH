@@ -214,6 +214,7 @@ type
     Label56: TLabel;
     Label57: TLabel;
     Label58: TLabel;
+    Button3: TButton;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -253,7 +254,6 @@ type
     procedure HouseNumberBox1Change(Sender: TObject);
     procedure HouseNumberBox2Change(Sender: TObject);
     procedure HouseNumberBox3Change(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -939,8 +939,7 @@ end;
 procedure TForm1.fileMenuLoadClick(Sender: TObject);
 begin
   // Ändrad av Musten 17/7 - Öppnar "Cases" mappen och kan endast välja .dat filer
-  SetCurrentDir(StartDir);
-  SetCurrentDir('Cases');
+  SetCurrentDir(TPath.GetSharedDocumentsPath+'\Glazing-LTH\Cases\');
   OpenDialog.Filename := '';
   OpenDialog.InitialDir := TPath.GetSharedDocumentsPath+'\Glazing-LTH\Cases\';
   OpenDialog.Filter := 'Sparfiler (.dat)|*.dat';
@@ -1071,11 +1070,6 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 begin
   OrientationTrackBar.Value := OrientationTrackBar.Value - 1;
-end;
-
-procedure TForm1.Button3Click(Sender: TObject);
-begin
-  //Does nothing, Just makes sure that information in number boxes that has been changed are submitted as the new value
 end;
 
 procedure TForm1.ChangeAbsCombo;
@@ -1806,6 +1800,7 @@ begin
   Form2.CMenuItem1.IsChecked := True;
   UpdateConstructionList;
   UpdateMaterialList;
+  SetCurrentDir(StartDir);
   Form2.Show;
 end;
 
