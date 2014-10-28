@@ -95,55 +95,25 @@ object Form5: TForm5
     end
     object ResultGrid: TStringGrid
       Height = 161.000000000000000000
+      HitTest = False
       Position.X = 8.000000000000000000
       Position.Y = 528.000000000000000000
       TabOrder = 9
-      Width = 305.000000000000000000
+      Width = 320.000000000000000000
+      CanFocus = False
       RowCount = 6
       RowHeight = 22.000000000000000000
       object StringColumn1: TStringColumn
         Height = 132.000000000000000000
         TabOrder = 0
-        Width = 100.000000000000000000
+        Width = 75.000000000000000000
       end
-    end
-    object RadioButton1: TRadioButton
-      Height = 19.000000000000000000
-      Position.X = 16.000000000000000000
-      Position.Y = 472.000000000000000000
-      TabOrder = 10
-      Text = 'RadioButton1'
-      Width = 120.000000000000000000
-    end
-    object RadioButton2: TRadioButton
-      Height = 19.000000000000000000
-      Position.X = 16.000000000000000000
-      Position.Y = 496.000000000000000000
-      TabOrder = 11
-      Text = 'RadioButton2'
-      Width = 120.000000000000000000
-    end
-    object RadioButton3: TRadioButton
-      Height = 19.000000000000000000
-      Position.X = 128.000000000000000000
-      Position.Y = 472.000000000000000000
-      TabOrder = 12
-      Text = 'RadioButton3'
-      Width = 120.000000000000000000
-    end
-    object RadioButton4: TRadioButton
-      Height = 19.000000000000000000
-      Position.X = 128.000000000000000000
-      Position.Y = 496.000000000000000000
-      TabOrder = 13
-      Text = 'RadioButton4'
-      Width = 120.000000000000000000
     end
     object Button3: TButton
       Height = 22.000000000000000000
       Position.X = 88.000000000000000000
       Position.Y = 376.000000000000000000
-      TabOrder = 14
+      TabOrder = 10
       Text = 'Button3'
       Width = 80.000000000000000000
       OnClick = Button3Click

@@ -27,10 +27,6 @@ type
     Label5: TLabel;
     ResultGrid: TStringGrid;
     StringColumn1: TStringColumn;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
-    RadioButton4: TRadioButton;
     Button3: TButton;
     procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -790,7 +786,7 @@ begin
   else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
   begin
     Resultat.Add
-      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_5 Opt_5 Sun_5')
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_4 Opt_4 Sun_4 Tmp_5 Opt_5 Sun_5')
   end
   else
   begin
@@ -1564,45 +1560,147 @@ begin
 end;
 
 procedure TForm5.TLSumValues;
+// Procedur som skall ge användaren värden som medelT, max- och minT, Energianvändning
 
 var
 
-  i: Integer;
-
+  i, colCount: Integer;
   TLPath, buffer: string;
-
   TLResult: TextFile;
-
-  IgnoreText: Boolean;
-
-  UteT, RumT, RumEnergi, Ball: array of double;
-
-  avgRumT, avgUteT, avgRumEnergi: double;
+  UteT, RumT, RumEnergi, Ball, Vol5T, Vol2T, Vol3T, Vol4T: array of double;
+  col: TStringColumn;
 
 begin
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Cases/');
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  // In i rätt mapp där Resultat.txt finns
   SetLength(UteT, 8760);
   SetLength(RumT, 8760);
-  SetLength(RumEnergi, 8760);
+  SetLength(RumEnergi, 8760); // Definiera vektorernas storlekar, 8760 timvärden
   SetLength(Ball, 8760);
+  // Vektor som tillfälligt håller värden som ej ska visas i denna procedur
+  SetLength(Vol2T, 8760);
+  SetLength(Vol3T, 8760);
+  SetLength(Vol4T, 8760);
+  SetLength(Vol5T, 8760);
+  // sadf;
+  colCount := ResultGrid.ColumnCount;
+  for i := colCount - 1 downto 1 do // Rensa i tabellerna
+  begin
+    ResultGrid.Columns[i].Free;
+  end;
+
+  for i := 0 to 3 do // Skapa rubriker i tabellen
+  begin
+    col := TStringColumn.Create(self);
+    col.Width := 60;
+    if i = 0 then
+    begin
+      col.Header := 'MedelT';
+    end
+    else if i = 1 then
+    begin
+      col.Header := 'Tot.Energi';
+    end
+    else if i = 2 then
+    begin
+      col.Header := 'Min.T';
+    end
+    else if i = 3 then
+    begin
+      col.Header := 'Max.T';
+    end;
+    ResultGrid.AddObject(col);
+  end;
+
+  ResultGrid.Cells[0, 0] := 'ReferensRum';
+  ResultGrid.Cells[0, 1] := 'Rumsvolym';
+  // Tillsätter rad med aktuella volymer, resten här under
 
   TLPath := GetCurrentDir + '\Resultat.txt';
   AssignFile(TLResult, TLPath);
   Reset(TLResult);
-  for i := 0 to 9 do
+  for i := 0 to 9 do // Hoppa över de första 10 raderna (text)
   begin
     ReadLn(TLResult, buffer);
   end;
   for i := 10 to 8769 do
+  // Beroende på hur många volymer, läs in temperaturer och energianvändning för rum
   begin
-
-    ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
-      Ball[i - 10], RumEnergi[i - 10]);
+    if DerobModel.HouseProperties.IntValue['nvol'] = 1 then
+    begin
+      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
+        Ball[i - 10], RumEnergi[i - 10]);
+    end
+    else if DerobModel.HouseProperties.IntValue['nvol'] = 2 then
+    begin
+      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
+        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10]);
+    end
+    else if DerobModel.HouseProperties.IntValue['nvol'] = 3 then
+    begin
+      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
+        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
+        Ball[i - 10], Vol3T[i - 10]);
+    end
+    else if DerobModel.HouseProperties.IntValue['nvol'] = 4 then
+    begin
+      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
+        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
+        Ball[i - 10], Vol3T[i - 10], Ball[i - 10], Vol4T[i - 10]);
+    end
+    else if DerobModel.HouseProperties.IntValue['nvol'] = 5 then
+    begin
+      if i = 4000 then
+      begin
+        showmessage('hej');
+      end;
+      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
+        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
+        Ball[i - 10], Vol3T[i - 10], Ball[i - 10], Vol4T[i - 10], Ball[i - 10],
+        Vol5T[i - 10]);
+    end;
   end;
-
   CloseFile(TLResult);
+
+  ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10);
+  ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10);
+  ResultGrid.Cells[3, 1] := FloatToStr(MinValue(RumT));
+  ResultGrid.Cells[4, 1] := FloatToStr(MaxValue(RumT));
+
+  if DerobModel.HouseProperties.IntValue['nvol'] > 1 then
+  begin
+    ResultGrid.Cells[0, 2] := 'Volym 2';
+    ResultGrid.Cells[1, 2] := FloatToStr(Round(Mean(Vol2T) * 10) / 10);
+    ResultGrid.Cells[2, 2] := '------';
+    ResultGrid.Cells[3, 2] := FloatToStr(MinValue(Vol2T));
+    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T));
+    if DerobModel.HouseProperties.IntValue['nvol'] > 2 then
+    begin
+      ResultGrid.Cells[0, 3] := 'Volym 3';
+      ResultGrid.Cells[1, 3] := FloatToStr(Round(Mean(Vol3T) * 10) / 10);
+      ResultGrid.Cells[2, 3] := '------';
+      ResultGrid.Cells[3, 3] := FloatToStr(MinValue(Vol3T));
+      ResultGrid.Cells[4, 3] := FloatToStr(MaxValue(Vol3T));
+    end;
+    if DerobModel.HouseProperties.IntValue['nvol'] > 3 then
+    begin
+      ResultGrid.Cells[0, 4] := 'Volym 4';
+      ResultGrid.Cells[1, 4] := FloatToStr(Round(Mean(Vol4T) * 10) / 10);
+      ResultGrid.Cells[2, 4] := '------';
+      ResultGrid.Cells[3, 4] := FloatToStr(MinValue(Vol4T));
+      ResultGrid.Cells[4, 4] := FloatToStr(MaxValue(Vol4T));
+    end;
+    if DerobModel.HouseProperties.IntValue['nvol'] = 5 then
+    begin
+      ResultGrid.Cells[0, 5] := 'Volym 5';
+      ResultGrid.Cells[1, 5] := FloatToStr(Round(Mean(Vol5T) * 10) / 10);
+      ResultGrid.Cells[2, 5] := '------';
+      ResultGrid.Cells[3, 5] := FloatToStr(MinValue(Vol5T));
+      ResultGrid.Cells[4, 5] := FloatToStr(MaxValue(Vol5T));
+    end;
+  end;
 
 end;
 

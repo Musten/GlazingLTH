@@ -2271,6 +2271,7 @@ begin
   else
   begin
     WindowComboBox.Enabled := False;
+    WindowComboBox.ItemIndex := -1;
   end;
 
   if GlazeCheckBox1.IsChecked then
@@ -2317,12 +2318,16 @@ begin
     GlazeCheckBox3.IsChecked or GlazeCheckBox4.IsChecked then
   begin
     IntGlazeCheckBox1.Enabled := True;
+    GlazeTempRadioButton.Enabled := True;
     GlazeComboBox.Enabled := True;
   end
   else
   begin
     IntGlazeCheckBox1.Enabled := False;
+    IntGlazeCheckBox1.IsChecked := False;
+    GlazeTempRadioButton.Enabled := False;
     GlazeComboBox.Enabled := False;
+    GlazeComboBox.ItemIndex := -1;
   end;
 
   if (GlazeCheckBox1.IsChecked and GlazeCheckBox2.IsChecked) or
@@ -2336,16 +2341,6 @@ begin
   begin
     IntGlazeCheckBox2.Enabled := False;
     IntGlazeCheckBox2.IsChecked := False;
-  end;
-
-  if (GlazeCheckBox1.IsChecked) or (GlazeCheckBox2.IsChecked) or
-    (GlazeCheckBox3.IsChecked) or (GlazeCheckBox4.IsChecked) then
-  begin
-    GlazeTempRadioButton.Enabled := True;
-  end
-  else
-  begin
-    GlazeTempRadioButton.Enabled := False;
   end;
 
   if (DerobModel.HouseProperties.IntValue['ChosenGlaze'] > 1) and
