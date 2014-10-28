@@ -1651,7 +1651,7 @@ begin
   end;
   CloseFile(TLResult);
 
-  ResultGrid.Cells[0, 0] := 'ReferensRum';
+  ResultGrid.Cells[0, 0] := 'ReferensRum';         //Rumsvolym i aktuell byggnad och referensbyggnad finns alltid i tabellen
   ResultGrid.Cells[0, 1] := 'Rumsvolym';
   ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10);
   ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10);
@@ -1664,7 +1664,7 @@ begin
     ResultGrid.Cells[1, 2] := FloatToStr(Round(Mean(Vol2T) * 10) / 10);
     ResultGrid.Cells[2, 2] := '------';
     ResultGrid.Cells[3, 2] := FloatToStr(MinValue(Vol2T));
-    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T));
+    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T));                   //Beroende på hur många volymer vi har fylls tabellen på
     if DerobModel.HouseProperties.IntValue['nvol'] > 2 then
     begin
       ResultGrid.Cells[0, 3] := 'Volym 3';
