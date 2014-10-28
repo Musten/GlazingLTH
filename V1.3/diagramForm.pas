@@ -1584,7 +1584,7 @@ begin
   SetLength(Vol3T, 8760);
   SetLength(Vol4T, 8760);
   SetLength(Vol5T, 8760);
-  // sadf;
+
   colCount := ResultGrid.ColumnCount;
   for i := colCount - 1 downto 1 do // Rensa i tabellerna
   begin
@@ -1595,28 +1595,22 @@ begin
   begin
     col := TStringColumn.Create(self);
     col.Width := 60;
-    if i = 0 then
-    begin
+    case i of
+    0:begin
       col.Header := 'MedelT';
-    end
-    else if i = 1 then
-    begin
+      end;
+    1:begin
       col.Header := 'Tot.Energi';
-    end
-    else if i = 2 then
-    begin
+      end;
+    2:begin
       col.Header := 'Min.T';
-    end
-    else if i = 3 then
-    begin
+      end;
+    3:begin
       col.Header := 'Max.T';
+      end;
     end;
     ResultGrid.AddObject(col);
   end;
-
-  ResultGrid.Cells[0, 0] := 'ReferensRum';
-  ResultGrid.Cells[0, 1] := 'Rumsvolym';
-  // Tillsätter rad med aktuella volymer, resten här under
 
   TLPath := GetCurrentDir + '\Resultat.txt';
   AssignFile(TLResult, TLPath);
@@ -1628,42 +1622,37 @@ begin
   for i := 10 to 8769 do
   // Beroende på hur många volymer, läs in temperaturer och energianvändning för rum
   begin
-    if DerobModel.HouseProperties.IntValue['nvol'] = 1 then
-    begin
+    case DerobModel.HouseProperties.IntValue['nvol'] of
+    1:begin
       ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
         Ball[i - 10], RumEnergi[i - 10]);
-    end
-    else if DerobModel.HouseProperties.IntValue['nvol'] = 2 then
-    begin
+      end;
+    2:begin
       ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
         Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10]);
-    end
-    else if DerobModel.HouseProperties.IntValue['nvol'] = 3 then
-    begin
+      end;
+    3:begin
       ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
         Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
         Ball[i - 10], Vol3T[i - 10]);
-    end
-    else if DerobModel.HouseProperties.IntValue['nvol'] = 4 then
-    begin
+      end;
+    4:begin
       ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
         Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
         Ball[i - 10], Vol3T[i - 10], Ball[i - 10], Vol4T[i - 10]);
-    end
-    else if DerobModel.HouseProperties.IntValue['nvol'] = 5 then
-    begin
-      if i = 4000 then
-      begin
-        showmessage('hej');
       end;
+    5:begin
       ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
         Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
         Ball[i - 10], Vol3T[i - 10], Ball[i - 10], Vol4T[i - 10], Ball[i - 10],
         Vol5T[i - 10]);
+      end;
     end;
   end;
   CloseFile(TLResult);
 
+  ResultGrid.Cells[0, 0] := 'ReferensRum';
+  ResultGrid.Cells[0, 1] := 'Rumsvolym';
   ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10);
   ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10);
   ResultGrid.Cells[3, 1] := FloatToStr(MinValue(RumT));
