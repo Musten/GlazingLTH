@@ -1908,7 +1908,7 @@ begin
   for i := 0 to 3 do // Skapa rubriker i tabellen
   begin
     col := TStringColumn.Create(self);
-    col.Width := 60;
+    col.Width := 47;
     case i of
       0:
         begin
@@ -1917,6 +1917,7 @@ begin
       1:
         begin
           col.Header := 'Tot.Energi';
+          col.Width := 85
         end;
       2:
         begin
@@ -1939,6 +1940,7 @@ begin
   end;
   for i := 10 to 8769 do
   // Beroende på hur många volymer, läs in temperaturer och energianvändning för rum
+  // Ball-vektorn får innehålla variabler vi inte vill visa, ex. Solabsorptans
   begin
     case DerobModel.HouseProperties.IntValue['nvol'] of
       1:
@@ -1956,21 +1958,21 @@ begin
         begin
           ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
             RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Vol3T[i - 10]);
+            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10]);
         end;
       4:
         begin
           ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
             RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
-            Vol4T[i - 10]);
+            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
+            Ball[i - 10], Vol4T[i - 10]);
         end;
       5:
         begin
           ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
             RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
-            Vol4T[i - 10], Ball[i - 10], Vol5T[i - 10]);
+            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
+            Ball[i - 10], Vol4T[i - 10], Ball[i - 10], Ball[i - 10], Vol5T[i - 10]);
         end;
     end;
   end;
@@ -1979,42 +1981,42 @@ begin
   ResultGrid.Cells[0, 0] := 'ReferensRum';
   // Rumsvolym i aktuell byggnad och referensbyggnad finns alltid i tabellen
   ResultGrid.Cells[0, 1] := 'Rumsvolym';
-  ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10);
-  ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10);
-  ResultGrid.Cells[3, 1] := FloatToStr(MinValue(RumT));
-  ResultGrid.Cells[4, 1] := FloatToStr(MaxValue(RumT));
+  ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10)+' °C';
+  ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10)+' kWh/år';
+  ResultGrid.Cells[3, 1] := FloatToStr(MinValue(RumT))+' °C';
+  ResultGrid.Cells[4, 1] := FloatToStr(MaxValue(RumT))+' °C';
 
   if DerobModel.HouseProperties.IntValue['nvol'] > 1 then
   begin
     ResultGrid.Cells[0, 2] := 'Volym 2';
-    ResultGrid.Cells[1, 2] := FloatToStr(Round(Mean(Vol2T) * 10) / 10);
+    ResultGrid.Cells[1, 2] := FloatToStr(Round(Mean(Vol2T) * 10) / 10)+' °C';
     ResultGrid.Cells[2, 2] := '------';
-    ResultGrid.Cells[3, 2] := FloatToStr(MinValue(Vol2T));
-    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T));
+    ResultGrid.Cells[3, 2] := FloatToStr(MinValue(Vol2T))+' °C';
+    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T))+' °C';
     // Beroende på hur många volymer vi har fylls tabellen på
     if DerobModel.HouseProperties.IntValue['nvol'] > 2 then
     begin
       ResultGrid.Cells[0, 3] := 'Volym 3';
-      ResultGrid.Cells[1, 3] := FloatToStr(Round(Mean(Vol3T) * 10) / 10);
+      ResultGrid.Cells[1, 3] := FloatToStr(Round(Mean(Vol3T) * 10) / 10)+' °C';
       ResultGrid.Cells[2, 3] := '------';
-      ResultGrid.Cells[3, 3] := FloatToStr(MinValue(Vol3T));
-      ResultGrid.Cells[4, 3] := FloatToStr(MaxValue(Vol3T));
+      ResultGrid.Cells[3, 3] := FloatToStr(MinValue(Vol3T))+' °C';
+      ResultGrid.Cells[4, 3] := FloatToStr(MaxValue(Vol3T))+' °C';
     end;
     if DerobModel.HouseProperties.IntValue['nvol'] > 3 then
     begin
       ResultGrid.Cells[0, 4] := 'Volym 4';
-      ResultGrid.Cells[1, 4] := FloatToStr(Round(Mean(Vol4T) * 10) / 10);
+      ResultGrid.Cells[1, 4] := FloatToStr(Round(Mean(Vol4T) * 10) / 10)+' °C';
       ResultGrid.Cells[2, 4] := '------';
-      ResultGrid.Cells[3, 4] := FloatToStr(MinValue(Vol4T));
-      ResultGrid.Cells[4, 4] := FloatToStr(MaxValue(Vol4T));
+      ResultGrid.Cells[3, 4] := FloatToStr(MinValue(Vol4T))+' °C';
+      ResultGrid.Cells[4, 4] := FloatToStr(MaxValue(Vol4T))+' °C';
     end;
     if DerobModel.HouseProperties.IntValue['nvol'] = 5 then
     begin
       ResultGrid.Cells[0, 5] := 'Volym 5';
-      ResultGrid.Cells[1, 5] := FloatToStr(Round(Mean(Vol5T) * 10) / 10);
+      ResultGrid.Cells[1, 5] := FloatToStr(Round(Mean(Vol5T) * 10) / 10)+' °C';
       ResultGrid.Cells[2, 5] := '------';
-      ResultGrid.Cells[3, 5] := FloatToStr(MinValue(Vol5T));
-      ResultGrid.Cells[4, 5] := FloatToStr(MaxValue(Vol5T));
+      ResultGrid.Cells[3, 5] := FloatToStr(MinValue(Vol5T))+' °C';
+      ResultGrid.Cells[4, 5] := FloatToStr(MaxValue(Vol5T))+' °C';
     end;
   end;
 
