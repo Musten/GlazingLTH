@@ -36,8 +36,8 @@ object Form5: TForm5
       Height = 24.000000000000000000
       Position.X = 40.000000000000000000
       Position.Y = 200.000000000000000000
-      Text = 'Energi, inglasning'
-      Width = 121.000000000000000000
+      Text = 'Energianv'#228'ndning, utan inglasning'
+      Width = 185.000000000000000000
     end
     object Label2: TLabel
       Height = 25.000000000000000000
@@ -49,8 +49,8 @@ object Form5: TForm5
       Height = 24.000000000000000000
       Position.X = 40.000000000000000000
       Position.Y = 128.000000000000000000
-      Text = 'Energi, utan inglasning'
-      Width = 129.000000000000000000
+      Text = 'Energianv'#228'ndning, med inglasning'
+      Width = 169.000000000000000000
     end
     object Label4: TLabel
       Height = 24.000000000000000000
@@ -86,19 +86,12 @@ object Form5: TForm5
       Width = 80.000000000000000000
       OnClick = Button1Click
     end
-    object Label5: TLabel
-      Height = 17.000000000000000000
-      Position.X = 32.000000000000000000
-      Position.Y = 256.000000000000000000
-      Text = 'Label5'
-      Width = 120.000000000000000000
-    end
     object ResultGrid: TStringGrid
       Height = 161.000000000000000000
       HitTest = False
       Position.X = 8.000000000000000000
       Position.Y = 528.000000000000000000
-      TabOrder = 9
+      TabOrder = 8
       Width = 320.000000000000000000
       CanFocus = False
       RowCount = 6
@@ -113,7 +106,7 @@ object Form5: TForm5
       Height = 22.000000000000000000
       Position.X = 88.000000000000000000
       Position.Y = 376.000000000000000000
-      TabOrder = 10
+      TabOrder = 9
       Text = 'Button3'
       Width = 80.000000000000000000
       OnClick = Button3Click
@@ -121,6 +114,7 @@ object Form5: TForm5
   end
   object Panel2: TPanel
     Align = alFitLeft
+    DesignVisible = False
     Height = 630.389648437500000000
     Position.Y = 135.000000000000000000
     Width = 809.000000000000000000
@@ -182,6 +176,7 @@ object Form5: TForm5
       Zoom.Pen.Fill.Color = claWhite
       TabOrder = 0
       Anchors = [akLeft, akTop, akRight, akBottom]
+      DesignVisible = False
       ColorPaletteIndex = 13
       object Series1: TLineSeries
         Marks.Visible = False

@@ -24,7 +24,6 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Button1: TButton;
-    Label5: TLabel;
     ResultGrid: TStringGrid;
     StringColumn1: TStringColumn;
     Button3: TButton;
@@ -205,7 +204,7 @@ procedure TForm5.GlazeHistogram;
 var
   Summer, Winter, SummerOpen, WinterOpen: TextFile;
   DataFile: TStringList;
-  VolPath: String;
+  VolPath, ResultPath: String;
   buffer: String;
   OutTempSummer, GlobalRadiationSummer, Temp1Summer, OpTemp1Summer, Heat1Summer,
     Cool1Summer, Sun1Summer, Temp2Summer, OpTemp2Summer, Heat2Summer,
@@ -795,97 +794,175 @@ begin
 
   for i := 0 to 8759 do
   begin
+    // Kollar om det är temperaturen i rummet som används för reglering
     if DerobModel.HouseProperties.BoolValue['RoomTemp'] = True then
     begin
+      // Kollar om temperaturen för vinterfallet är högre än max tillåten temperatur
       if TempWinter[i] > DerobModel.HouseProperties.IntValue['TMaxRoom'] then
       begin
-        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) and
-          (Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) then
+        // Kollar antalet volymer
+        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) then
         begin
-          YearlyTemp[i] := TempSummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]));
+          // Kollar om någon av inglasningarna överstiger maxtemperaturen i inglasningen
+          if (Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) then
+          begin
+            YearlyTemp[i] := TempSummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempSummer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) and
-          ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
         begin
-          YearlyTemp[i] := TempSummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]) + ' ' + FloatToStr(Temp3SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-            FloatToStr(Sun3SummerOpen[i]));
+          if ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTemp[i] := TempSummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]) + ' ' +
+              FloatToStr(Temp3SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
+              FloatToStr(Sun3SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempSummer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
+              ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
+              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) and
-          ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
         begin
-          YearlyTemp[i] := TempSummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]) + ' ' + FloatToStr(Temp3SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-            FloatToStr(Sun3SummerOpen[i]) + ' ' + FloatToStr(Temp4SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
-            FloatToStr(Sun4SummerOpen[i]));
+          if ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTemp[i] := TempSummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]) + ' ' +
+              FloatToStr(Temp3SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
+              FloatToStr(Sun3SummerOpen[i]) + ' ' +
+              FloatToStr(Temp4SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
+              FloatToStr(Sun4SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempSummer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
+              ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
+              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]) +
+              ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
+              FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) and
-          ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp5Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
         begin
-          YearlyTemp[i] := TempSummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]) + ' ' + FloatToStr(Temp3SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-            FloatToStr(Sun3SummerOpen[i]) + ' ' + FloatToStr(Temp4SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
-            FloatToStr(Sun4SummerOpen[i]) + ' ' + FloatToStr(Temp5SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp5SummerOpen[i]) + '  ' +
-            FloatToStr(Sun5SummerOpen[i]));
+          if ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp5Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTemp[i] := TempSummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]) + ' ' +
+              FloatToStr(Temp3SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
+              FloatToStr(Sun3SummerOpen[i]) + ' ' +
+              FloatToStr(Temp4SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
+              FloatToStr(Sun4SummerOpen[i]) + ' ' +
+              FloatToStr(Temp5SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp5SummerOpen[i]) + '  ' +
+              FloatToStr(Sun5SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempSummer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
+              ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
+              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]) +
+              ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
+              FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]) +
+              ' ' + FloatToStr(Temp5Summer[i]) + '  ' +
+              FloatToStr(OpTemp5Summer[i]) + '  ' + FloatToStr(Sun5Summer[i]));
+          end;
         end
         else
         begin
@@ -899,95 +976,172 @@ begin
         end;
 
       end
+      // Om vintertfallets temperatur inte är högre än max tillåtna
       else
       begin
-        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) and
-          (Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) then
+        // Kollar antalet volymer
+        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) then
         begin
-          YearlyTemp[i] := TempWinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]));
+          // Kollar om någon av inglasningarna överstiger maxtemperaturen i inglasningen
+          if (Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) then
+          begin
+            YearlyTemp[i] := TempWinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempWinter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) and
-          ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
         begin
-          YearlyTemp[i] := TempWinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]) + ' ' + FloatToStr(Temp3WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-            FloatToStr(Sun3WinterOpen[i]));
+          if ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTemp[i] := TempWinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]) + ' ' +
+              FloatToStr(Temp3WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
+              FloatToStr(Sun3WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempWinter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
+              ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
+              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) and
-          ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
         begin
-          YearlyTemp[i] := TempWinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]) + ' ' + FloatToStr(Temp3WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-            FloatToStr(Sun3WinterOpen[i]) + ' ' + FloatToStr(Temp4WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
-            FloatToStr(Sun4WinterOpen[i]));
+          if ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTemp[i] := TempWinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]) + ' ' +
+              FloatToStr(Temp3WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
+              FloatToStr(Sun3WinterOpen[i]) + ' ' +
+              FloatToStr(Temp4WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
+              FloatToStr(Sun4WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempWinter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
+              ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
+              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]) +
+              ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
+              FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) and
-          ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp5Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
         begin
-          YearlyTemp[i] := TempWinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]) + ' ' + FloatToStr(Temp3WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-            FloatToStr(Sun3WinterOpen[i]) + ' ' + FloatToStr(Temp4WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
-            FloatToStr(Sun4WinterOpen[i]) + ' ' + FloatToStr(Temp5WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp5WinterOpen[i]) + '  ' +
-            FloatToStr(Sun5WinterOpen[i]));
+          if ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp5Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTemp[i] := TempWinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]) + ' ' +
+              FloatToStr(Temp3WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
+              FloatToStr(Sun3WinterOpen[i]) + ' ' +
+              FloatToStr(Temp4WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
+              FloatToStr(Sun4WinterOpen[i]) + ' ' +
+              FloatToStr(Temp5WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp5WinterOpen[i]) + '  ' +
+              FloatToStr(Sun5WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTemp[i] := TempWinter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
+              ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
+              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]) +
+              ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
+              FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]) +
+              ' ' + FloatToStr(Temp5Winter[i]) + '  ' +
+              FloatToStr(OpTemp5Winter[i]) + '  ' + FloatToStr(Sun5Winter[i]));
+          end;
         end
         else
         begin
@@ -996,108 +1150,187 @@ begin
           Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i]) +
             '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
             FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
-            ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i])
-            + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
-            FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+            ' ' + FloatToStr(Heat1Winter[i]) + '  ' +
+            FloatToStr(Sun1Winter[i]));
         end;
-
       end;
     end
+    // Kollar om det regleras med avseende på inglasningstemperatur
     else if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
     begin
+      // Kollar om temperaturen för vinterfallet överstiger temperaturen i inglasningen
       if TempWinter[i] > DerobModel.HouseProperties.IntValue['TMaxGlaze'] then
       begin
-        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) and
-          (Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) then
+        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) then
         begin
-          YearlyTempGlaze[i] := TempSummerOpen[i];
-          YearlyTemp[i] := Temp1SummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]));
+          if (Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) then
+          begin
+            YearlyTempGlaze[i] := TempSummerOpen[i];
+            YearlyTemp[i] := Temp1SummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempSummer[i];
+            YearlyTemp[i] := Temp1Summer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) and
-          ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
         begin
-          YearlyTempGlaze[i] := TempSummerOpen[i];
-          YearlyTemp[i] := Temp1SummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]) + ' ' + FloatToStr(Temp3SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-            FloatToStr(Sun3SummerOpen[i]));
+          if ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTempGlaze[i] := TempSummerOpen[i];
+            YearlyTemp[i] := Temp1SummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]) + ' ' +
+              FloatToStr(Temp3SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
+              FloatToStr(Sun3SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempSummer[i];
+            YearlyTemp[i] := Temp1Summer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
+              ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
+              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]));
+
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) and
-          ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
         begin
-          YearlyTempGlaze[i] := TempSummerOpen[i];
-          YearlyTemp[i] := Temp1SummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]) + ' ' + FloatToStr(Temp3SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-            FloatToStr(Sun3SummerOpen[i]) + ' ' + FloatToStr(Temp4SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
-            FloatToStr(Sun4SummerOpen[i]));
+          if ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTempGlaze[i] := TempSummerOpen[i];
+            YearlyTemp[i] := Temp1SummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]) + ' ' +
+              FloatToStr(Temp3SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
+              FloatToStr(Sun3SummerOpen[i]) + ' ' +
+              FloatToStr(Temp4SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
+              FloatToStr(Sun4SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempSummer[i];
+            YearlyTemp[i] := Temp1Summer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
+              ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
+              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]) +
+              ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
+              FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) and
-          ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp5Summer[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
         begin
-          YearlyTempGlaze[i] := TempSummerOpen[i];
-          YearlyTemp[i] := Temp1SummerOpen[i];
-          Heat[i] := Heat1SummerOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempSummerOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
-            FloatToStr(Temp1SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
-            FloatToStr(Heat1SummerOpen[i]) + '  ' + FloatToStr(Sun1SummerOpen[i]
-            ) + ' ' + FloatToStr(Temp2SummerOpen[i]) + '  ' +
-            FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-            FloatToStr(Sun2SummerOpen[i]) + ' ' + FloatToStr(Temp3SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-            FloatToStr(Sun3SummerOpen[i]) + ' ' + FloatToStr(Temp4SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
-            FloatToStr(Sun4SummerOpen[i]) + ' ' + FloatToStr(Temp5SummerOpen[i])
-            + '  ' + FloatToStr(OpTemp5SummerOpen[i]) + '  ' +
-            FloatToStr(Sun5SummerOpen[i]));
+          if ((Temp2Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp5Summer[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTempGlaze[i] := TempSummerOpen[i];
+            YearlyTemp[i] := Temp1SummerOpen[i];
+            Heat[i] := Heat1SummerOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempSummerOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationSummerOpen[i]) + '  ' +
+              FloatToStr(Temp1SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp1SummerOpen[i]) + ' ' +
+              FloatToStr(Heat1SummerOpen[i]) + '  ' +
+              FloatToStr(Sun1SummerOpen[i]) + ' ' +
+              FloatToStr(Temp2SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
+              FloatToStr(Sun2SummerOpen[i]) + ' ' +
+              FloatToStr(Temp3SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
+              FloatToStr(Sun3SummerOpen[i]) + ' ' +
+              FloatToStr(Temp4SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
+              FloatToStr(Sun4SummerOpen[i]) + ' ' +
+              FloatToStr(Temp5SummerOpen[i]) + '  ' +
+              FloatToStr(OpTemp5SummerOpen[i]) + '  ' +
+              FloatToStr(Sun5SummerOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempSummer[i];
+            YearlyTemp[i] := Temp1Summer[i];
+            Heat[i] := Heat1Summer[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempSummer[i])
+              + '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
+              FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
+              ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
+              ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
+              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
+              ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
+              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]) +
+              ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
+              FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]) +
+              ' ' + FloatToStr(Temp5Summer[i]) + '  ' +
+              FloatToStr(OpTemp5Summer[i]) + '  ' + FloatToStr(Sun5Summer[i]));
+          end;
         end
         else
         begin
@@ -1109,101 +1342,180 @@ begin
             ' ' + FloatToStr(Heat1Summer[i]) + '  ' +
             FloatToStr(Sun1Summer[i]));
         end;
-
       end
+      // Om vinter temperaturen inte överstiger det angivna värdet
       else
       begin
-        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) and
-          (Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) then
+        if (DerobModel.HouseProperties.IntValue['nvol'] = 2) then
         begin
-          YearlyTempGlaze[i] := TempWinterOpen[i];
-          YearlyTemp[i] := Temp1WinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]));
+          if (Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) then
+          begin
+            YearlyTempGlaze[i] := TempWinterOpen[i];
+            YearlyTemp[i] := Temp1WinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempWinter[i];
+            YearlyTemp[i] := Temp1Winter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) and
-          ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
         begin
-          YearlyTempGlaze[i] := TempWinterOpen[i];
-          YearlyTemp[i] := Temp1WinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]) + ' ' + FloatToStr(Temp3WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-            FloatToStr(Sun3WinterOpen[i]));
+          if ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTempGlaze[i] := TempWinterOpen[i];
+            YearlyTemp[i] := Temp1WinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]) + ' ' +
+              FloatToStr(Temp3WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
+              FloatToStr(Sun3WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempWinter[i];
+            YearlyTemp[i] := Temp1Winter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
+              ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
+              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]));
+
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) and
-          ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
         begin
-          YearlyTempGlaze[i] := TempWinterOpen[i];
-          YearlyTemp[i] := Temp1WinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]) + ' ' + FloatToStr(Temp3WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-            FloatToStr(Sun3WinterOpen[i]) + ' ' + FloatToStr(Temp4WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
-            FloatToStr(Sun4WinterOpen[i]));
+          if ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTempGlaze[i] := TempWinterOpen[i];
+            YearlyTemp[i] := Temp1WinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]) + ' ' +
+              FloatToStr(Temp3WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
+              FloatToStr(Sun3WinterOpen[i]) + ' ' +
+              FloatToStr(Temp4WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
+              FloatToStr(Sun4WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempWinter[i];
+            YearlyTemp[i] := Temp1Winter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
+              ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
+              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]) +
+              ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
+              FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]));
+          end;
         end
-        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) and
-          ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp']) or
-          (Temp5Winter[i] >= DerobModel.VentilationProperties.DoubleValue
-          ['OpeningMaxTemp'])) then
+        else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
         begin
-          YearlyTempGlaze[i] := TempWinterOpen[i];
-          YearlyTemp[i] := Temp1WinterOpen[i];
-          Heat[i] := Heat1WinterOpen[i];
-          Resultat.Add(FloatToStr(i + 1) + '  ' +
-            FloatToStr(OutTempWinterOpen[i]) + '  ' +
-            FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
-            FloatToStr(Temp1WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
-            FloatToStr(Heat1WinterOpen[i]) + '  ' + FloatToStr(Sun1WinterOpen[i]
-            ) + ' ' + FloatToStr(Temp2WinterOpen[i]) + '  ' +
-            FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-            FloatToStr(Sun2WinterOpen[i]) + ' ' + FloatToStr(Temp3WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-            FloatToStr(Sun3WinterOpen[i]) + ' ' + FloatToStr(Temp4WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
-            FloatToStr(Sun4WinterOpen[i]) + ' ' + FloatToStr(Temp5WinterOpen[i])
-            + '  ' + FloatToStr(OpTemp5WinterOpen[i]) + '  ' +
-            FloatToStr(Sun5WinterOpen[i]));
+          if ((Temp2Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp3Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp4Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp']) or
+            (Temp5Winter[i] >= DerobModel.VentilationProperties.DoubleValue
+            ['OpeningMaxTemp'])) then
+          begin
+            YearlyTempGlaze[i] := TempWinterOpen[i];
+            YearlyTemp[i] := Temp1WinterOpen[i];
+            Heat[i] := Heat1WinterOpen[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' +
+              FloatToStr(OutTempWinterOpen[i]) + '  ' +
+              FloatToStr(GlobalRadiationWinterOpen[i]) + '  ' +
+              FloatToStr(Temp1WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp1WinterOpen[i]) + ' ' +
+              FloatToStr(Heat1WinterOpen[i]) + '  ' +
+              FloatToStr(Sun1WinterOpen[i]) + ' ' +
+              FloatToStr(Temp2WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
+              FloatToStr(Sun2WinterOpen[i]) + ' ' +
+              FloatToStr(Temp3WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
+              FloatToStr(Sun3WinterOpen[i]) + ' ' +
+              FloatToStr(Temp4WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
+              FloatToStr(Sun4WinterOpen[i]) + ' ' +
+              FloatToStr(Temp5WinterOpen[i]) + '  ' +
+              FloatToStr(OpTemp5WinterOpen[i]) + '  ' +
+              FloatToStr(Sun5WinterOpen[i]));
+          end
+          else
+          begin
+            YearlyTempGlaze[i] := TempWinter[i];
+            YearlyTemp[i] := Temp1Winter[i];
+            Heat[i] := Heat1Winter[i];
+            Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i])
+              + '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
+              FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
+              ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
+              ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
+              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
+              ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
+              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]) +
+              ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
+              FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]) +
+              ' ' + FloatToStr(Temp5Winter[i]) + '  ' +
+              FloatToStr(OpTemp5Winter[i]) + '  ' + FloatToStr(Sun5Winter[i]));
+          end;
         end
         else
         begin
@@ -1212,16 +1524,16 @@ begin
           Resultat.Add(FloatToStr(i + 1) + '  ' + FloatToStr(OutTempWinter[i]) +
             '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
             FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
-            ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i])
-            + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
-            FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+            ' ' + FloatToStr(Heat1Winter[i]) + '  ' +
+            FloatToStr(Sun1Winter[i]));
         end;
 
       end;
     end;
-
   end;
-  Resultat.SaveToFile('../Resultat.txt');
+  ResultPath := DerobModel.HouseProperties.StringValue['CaseDir'] + '\' +
+    DerobModel.HouseProperties.StringValue['CaseName'];
+  Resultat.SaveToFile(ResultPath + '/Resultat.txt');
   Resultat.Free;
   for i := 0 to 743 do
   begin
@@ -1291,6 +1603,7 @@ begin
   end;
   totalHeat := HeatJan + HeatFeb + HeatMar + HeatApr + HeatMay + HeatJun +
     HeatJul + HeatAug + HeatSep + HeatOct + HeatNov + HeatDec;
+//  sum(Heat);
 
   if HeatRadioButton.IsChecked = True then
   begin
@@ -1538,8 +1851,9 @@ procedure TForm5.ResultTxtBtnClick(Sender: TObject);
 var
   ResultatPath: String;
 begin
-  SetCurrentDir('../');
-  ResultatPath := GetCurrentDir + '\Resultat.txt';
+
+  ResultatPath := DerobModel.HouseProperties.StringValue['CaseDir'] + '\' +
+    DerobModel.HouseProperties.StringValue['CaseName'] + '\Resultat.txt';
   ShellExecute(0, 'open', PChar(ResultatPath), nil, '', 1);
 end;
 
@@ -1571,13 +1885,13 @@ var
   col: TStringColumn;
 
 begin
-  SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
-  SetCurrentDir('Cases/');
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
   // In i rätt mapp där Resultat.txt finns
   SetLength(UteT, 8760);
   SetLength(RumT, 8760);
-  SetLength(RumEnergi, 8760); // Definiera vektorernas storlekar, 8760 timvärden
+  SetLength(RumEnergi, 8760);
+  // Definiera vektorernas storlekar, 8760 timvärden
   SetLength(Ball, 8760);
   // Vektor som tillfälligt håller värden som ej ska visas i denna procedur
   SetLength(Vol2T, 8760);
@@ -1596,18 +1910,22 @@ begin
     col := TStringColumn.Create(self);
     col.Width := 60;
     case i of
-    0:begin
-      col.Header := 'MedelT';
-      end;
-    1:begin
-      col.Header := 'Tot.Energi';
-      end;
-    2:begin
-      col.Header := 'Min.T';
-      end;
-    3:begin
-      col.Header := 'Max.T';
-      end;
+      0:
+        begin
+          col.Header := 'MedelT';
+        end;
+      1:
+        begin
+          col.Header := 'Tot.Energi';
+        end;
+      2:
+        begin
+          col.Header := 'Min.T';
+        end;
+      3:
+        begin
+          col.Header := 'Max.T';
+        end;
     end;
     ResultGrid.AddObject(col);
   end;
@@ -1623,35 +1941,43 @@ begin
   // Beroende på hur många volymer, läs in temperaturer och energianvändning för rum
   begin
     case DerobModel.HouseProperties.IntValue['nvol'] of
-    1:begin
-      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
-        Ball[i - 10], RumEnergi[i - 10]);
-      end;
-    2:begin
-      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
-        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10]);
-      end;
-    3:begin
-      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
-        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
-        Ball[i - 10], Vol3T[i - 10]);
-      end;
-    4:begin
-      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
-        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
-        Ball[i - 10], Vol3T[i - 10], Ball[i - 10], Vol4T[i - 10]);
-      end;
-    5:begin
-      ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10], RumT[i - 10],
-        Ball[i - 10], RumEnergi[i - 10], Ball[i - 10], Vol2T[i - 10],
-        Ball[i - 10], Vol3T[i - 10], Ball[i - 10], Vol4T[i - 10], Ball[i - 10],
-        Vol5T[i - 10]);
-      end;
+      1:
+        begin
+          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
+            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10]);
+        end;
+      2:
+        begin
+          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
+            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
+            Vol2T[i - 10]);
+        end;
+      3:
+        begin
+          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
+            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
+            Vol2T[i - 10], Ball[i - 10], Vol3T[i - 10]);
+        end;
+      4:
+        begin
+          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
+            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
+            Vol2T[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
+            Vol4T[i - 10]);
+        end;
+      5:
+        begin
+          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
+            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
+            Vol2T[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
+            Vol4T[i - 10], Ball[i - 10], Vol5T[i - 10]);
+        end;
     end;
   end;
   CloseFile(TLResult);
 
-  ResultGrid.Cells[0, 0] := 'ReferensRum';         //Rumsvolym i aktuell byggnad och referensbyggnad finns alltid i tabellen
+  ResultGrid.Cells[0, 0] := 'ReferensRum';
+  // Rumsvolym i aktuell byggnad och referensbyggnad finns alltid i tabellen
   ResultGrid.Cells[0, 1] := 'Rumsvolym';
   ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10);
   ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10);
@@ -1664,7 +1990,8 @@ begin
     ResultGrid.Cells[1, 2] := FloatToStr(Round(Mean(Vol2T) * 10) / 10);
     ResultGrid.Cells[2, 2] := '------';
     ResultGrid.Cells[3, 2] := FloatToStr(MinValue(Vol2T));
-    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T));                   //Beroende på hur många volymer vi har fylls tabellen på
+    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T));
+    // Beroende på hur många volymer vi har fylls tabellen på
     if DerobModel.HouseProperties.IntValue['nvol'] > 2 then
     begin
       ResultGrid.Cells[0, 3] := 'Volym 3';
