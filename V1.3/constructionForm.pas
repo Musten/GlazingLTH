@@ -482,22 +482,26 @@ end;
 
 procedure TForm2.PopupBox1Change(Sender: TObject);
 begin
-  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
-  DerobModel.FileName := PopupBox1.Text;
-  DerobModel.Open;
-  UpdateConstructionList;
-    if ConstructionListBox.Count > 0 then
+  // If-sats för att programmet inte ska crasha när listan tömms och fylls om på nytt.
+  if PopupBox1.Items.Count > 0 then
   begin
-    ConstructionListBox.ItemIndex := 0;
-    UpdateLayerList;
-    if DerobModel.Constructions[23].LayerCount > 0 then
+    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
+    DerobModel.FileName := PopupBox1.Text;
+    DerobModel.Open;
+    UpdateConstructionList;
+    if ConstructionListBox.Count > 0 then
     begin
-      Form2.LayerListBox.ItemIndex := 0;
-      UpdateLayerThicknessBox;
+      ConstructionListBox.ItemIndex := 0;
+      UpdateLayerList;
+      if DerobModel.Constructions[23].LayerCount > 0 then
+      begin
+        Form2.LayerListBox.ItemIndex := 0;
+        UpdateLayerThicknessBox;
+      end;
     end;
+    MaterialListBox.ItemIndex := 0;
+    UpdateMaterialConstants;
   end;
-  MaterialListBox.ItemIndex := 0;
-  UpdateMaterialConstants;
 end;
 
 procedure TForm2.FormCreate(Sender: TObject);
