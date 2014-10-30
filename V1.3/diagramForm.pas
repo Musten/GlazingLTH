@@ -42,6 +42,7 @@ type
     procedure GlazeHistogram;
     procedure NoGlazeHistogram;
     procedure TLSumValues;
+    procedure UpdateChart;
     { Private declarations }
   public
     { Public declarations }
@@ -52,6 +53,13 @@ var
   Form5: TForm5;
   Resultat, ResVolLoad, ResNoGlaze: TStrings;
   GlazeTemp: TLineSeries;
+  HeatJan, HeatFeb, HeatMar, HeatApr, HeatMay, HeatJun, HeatJul, HeatAug,
+    HeatSep, HeatOct, HeatNov, HeatDec, totalHeat, HeatJanNoGl, HeatFebNoGl,
+    HeatMarNoGl, HeatAprNoGl, HeatMayNoGl, HeatJunNoGl, HeatJulNoGl,
+    HeatAugNoGl, HeatSepNoGl, HeatOctNoGl, HeatNovNoGl, HeatDecNoGl: Real;
+  Temp: array of double;
+  TimeGlaze, Time, TimeNoGl: array of Real;
+  intervall: Integer;
 
 implementation
 
@@ -183,14 +191,21 @@ end;
 
 procedure TForm5.FormShow(Sender: TObject);
 begin
-  Chart1.Legend.Visible := False;
+  Chart1.Legend.Visible := True;
+
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
+    GlazeTemp.ShowInLegend := True;
     GlazeTemp := TLineSeries.Create(Chart1);
     Chart1.AddSeries(GlazeTemp);
     GlazeTemp.Title := 'Vald Inglasning';
     Chart1.Series[2].Color := TAlphaColorRec.Green;
   end;
+  GlazeHistogram;
+  NoGlazeHistogram;
+  TempRadioButton.IsChecked := True;
+  UpdateChart;
+  TLSumValues;
 end;
 
 procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
@@ -238,14 +253,11 @@ var
   TempSummerOpen, TempWinterOpen, OpTempSummerOpen, OpTempWinterOpen,
     SunSummerOpen, SunWinterOpen: Array of Real;
 
-  i, j, SkipLine, intervall: Integer;
+  i, j, SkipLine: Integer;
   IgnoreText: Boolean;
 
-  Temp, Hour, Time, TimeGlaze, YearlyTemp, YearlyTempGlaze, Heat, TempSummer,
-    TempWinter, OpTempSummer, OpTempWinter, SunSummer, SunWinter: Array of Real;
-
-  HeatJan, HeatFeb, HeatMar, HeatApr, HeatMay, HeatJun, HeatJul, HeatAug,
-    HeatSep, HeatOct, HeatNov, HeatDec, totalHeat: Real;
+  Temp, Hour, YearlyTemp, YearlyTempGlaze, Heat, TempSummer, TempWinter,
+    OpTempSummer, OpTempWinter, SunSummer, SunWinter: Array of Real;
 
 begin
   intervall := (40 - DerobModel.HouseProperties.IntValue['TMinRoom']) * 10;
@@ -1603,67 +1615,21 @@ begin
   end;
   totalHeat := HeatJan + HeatFeb + HeatMar + HeatApr + HeatMay + HeatJun +
     HeatJul + HeatAug + HeatSep + HeatOct + HeatNov + HeatDec;
-//  sum(Heat);
-
-  if HeatRadioButton.IsChecked = True then
-  begin
-    Chart1.LeftAxis.Title.Caption := 'Energibehov';
-    // 'Energibehov/dag (kWh)';
-    Chart1.BottomAxis.Title.Caption := 'Månad';
-    HeatJan := (HeatJan / 744) / 1000;
-    HeatFeb := (HeatFeb / 672) / 1000;
-    HeatMar := (HeatMar / 744) / 1000;
-    HeatApr := (HeatApr / 720) / 1000;
-    HeatMay := (HeatMay / 744) / 1000;
-    HeatJun := (HeatJun / 720) / 1000;
-    HeatJul := (HeatJul / 744) / 1000;
-    HeatAug := (HeatAug / 744) / 1000;
-    HeatSep := (HeatSep / 720) / 1000;
-    HeatOct := (HeatOct / 744) / 1000;
-    HeatNov := (HeatNov / 720) / 1000;
-    HeatDec := (HeatDec / 744) / 1000;
-
-    With Chart1.Series[0] Do
-    Begin
-      AddXY(1, HeatJan, '', clTeeColor);
-      AddXY(2, HeatFeb, '', clTeeColor);
-      AddXY(3, HeatMar, '', clTeeColor);
-      AddXY(4, HeatApr, '', clTeeColor);
-      AddXY(5, HeatMay, '', clTeeColor);
-      AddXY(6, HeatJun, '', clTeeColor);
-      AddXY(7, HeatJul, '', clTeeColor);
-      AddXY(8, HeatAug, '', clTeeColor);
-      AddXY(9, HeatSep, '', clTeeColor);
-      AddXY(10, HeatOct, '', clTeeColor);
-      AddXY(11, HeatNov, '', clTeeColor);
-      AddXY(12, HeatDec, '', clTeeColor);
-    end;
-  end
-  else if TempRadioButton.IsChecked = True then
-  begin
-    Chart1.LeftAxis.Title.Caption := 'Timmar';
-    Chart1.BottomAxis.Title.Caption := 'Temperatur';
-    With Chart1.Series[0] Do
-    Begin
-      for i := 0 to intervall do
-      begin
-        AddXY(Temp[i], Time[i], '', clTeeColor);
-      end;
-    end;
-    if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
-    begin
-
-      With Chart1.Series[2] Do
-      Begin
-        for i := 0 to intervall do
-        begin
-          AddXY(Temp[i], TimeGlaze[i], '', clTeeColor);
-        end;
-      end;
-    end;
-  end;
 
   Label2.Text := FloatToStr(Round(totalHeat / 1000)) + ' kWh/år';
+
+  HeatJan := (HeatJan / 744) / 1000;
+  HeatFeb := (HeatFeb / 672) / 1000;
+  HeatMar := (HeatMar / 744) / 1000;
+  HeatApr := (HeatApr / 720) / 1000;
+  HeatMay := (HeatMay / 744) / 1000;
+  HeatJun := (HeatJun / 720) / 1000;
+  HeatJul := (HeatJul / 744) / 1000;
+  HeatAug := (HeatAug / 744) / 1000;
+  HeatSep := (HeatSep / 720) / 1000;
+  HeatOct := (HeatOct / 744) / 1000;
+  HeatNov := (HeatNov / 720) / 1000;
+  HeatDec := (HeatDec / 744) / 1000;
 
 end;
 
@@ -1675,8 +1641,7 @@ begin
     Chart1.Series[2].Clear;
     GlazeTemp.ShowInLegend := False;
   end;
-  GlazeHistogram;
-  NoGlazeHistogram;
+  UpdateChart;
 end;
 
 procedure TForm5.NoGlazeHistogram;
@@ -1686,13 +1651,8 @@ var
   VolPath, StartDir: String;
   buffer: String;
   Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1, Time: array of Real;
-  Temp: array of double;
-  i, j, intervall: Integer;
   IgnoreText: Boolean;
-  meanJan, meanFeb, meanMar, meanApr, meanMay, meanJun, meanJul, meanAug,
-    meanSep, meanOct, meanNov, meanDec: Real;
-  HeatJan, HeatFeb, HeatMar, HeatApr, HeatMay, HeatJun, HeatJul, HeatAug,
-    HeatSep, HeatOct, HeatNov, HeatDec, totalHeat: Real;
+  i, j: Integer;
 begin
   // Definering av vektorer och variabler
   intervall := (40 - DerobModel.HouseProperties.IntValue['TMinRoom']) * 10;
@@ -1705,6 +1665,7 @@ begin
   SetLength(Heat1, 8760);
   SetLength(Time, intervall);
   SetLength(Temp, intervall);
+  SetLength(TimeNoGl, 8760);
   Temp[0] := DerobModel.HouseProperties.IntValue['TMinRoom'];
   for i := 1 to intervall do
   begin
@@ -1745,7 +1706,7 @@ begin
     begin
       if Temp1[i] >= Temp[j] then
       begin
-        Time[j] := Time[j] + 1;
+        TimeNoGl[j] := TimeNoGl[j] + 1;
       end;
 
     end;
@@ -1753,98 +1714,71 @@ begin
   CloseFile(NoGlaze);
   for i := 0 to 743 do
   begin
-    HeatJan := HeatJan + Heat1[i];
+    HeatJanNoGl := HeatJanNoGl + Heat1[i];
   end;
   for i := 744 to 1415 do
   begin
-    HeatFeb := HeatFeb + Heat1[i];
+    HeatFebNoGl := HeatFebNoGl + Heat1[i];
   end;
   for i := 1416 to 2159 do
   begin
-    HeatMar := HeatMar + Heat1[i];
+    HeatMarNoGl := HeatMarNoGl + Heat1[i];
   end;
   for i := 2160 to 2879 do
   begin
-    HeatApr := HeatApr + Heat1[i];
+    HeatAprNoGl := HeatAprNoGl + Heat1[i];
   end;
   for i := 2880 to 3623 do
   begin
-    HeatMay := HeatMay + Heat1[i];
+    HeatMayNoGl := HeatMayNoGl + Heat1[i];
   end;
   for i := 3624 to 4343 do
   begin
-    HeatJun := HeatJun + Heat1[i];
+    HeatJunNoGl := HeatJunNoGl + Heat1[i];
   end;
   for i := 4344 to 5087 do
   begin
-    HeatJul := HeatJul + Heat1[i];
+    HeatJulNoGl := HeatJulNoGl + Heat1[i];
   end;
   for i := 5088 to 5831 do
   begin
-    HeatAug := HeatAug + Heat1[i];
+    HeatAugNoGl := HeatAugNoGl + Heat1[i];
   end;
   for i := 5832 to 6551 do
   begin
-    HeatSep := HeatSep + Heat1[i];
+    HeatSepNoGl := HeatSepNoGl + Heat1[i];
   end;
   for i := 6552 to 7295 do
   begin
-    HeatOct := HeatOct + Heat1[i];
+    HeatOctNoGl := HeatOctNoGl + Heat1[i];
   end;
   for i := 7296 to 8015 do
   begin
-    HeatNov := HeatNov + Heat1[i];
+    HeatNovNoGl := HeatNovNoGl + Heat1[i];
   end;
   for i := 8016 to 8759 do
   begin
-    HeatDec := HeatDec + Heat1[i];
+    HeatDecNoGl := HeatDecNoGl + Heat1[i];
   end;
 
-  totalHeat := HeatJan + HeatFeb + HeatMar + HeatApr + HeatMay + HeatJun +
-    HeatJul + HeatAug + HeatSep + HeatOct + HeatNov + HeatDec;
+  totalHeat := HeatJanNoGl + HeatFebNoGl + HeatMarNoGl + HeatAprNoGl +
+    HeatMayNoGl + HeatJunNoGl + HeatJulNoGl + HeatAugNoGl + HeatSepNoGl +
+    HeatOctNoGl + HeatNovNoGl + HeatDecNoGl;
 
-  if HeatRadioButton.IsChecked = True then
-  begin
-    HeatJan := (HeatJan / 744) / 1000;
-    HeatFeb := (HeatFeb / 672) / 1000;
-    HeatMar := (HeatMar / 744) / 1000;
-    HeatApr := (HeatApr / 720) / 1000;
-    HeatMay := (HeatMay / 744) / 1000;
-    HeatJun := (HeatJun / 720) / 1000;
-    HeatJul := (HeatJul / 744) / 1000;
-    HeatAug := (HeatAug / 744) / 1000;
-    HeatSep := (HeatSep / 720) / 1000;
-    HeatOct := (HeatOct / 744) / 1000;
-    HeatNov := (HeatNov / 720) / 1000;
-    HeatDec := (HeatDec / 744) / 1000;
-
-    With Chart1.Series[1] Do
-    Begin
-      AddXY(1, HeatJan, '', clTeeColor);
-      AddXY(2, HeatFeb, '', clTeeColor);
-      AddXY(3, HeatMar, '', clTeeColor);
-      AddXY(4, HeatApr, '', clTeeColor);
-      AddXY(5, HeatMay, '', clTeeColor);
-      AddXY(6, HeatJun, '', clTeeColor);
-      AddXY(7, HeatJul, '', clTeeColor);
-      AddXY(8, HeatAug, '', clTeeColor);
-      AddXY(9, HeatSep, '', clTeeColor);
-      AddXY(10, HeatOct, '', clTeeColor);
-      AddXY(11, HeatNov, '', clTeeColor);
-      AddXY(12, HeatDec, '', clTeeColor);
-    end;
-  end
-  else if TempRadioButton.IsChecked = True then
-  begin
-    With Chart1.Series[1] Do
-    Begin
-      for i := 0 to intervall do
-      begin
-        AddXY(Temp[i], Time[i], '', clTeeColor);
-      end;
-    end;
-  end;
   Label4.Text := FloatToStr(Round(totalHeat / 1000)) + ' kWh/år';
+
+  HeatJanNoGl := (HeatJanNoGl / 744) / 1000;
+  HeatFebNoGl := (HeatFebNoGl / 672) / 1000;
+  HeatMarNoGl := (HeatMarNoGl / 744) / 1000;
+  HeatAprNoGl := (HeatAprNoGl / 720) / 1000;
+  HeatMayNoGl := (HeatMayNoGl / 744) / 1000;
+  HeatJunNoGl := (HeatJunNoGl / 720) / 1000;
+  HeatJulNoGl := (HeatJulNoGl / 744) / 1000;
+  HeatAugNoGl := (HeatAugNoGl / 744) / 1000;
+  HeatSepNoGl := (HeatSepNoGl / 720) / 1000;
+  HeatOctNoGl := (HeatOctNoGl / 744) / 1000;
+  HeatNovNoGl := (HeatNovNoGl / 720) / 1000;
+  HeatDecNoGl := (HeatDecNoGl / 744) / 1000;
 end;
 
 procedure TForm5.ResultTxtBtnClick(Sender: TObject);
@@ -1869,8 +1803,7 @@ begin
   begin
     GlazeTemp.ShowInLegend := True;
   end;
-  GlazeHistogram;
-  NoGlazeHistogram;
+  UpdateChart;
 end;
 
 procedure TForm5.TLSumValues;
@@ -1964,15 +1897,16 @@ begin
         begin
           ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
             RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
-            Ball[i - 10], Vol4T[i - 10]);
+            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10],
+            Ball[i - 10], Ball[i - 10], Vol4T[i - 10]);
         end;
       5:
         begin
           ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
             RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10], Ball[i - 10],
-            Ball[i - 10], Vol4T[i - 10], Ball[i - 10], Ball[i - 10], Vol5T[i - 10]);
+            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10],
+            Ball[i - 10], Ball[i - 10], Vol4T[i - 10], Ball[i - 10],
+            Ball[i - 10], Vol5T[i - 10]);
         end;
     end;
   end;
@@ -1981,45 +1915,144 @@ begin
   ResultGrid.Cells[0, 0] := 'ReferensRum';
   // Rumsvolym i aktuell byggnad och referensbyggnad finns alltid i tabellen
   ResultGrid.Cells[0, 1] := 'Rumsvolym';
-  ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10)+' °C';
-  ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10)+' kWh/år';
-  ResultGrid.Cells[3, 1] := FloatToStr(MinValue(RumT))+' °C';
-  ResultGrid.Cells[4, 1] := FloatToStr(MaxValue(RumT))+' °C';
+  ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10) + ' °C';
+  ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10) +
+    ' kWh/år';
+  ResultGrid.Cells[3, 1] := FloatToStr(MinValue(RumT)) + ' °C';
+  ResultGrid.Cells[4, 1] := FloatToStr(MaxValue(RumT)) + ' °C';
 
   if DerobModel.HouseProperties.IntValue['nvol'] > 1 then
   begin
     ResultGrid.Cells[0, 2] := 'Volym 2';
-    ResultGrid.Cells[1, 2] := FloatToStr(Round(Mean(Vol2T) * 10) / 10)+' °C';
+    ResultGrid.Cells[1, 2] := FloatToStr(Round(Mean(Vol2T) * 10) / 10) + ' °C';
     ResultGrid.Cells[2, 2] := '------';
-    ResultGrid.Cells[3, 2] := FloatToStr(MinValue(Vol2T))+' °C';
-    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T))+' °C';
+    ResultGrid.Cells[3, 2] := FloatToStr(MinValue(Vol2T)) + ' °C';
+    ResultGrid.Cells[4, 2] := FloatToStr(MaxValue(Vol2T)) + ' °C';
     // Beroende på hur många volymer vi har fylls tabellen på
     if DerobModel.HouseProperties.IntValue['nvol'] > 2 then
     begin
       ResultGrid.Cells[0, 3] := 'Volym 3';
-      ResultGrid.Cells[1, 3] := FloatToStr(Round(Mean(Vol3T) * 10) / 10)+' °C';
+      ResultGrid.Cells[1, 3] :=
+        FloatToStr(Round(Mean(Vol3T) * 10) / 10) + ' °C';
       ResultGrid.Cells[2, 3] := '------';
-      ResultGrid.Cells[3, 3] := FloatToStr(MinValue(Vol3T))+' °C';
-      ResultGrid.Cells[4, 3] := FloatToStr(MaxValue(Vol3T))+' °C';
+      ResultGrid.Cells[3, 3] := FloatToStr(MinValue(Vol3T)) + ' °C';
+      ResultGrid.Cells[4, 3] := FloatToStr(MaxValue(Vol3T)) + ' °C';
     end;
     if DerobModel.HouseProperties.IntValue['nvol'] > 3 then
     begin
       ResultGrid.Cells[0, 4] := 'Volym 4';
-      ResultGrid.Cells[1, 4] := FloatToStr(Round(Mean(Vol4T) * 10) / 10)+' °C';
+      ResultGrid.Cells[1, 4] :=
+        FloatToStr(Round(Mean(Vol4T) * 10) / 10) + ' °C';
       ResultGrid.Cells[2, 4] := '------';
-      ResultGrid.Cells[3, 4] := FloatToStr(MinValue(Vol4T))+' °C';
-      ResultGrid.Cells[4, 4] := FloatToStr(MaxValue(Vol4T))+' °C';
+      ResultGrid.Cells[3, 4] := FloatToStr(MinValue(Vol4T)) + ' °C';
+      ResultGrid.Cells[4, 4] := FloatToStr(MaxValue(Vol4T)) + ' °C';
     end;
     if DerobModel.HouseProperties.IntValue['nvol'] = 5 then
     begin
       ResultGrid.Cells[0, 5] := 'Volym 5';
-      ResultGrid.Cells[1, 5] := FloatToStr(Round(Mean(Vol5T) * 10) / 10)+' °C';
+      ResultGrid.Cells[1, 5] :=
+        FloatToStr(Round(Mean(Vol5T) * 10) / 10) + ' °C';
       ResultGrid.Cells[2, 5] := '------';
-      ResultGrid.Cells[3, 5] := FloatToStr(MinValue(Vol5T))+' °C';
-      ResultGrid.Cells[4, 5] := FloatToStr(MaxValue(Vol5T))+' °C';
+      ResultGrid.Cells[3, 5] := FloatToStr(MinValue(Vol5T)) + ' °C';
+      ResultGrid.Cells[4, 5] := FloatToStr(MaxValue(Vol5T)) + ' °C';
     end;
   end;
 
+end;
+
+procedure TForm5.UpdateChart;
+
+var
+
+  i: Integer;
+
+begin // Med inglasning- linje
+  Chart1.Series[0].Clear;
+  Chart1.Series[1].Clear;
+  if DerobModel.VentilationProperties.BoolValue['GlazeTemp'] = True then
+  begin
+    Chart1.Series[2].Clear;
+  end;
+  if HeatRadioButton.IsChecked = True then
+  begin
+    Chart1.LeftAxis.Title.Caption := 'Energibehov';
+    // 'Energibehov/dag (kWh)';
+    Chart1.BottomAxis.Title.Caption := 'Månad';
+
+    With Chart1.Series[0] Do
+    Begin
+      AddXY(1, HeatJan, '', clTeeColor);
+      AddXY(2, HeatFeb, '', clTeeColor);
+      AddXY(3, HeatMar, '', clTeeColor);
+      AddXY(4, HeatApr, '', clTeeColor);
+      AddXY(5, HeatMay, '', clTeeColor);
+      AddXY(6, HeatJun, '', clTeeColor);
+      AddXY(7, HeatJul, '', clTeeColor);
+      AddXY(8, HeatAug, '', clTeeColor);
+      AddXY(9, HeatSep, '', clTeeColor);
+      AddXY(10, HeatOct, '', clTeeColor);
+      AddXY(11, HeatNov, '', clTeeColor);
+      AddXY(12, HeatDec, '', clTeeColor);
+    end;
+  end
+  else if TempRadioButton.IsChecked = True then
+  begin
+    Chart1.LeftAxis.Title.Caption := 'Timmar';
+    Chart1.BottomAxis.Title.Caption := 'Temperatur';
+    With Chart1.Series[0] Do
+    Begin
+      for i := 0 to intervall do
+      begin
+        AddXY(Temp[i], Time[i], '', clTeeColor);
+      end;
+    end;
+    if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+    begin
+
+      With Chart1.Series[2] Do
+      Begin
+        for i := 0 to intervall do
+        begin
+          AddXY(Temp[i], TimeGlaze[i], '', clTeeColor);
+        end;
+      end;
+    end;
+  end;
+
+  // Utan inglasning-linjen
+  if DerobModel.VentilationProperties.BoolValue['GlazeTemp'] = True then
+  begin
+    Chart1.Series[2].Clear;
+  end;
+  if HeatRadioButton.IsChecked = True then
+  begin
+
+    With Chart1.Series[1] Do
+    Begin
+      AddXY(1, HeatJanNoGl, '', clTeeColor);
+      AddXY(2, HeatFebNoGl, '', clTeeColor);
+      AddXY(3, HeatMarNoGl, '', clTeeColor);
+      AddXY(4, HeatAprNoGl, '', clTeeColor);
+      AddXY(5, HeatMayNoGl, '', clTeeColor);
+      AddXY(6, HeatJunNoGl, '', clTeeColor);
+      AddXY(7, HeatJulNoGl, '', clTeeColor);
+      AddXY(8, HeatAugNoGl, '', clTeeColor);
+      AddXY(9, HeatSepNoGl, '', clTeeColor);
+      AddXY(10, HeatOctNoGl, '', clTeeColor);
+      AddXY(11, HeatNovNoGl, '', clTeeColor);
+      AddXY(12, HeatDecNoGl, '', clTeeColor);
+    end;
+  end
+  else if TempRadioButton.IsChecked = True then
+  begin
+    With Chart1.Series[1] Do
+    Begin
+      for i := 0 to intervall do
+      begin
+        AddXY(Temp[i], TimeNoGl[i], '', clTeeColor);
+      end;
+    end;
+  end;
 end;
 
 end.
