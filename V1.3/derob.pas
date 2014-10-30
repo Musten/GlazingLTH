@@ -591,7 +591,7 @@ end;
 constructor TDerobProperties.Create;
 begin
   inherited;
-  //Skapar ett bibliotek som kan läsa olika egenskaper
+  // Skapar ett bibliotek som kan läsa olika egenskaper
   FProperties := TDictionary<string, TDerobPropertyType>.Create;
   FStringProperties := TDictionary<string, string>.Create;
   FDoubleProperties := TDictionary<string, double>.Create;
@@ -692,8 +692,8 @@ begin
   begin
     ReadLn(f, Name);
     ReadLn(f, PropType);
-    //Kontroll av vilken typ av property som läses in
-    //0 för strängar, 1 för flyttal, 2 för heltal, 3 för boolesk
+    // Kontroll av vilken typ av property som läses in
+    // 0 för strängar, 1 för flyttal, 2 för heltal, 3 för boolesk
     case PropType of
       0:
         begin
@@ -739,7 +739,7 @@ begin
     Writeln(f, Name);
 
     // Write property type and value
-    //De olika värdena som skrivs är 0 för sträng, 1 för flyttal, 2 för heltal och 3 för boolesk
+    // De olika värdena som skrivs är 0 för sträng, 1 för flyttal, 2 för heltal och 3 för boolesk
 
     case FProperties[Name] of
       ptString:
@@ -890,15 +890,15 @@ end;
 
 procedure TConstruction.AddLayer(Material: TMaterial; Thickness: double);
 begin
-  //Lägg till materialet som ett lager i konstruktionen
+  // Lägg till materialet som ett lager i konstruktionen
   FLayers.Add(Material);
-  //Lägg till materialets tjocklek i konstruktionen
+  // Lägg till materialets tjocklek i konstruktionen
   FLayerThickness.Add(Thickness);
-  //Lägg materialet sist i konstruktionen OSÄKER
+  // Lägg materialet sist i konstruktionen OSÄKER
   FLayerIdx.Add(-1);
 end;
 
-//Skapa objektet för konstruktionen
+// Skapa objektet för konstruktionen
 constructor TConstruction.Create;
 begin
   inherited;
@@ -1017,7 +1017,7 @@ constructor TMaterial.Create;
 begin
   inherited;
 
-  //Initierar egenskaperna för materialet
+  // Initierar egenskaperna för materialet
 
   DoubleValue['Density'] := 1.0;
   DoubleValue['Lambda'] := 1.0;
@@ -1067,9 +1067,9 @@ end;
 procedure TSurface.SaveToFile(var f: TextFile);
 begin
   inherited SaveToFile(f);
-  //Sparar ner X,Y,Z-värden för ytan
+  // Sparar ner X,Y,Z-värden för ytan
   Writeln(f, FX, FY, FZ);
-  //Sparar ner rotationen för ytan (Används ej)
+  // Sparar ner rotationen för ytan (Används ej)
   Writeln(f, FRotationX, FRotationY, FRotationZ);
   // Sparar ner längd bredd och höjd för ytan
   Writeln(f, FLength, FWidth, FHeight);
@@ -1606,7 +1606,7 @@ begin
 
   AssignFile(f, FFilename);
   Rewrite(f);
- 
+
   i := 0;
 
   Writeln(f, FMaterials.Count);
@@ -1625,37 +1625,37 @@ begin
     Construction.Idx := i;
     Construction.SaveToFile(f);
   end;
-  if HouseProperties.BoolValue['ConstructionLib']=False then
+  if HouseProperties.BoolValue['ConstructionLib'] = false then
   begin
-  Writeln(f, FWalls.Count);
-  for Wall in FWalls do
-    Wall.SaveToFile(f);
+    Writeln(f, FWalls.Count);
+    for Wall in FWalls do
+      Wall.SaveToFile(f);
 
-  Writeln(f, FRoofs.Count);
-  for Roof in FRoofs do
-    Roof.SaveToFile(f);
+    Writeln(f, FRoofs.Count);
+    for Roof in FRoofs do
+      Roof.SaveToFile(f);
 
-  Writeln(f, FFloors.Count);
-  for Floor in FFloors do
-    Floor.SaveToFile(f);
+    Writeln(f, FFloors.Count);
+    for Floor in FFloors do
+      Floor.SaveToFile(f);
 
-  { Ändrat }
-  Writeln(f, FWindows.Count);
-  for Window in FWindows do
-    Window.SaveToFile(f);
+    { Ändrat }
+    Writeln(f, FWindows.Count);
+    for Window in FWindows do
+      Window.SaveToFile(f);
 
-  { Ändrat }
-  Writeln(f, FGlazing.Count);
-  for Glaze in FGlazing do
-   begin
-    Glaze.SaveToFile(f);
-   end;
-  FSurface.SaveToFile(f);
-  FHouseProperties.SaveToFile(f);
-  FLocationProperties.SaveToFile(f);
-  FVentilationProperties.SaveToFile(f);
+    { Ändrat }
+    Writeln(f, FGlazing.Count);
+    for Glaze in FGlazing do
+    begin
+      Glaze.SaveToFile(f);
+    end;
+    FSurface.SaveToFile(f);
+    FHouseProperties.SaveToFile(f);
+    FLocationProperties.SaveToFile(f);
+    FVentilationProperties.SaveToFile(f);
 
-  FGlazingProperties.SaveToFile(f); // Ändrat
+    FGlazingProperties.SaveToFile(f); // Ändrat
   end;
 
   CloseFile(f);
@@ -1679,14 +1679,16 @@ begin
 
   AssignFile(f, FFilename);
   Reset(f);
-
-  Self.ClearWalls;
-  Self.ClearRoofs;
-  Self.ClearFloors;
-  Self.ClearWindows;
+  if HouseProperties.BoolValue['ConstructionLib'] = false then
+  begin
+    Self.ClearWalls;
+    Self.ClearRoofs;
+    Self.ClearFloors;
+    Self.ClearWindows;
+    Self.ClearGlazing;
+  end;
   Self.ClearMaterials;
   Self.ClearConstructions;
-  Self.ClearGlazing;
 
   ReadLn(f, ItemCount);
   for i := 1 to ItemCount do
@@ -1704,7 +1706,8 @@ begin
     AddConstruction(Construction);
     Construction.ReConnect(FMaterials);
   end;
-
+        if HouseProperties.BoolValue['ConstructionLib'] = false then
+  begin
   ReadLn(f, ItemCount);
   for i := 1 to ItemCount do
   begin
@@ -1754,6 +1757,7 @@ begin
   Self.LocationProperties.ReadFromFile(f);
   Self.VentilationProperties.ReadFromFile(f);
   Self.GlazingProperties.ReadFromFile(f);
+  end;
 
   CloseFile(f);
 end;

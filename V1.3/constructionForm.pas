@@ -114,9 +114,49 @@ begin
 end;
 
 procedure TForm2.ConstrSaveButtonClick(Sender: TObject);
+var
+  SaveChange, FileReWrite: Integer;
+  FileName: String;
 begin
   CUpdateComboBox;
+  // Kollar om det har skett ändringar
+  if DerobModel.HouseProperties.BoolValue['ConstructionChange'] = True then
+  begin
+    // Visar ruta som frågar om man vill spara ändringarna
+    SaveChange := MessageDlg
+      ('Ändringar har skett, spara konstruktionsbibliotek?',
+      TMsgDlgType.mtWarning, mbYesNo, 0);
+    // Om användaren vill spara...
+    if SaveChange = mrYes then
+    begin
+      // Namnet på biblioteket användaren vill spara
+      if InputQuery('Spara konstruktionsbibliotek', 'Biblioteksnamn: ', FileName)
+      then
+      begin
+        DerobModel.FileName := FileName + '.con';
+        // Kollar om det redan finns ett sparat konstruktionsbibliotek med det namnet
+        if FileExists(DerobModel.FileName) then
+        begin
+          // Frågar användaren om man vill skriva över biblioteket
+          FileReWrite :=
+            MessageDlg('Konstruktionsbibliotek existerar redan, skriv över?',
+            TMsgDlgType.mtWarning, mbYesNo, 0);
+          // Sparar om biblioteket
+          if FileReWrite = mrYes then
+          begin
+            DerobModel.Save;
+            DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
+          end;
+        end;
+      end;
+    end;
+    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
+    DerobModel.Save;
+    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
+  end;
+
   Form2.Close;
+  DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
 end;
 
 procedure TForm2.CUpdateComboBox;
@@ -214,7 +254,7 @@ procedure TForm2.CreateConstructionButtonClick(Sender: TObject);
 var
   Construction: TConstruction;
 begin
-
+  DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
   // Create new construction instance
 
   Construction := TConstruction.Create;
@@ -229,6 +269,7 @@ begin
 
   if Construction.Name <> '' then
   begin
+    DerobModel.HouseProperties.BoolValue['ConstructionChange'] := True;
     DerobModel.AddConstruction(Construction);
   end;
 
@@ -386,8 +427,6 @@ begin
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Constructions');
   DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
-  // DerobModel.Filename := InputBox('Spara konstruktionsbibliotek',
-  // 'Biblioteksnamn: ', '');
   if InputQuery('Spara konstruktionsbibliotek', 'Biblioteksnamn: ', FileName)
   then
   begin
@@ -396,19 +435,23 @@ begin
     if DerobModel.FileName <> '' then
     begin
       DerobModel.FileName := DerobModel.FileName + '.con';
-      if FilEexists(DerobModel.FileName) then
+      if FileExists(DerobModel.FileName) then
       begin
         FileReWrite :=
           MessageDlg('Konstruktionsbibliotek existerar redan, skriv över?',
           TMsgDlgType.mtWarning, mbYesNo, 0);
         if FileReWrite = mrYes then
         begin
+
           DerobModel.Save;
+          DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
         end;
       end
       else
       begin
+
         DerobModel.Save;
+        DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
       end;
     end
     // Om användaren inte fyller i något
@@ -416,12 +459,14 @@ begin
     begin
       DerobModel.FileName := DateToStr(Now) + '.con';
       repeat
-        if FilEexists(DerobModel.FileName) then
+        if FileExists(DerobModel.FileName) then
           inc(val);
         DerobModel.FileName := DateToStr(Now) + '(' + IntToStr(val) + ').con';
 
-      until FilEexists(DerobModel.FileName) = False;
+      until FileExists(DerobModel.FileName) = False;
+
       DerobModel.Save;
+      DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
     end;
   end;
 end;
