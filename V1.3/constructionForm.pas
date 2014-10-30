@@ -146,13 +146,24 @@ begin
           begin
             DerobModel.Save;
             DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
+          end
+          //Om användaren inte vill spara över filen så sparas den som "aktuellt datum.con"
+          else
+          begin
+            DerobModel.FileName := DerobModel.FileName :=
+              DateToStr(Now) + '.con';
+            repeat
+              if FileExists(DerobModel.FileName) then
+                inc(val);
+              DerobModel.FileName := DateToStr(Now) + '(' + IntToStr(val)
+                + ').con';
+            until FileExists(DerobModel.FileName) = False;
+            DerobModel.Save;
+            DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
           end;
         end;
       end;
     end;
-    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
-    DerobModel.Save;
-    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
   end;
 
   Form2.Close;
