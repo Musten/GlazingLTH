@@ -425,7 +425,7 @@ begin
   DerobModel.HouseProperties.IntValue['TMinRoom'] :=
     Round(TempMinNumberBox.Value);
   // Om innetemperatur i volym 1 väljs
-  if RoomTempRadioButton.IsChecked then
+  if RoomTempRadioButton.IsChecked = True then
   begin
     DerobModel.HouseProperties.BoolValue['RoomTemp'] := True;
     DerobModel.HouseProperties.IntValue['TMaxRoom'] :=
@@ -829,6 +829,7 @@ procedure TForm1.simulateMenuCalculateClick(Sender: TObject);
 begin
   SetCurrentDir(StartDir); // NY
   DerobModel.HouseProperties.BoolValue['KGK'] := False;
+  PropertiesClick(Self);
   GeometryClick(Self);
   mainGeometrySave;
   VolumeCount;

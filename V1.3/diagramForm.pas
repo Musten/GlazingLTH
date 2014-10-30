@@ -26,8 +26,6 @@ type
     Button1: TButton;
     ResultGrid: TStringGrid;
     StringColumn1: TStringColumn;
-    Button3: TButton;
-    procedure GlazeDiagramButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure TempRadioButtonChange(Sender: TObject);
     procedure HeatRadioButtonChange(Sender: TObject);
@@ -35,7 +33,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
@@ -168,11 +165,6 @@ begin
   Grid.Visible := True;
 end;
 
-procedure TForm5.Button3Click(Sender: TObject);
-begin
-  TLSumValues;
-end;
-
 procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Chart1.Series[0].Clear;
@@ -187,6 +179,7 @@ begin
   begin
     GlazeTemp.Free;
   end;
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
 end;
 
 procedure TForm5.FormShow(Sender: TObject);
@@ -206,13 +199,6 @@ begin
   TempRadioButton.IsChecked := True;
   UpdateChart;
   TLSumValues;
-end;
-
-procedure TForm5.GlazeDiagramButtonClick(Sender: TObject);
-begin
-  GlazeHistogram;
-  NoGlazeHistogram;
-  Chart1.BottomAxis.Increment := 1;
 end;
 
 procedure TForm5.GlazeHistogram;

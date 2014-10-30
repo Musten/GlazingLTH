@@ -101,15 +101,6 @@ object Form5: TForm5
         Width = 75.000000000000000000
       end
     end
-    object Button3: TButton
-      Height = 22.000000000000000000
-      Position.X = 88.000000000000000000
-      Position.Y = 376.000000000000000000
-      TabOrder = 9
-      Text = 'Button3'
-      Width = 80.000000000000000000
-      OnClick = Button3Click
-    end
   end
   object Panel2: TPanel
     Align = alFitLeft
