@@ -69,9 +69,9 @@ implementation
 procedure TForm5.Button1Click(Sender: TObject);
 var
   FileName: String;
-  VolLoadFileStream, NoGlazeFileStream: TFilestream;
+  VolLoadFileStream: TFilestream;
   i, LineCount, TempLine, colCount: Integer;
-  TLStrings, RefStrings: TStringList;
+  TLStrings: TStringList;
   val: array of Real;
   j, VolLine: Integer;
   col: TStringColumn;
@@ -1647,8 +1647,7 @@ end;
 procedure TForm5.NoGlazeHistogram;
 var
   NoGlaze: TextFile;
-  DataFile: TStringList;
-  VolPath, StartDir: String;
+  VolPath: String;
   buffer: String;
   Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1, Time: array of Real;
   IgnoreText: Boolean;
@@ -1814,7 +1813,8 @@ var
   i, colCount: Integer;
   TLPath, buffer: string;
   TLResult: TextFile;
-  UteT, RumT, RumEnergi, Ball, Vol5T, Vol2T, Vol3T, Vol4T: array of double;
+  UteT, RumT, RumEnergi, Ball, Vol5T, Vol2T, Vol3T, Vol4T,
+  RefT, RefEnergi: array of double;
   col: TStringColumn;
 
 begin
@@ -1831,6 +1831,8 @@ begin
   SetLength(Vol3T, 8760);
   SetLength(Vol4T, 8760);
   SetLength(Vol5T, 8760);
+  SetLength(RefT, 8760);
+  SetLength(RefEnergi, 8760);
 
   colCount := ResultGrid.ColumnCount;
   for i := colCount - 1 downto 1 do // Rensa i tabellerna
@@ -1912,8 +1914,34 @@ begin
   end;
   CloseFile(TLResult);
 
-  ResultGrid.Cells[0, 0] := 'ReferensRum';
+  //In i rätt mapp där Vol_Load för referensfallet NoGlaze finns
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  SetCurrentDir('NoGlaze');
+
+  TLPath := GetCurrentDir + '\Vol_Load.txt';
+  AssignFile(TLResult, TLPath);
+  Reset(TLResult);
+
+  for i := 0 to 11 do // Hoppa över de första 10 raderna (text)
+  begin
+    ReadLn(TLResult, buffer);
+  end;
+
+  for i := 12 to 8771 do
+    begin
+      ReadLn(TLResult, Ball[i - 12], Ball[i - 12], Ball[i - 12], RefT[i - 12],
+      Ball[i - 12], RefEnergi[i - 12]);
+    end;
+
   // Rumsvolym i aktuell byggnad och referensbyggnad finns alltid i tabellen
+  ResultGrid.Cells[0, 0] := 'ReferensRum';
+  ResultGrid.Cells[1, 0] := FloatToStr(Round(Mean(RefT) * 10) /10) + ' °C';
+  ResultGrid.Cells[2, 0] := FloatToStr(Round(Sum(RefEnergi) / 100) / 10) +
+   ' kWh/år';
+  ResultGrid.Cells[3, 0] := FloatToStr(MinValue(RefT)) + ' °C';
+  ResultGrid.Cells[4, 0] := FloatToStr(MaxValue(RefT)) + ' °C';
+
   ResultGrid.Cells[0, 1] := 'Rumsvolym';
   ResultGrid.Cells[1, 1] := FloatToStr(Round(Mean(RumT) * 10) / 10) + ' °C';
   ResultGrid.Cells[2, 1] := FloatToStr(Round(Sum(RumEnergi) / 100) / 10) +
@@ -1957,7 +1985,6 @@ begin
       ResultGrid.Cells[4, 5] := FloatToStr(MaxValue(Vol5T)) + ' °C';
     end;
   end;
-
 end;
 
 procedure TForm5.UpdateChart;

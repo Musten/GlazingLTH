@@ -88,7 +88,6 @@ object Form5: TForm5
     end
     object ResultGrid: TStringGrid
       Height = 157.000000000000000000
-      HitTest = False
       Position.X = 40.000000000000000000
       Position.Y = 528.000000000000000000
       TabOrder = 8
