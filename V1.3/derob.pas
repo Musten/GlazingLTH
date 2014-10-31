@@ -1647,9 +1647,8 @@ begin
     { Ändrat }
     Writeln(f, FGlazing.Count);
     for Glaze in FGlazing do
-    begin
       Glaze.SaveToFile(f);
-    end;
+
     FSurface.SaveToFile(f);
     FHouseProperties.SaveToFile(f);
     FLocationProperties.SaveToFile(f);
@@ -1664,6 +1663,7 @@ end;
 procedure TDerobModel.Open;
 var
   f: TextFile;
+  DerobModel: TDerobModel;
   Wall: TWall;
   Roof: TRoof;
   Floor: TFloor;
@@ -1706,57 +1706,57 @@ begin
     AddConstruction(Construction);
     Construction.ReConnect(FMaterials);
   end;
-        if HouseProperties.BoolValue['ConstructionLib'] = false then
+  if HouseProperties.BoolValue['ConstructionLib'] = false then
   begin
-  ReadLn(f, ItemCount);
-  for i := 1 to ItemCount do
-  begin
-    Wall := TWall.Create;
-    Wall.ReadFromFile(f);
-    AddWall(Wall);
-    // Wall.ReConnect(FConstructions);  Senare
-  end;
+    ReadLn(f, ItemCount);
+    for i := 1 to ItemCount do
+    begin
+      Wall := TWall.Create;
+      Wall.ReadFromFile(f);
+      AddWall(Wall);
+      // Wall.ReConnect(FConstructions);  Senare
+    end;
 
-  ReadLn(f, ItemCount);
-  for i := 1 to ItemCount do
-  begin
-    Roof := TRoof.Create;
-    Roof.ReadFromFile(f);
-    AddRoof(Roof);
-    // Roof.ReConnect(FConstructions);           Senare
-  end;
+    ReadLn(f, ItemCount);
+    for i := 1 to ItemCount do
+    begin
+      Roof := TRoof.Create;
+      Roof.ReadFromFile(f);
+      AddRoof(Roof);
+      // Roof.ReConnect(FConstructions);           Senare
+    end;
 
-  ReadLn(f, ItemCount);
-  for i := 1 to ItemCount do
-  begin
-    Floor := TFloor.Create;
-    Floor.ReadFromFile(f);
-    AddFloor(Floor);
-    // Floor.ReConnect(FConstructions);       Senare
-  end;
+    ReadLn(f, ItemCount);
+    for i := 1 to ItemCount do
+    begin
+      Floor := TFloor.Create;
+      Floor.ReadFromFile(f);
+      AddFloor(Floor);
+      // Floor.ReConnect(FConstructions);       Senare
+    end;
 
-  { Ändrat }
-  ReadLn(f, ItemCount);
-  for i := 1 to ItemCount do
-  begin
-    Window := TWindow.Create;
-    Window.ReadFromFile(f);
-    AddWindow(Window);
-  end;
+    { Ändrat }
+    ReadLn(f, ItemCount);
+    for i := 1 to ItemCount do
+    begin
+      Window := TWindow.Create;
+      Window.ReadFromFile(f);
+      AddWindow(Window);
+    end;
 
-  { Ändrat }
-  ReadLn(f, ItemCount);
-  for i := 1 to ItemCount do
-  begin
-    Glaze := TGlazing.Create;
-    Glaze.ReadFromFile(f);
-    AddGlazing(Glaze);
-  end;
-  Self.Surface.ReadFromFile(f);
-  Self.HouseProperties.ReadFromFile(f);
-  Self.LocationProperties.ReadFromFile(f);
-  Self.VentilationProperties.ReadFromFile(f);
-  Self.GlazingProperties.ReadFromFile(f);
+    { Ändrat }
+    ReadLn(f, ItemCount);
+    for i := 1 to ItemCount do
+    begin
+      Glaze := TGlazing.Create;
+      Glaze.ReadFromFile(f);
+      AddGlazing(Glaze);
+    end;
+    Self.Surface.ReadFromFile(f);
+    Self.HouseProperties.ReadFromFile(f);
+    Self.LocationProperties.ReadFromFile(f);
+    Self.VentilationProperties.ReadFromFile(f);
+    Self.GlazingProperties.ReadFromFile(f);
   end;
 
   CloseFile(f);

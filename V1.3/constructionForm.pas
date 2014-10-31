@@ -66,7 +66,6 @@ type
     procedure RemoveLayerButtonClick(Sender: TObject);
     procedure CMenuItem4Click(Sender: TObject);
     procedure CMenuItem5Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure LayerListBoxItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
     procedure FormShow(Sender: TObject);
@@ -115,7 +114,7 @@ end;
 
 procedure TForm2.ConstrSaveButtonClick(Sender: TObject);
 var
-  SaveChange, FileReWrite: Integer;
+  SaveChange, FileReWrite, val: Integer;
   FileName: String;
 begin
   CUpdateComboBox;
@@ -147,11 +146,10 @@ begin
             DerobModel.Save;
             DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
           end
-          //Om användaren inte vill spara över filen så sparas den som "aktuellt datum.con"
+          // Om användaren inte vill spara över filen så sparas den som "aktuellt datum.con"
           else
           begin
-            DerobModel.FileName := DerobModel.FileName :=
-              DateToStr(Now) + '.con';
+            DerobModel.FileName := DateToStr(Now) + '.con';
             repeat
               if FileExists(DerobModel.FileName) then
                 inc(val);
@@ -560,27 +558,23 @@ begin
   end;
 end;
 
-procedure TForm2.FormCreate(Sender: TObject);
-begin
-  CurrentCategory := 'Wall';
-end;
-
 procedure TForm2.FormShow(Sender: TObject);
 var
   searchResult: TSearchRec;
 begin
-  if ConstructionListBox.Count > 0 then
-  begin
-    ConstructionListBox.ItemIndex := 0;
-    UpdateLayerList;
-    if DerobModel.Constructions[23].LayerCount > 0 then
-    begin
-      Form2.LayerListBox.ItemIndex := 0;
-      UpdateLayerThicknessBox;
-    end;
-  end;
-  MaterialListBox.ItemIndex := 0;
-  UpdateMaterialConstants;
+  CurrentCategory := 'Wall';
+   if ConstructionListBox.Count > 0 then
+   begin
+   ConstructionListBox.ItemIndex := 0;
+   UpdateLayerList;
+   if DerobModel.Constructions[23].LayerCount > 0 then
+   begin
+   Form2.LayerListBox.ItemIndex := 0;
+   UpdateLayerThicknessBox;
+   end;
+   end;
+   MaterialListBox.ItemIndex := 0;
+   UpdateMaterialConstants;
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Constructions');
   PopupBox1.Items.Clear;
@@ -592,6 +586,7 @@ begin
       PopupBox1.Items.Add(searchResult.Name);
     end;
     until FindNext(searchResult) <> 0;
+    findClose(searchResult);
   end;
 end;
 

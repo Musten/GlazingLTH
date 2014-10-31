@@ -1,5 +1,7 @@
 unit mainFormny;
+
 interface
+
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
@@ -351,13 +353,15 @@ begin
   DerobModel.HouseProperties.IntValue['WallHolder'] := WallComboBox.ItemIndex;
 
   if GlazeComboBox.Enabled = True then
-    begin
-      DerobModel.HouseProperties.IntValue['GlazeHolder'] := GlazeComboBox.ItemIndex;
-    end;
+  begin
+    DerobModel.HouseProperties.IntValue['GlazeHolder'] :=
+      GlazeComboBox.ItemIndex;
+  end;
   if WindowComboBox.Enabled = True then
-    begin
-      DerobModel.HouseProperties.IntValue['WindowHolder'] := WindowComboBox.ItemIndex;
-    end;
+  begin
+    DerobModel.HouseProperties.IntValue['WindowHolder'] :=
+      WindowComboBox.ItemIndex;
+  end;
 end;
 
 procedure TForm1.GeometryClear;
@@ -442,7 +446,8 @@ begin
     DerobModel.HouseProperties.IntValue['ChosenGlaze'] :=
       GlazeControlComboBox.ItemIndex + 2;
     DerobModel.HouseProperties.BoolValue['GlazeTemp'] := True;
-    DerobModel.HouseProperties.IntValue['TMaxGlaze'] := Round(TempMaxNumberBox.Value);
+    DerobModel.HouseProperties.IntValue['TMaxGlaze'] :=
+      Round(TempMaxNumberBox.Value);
   end
   else
   begin
@@ -469,13 +474,15 @@ begin
   if IntGlazeCheckBox1.IsChecked then
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := True;
-    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:= OpeningNrBox.Value;
-    DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'] := OpeningNrBox2.Value;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'] :=
+      OpeningNrBox.Value;
+    DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'] :=
+      OpeningNrBox2.Value;
   end
   else
   begin
     DerobModel.VentilationProperties.BoolValue['AutoOpening'] := False;
-    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage']:= 0;
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'] := 0;
   end;
 
   if IntGlazeCheckBox2.IsChecked then
@@ -843,7 +850,7 @@ begin
   SetCurrentDir('Cases/' + DerobModel.HouseProperties.StringValue['CaseName']);
   // Skapa en temporär sparfil om det blir något fel vid sparning
   DerobModel.Filename := 'Sparfil.bak';
-  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
+  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := false;
   DerobModel.Save;
   // Ta bort den gamla filen om det inte är något fel
   DeleteFile('Sparfil.dat');
@@ -897,7 +904,7 @@ begin
       ShowMessage('Fallet existerar redan, v.v. ladda fallet istället.');
     end
     else
-    DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
+      DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
     CreateDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
     SetCurrentDir(StartDir);
@@ -941,16 +948,16 @@ end;
 procedure TForm1.fileMenuLoadClick(Sender: TObject);
 begin
   // Ändrad av Musten 17/7 - Öppnar "Cases" mappen och kan endast välja .dat filer
-  SetCurrentDir(TPath.GetSharedDocumentsPath+'\Glazing-LTH\Cases\');
+  SetCurrentDir(TPath.GetSharedDocumentsPath + '\Glazing-LTH\Cases\');
   OpenDialog.Filename := '';
-  OpenDialog.InitialDir := TPath.GetSharedDocumentsPath+'\Glazing-LTH\Cases\';
+  OpenDialog.InitialDir := TPath.GetSharedDocumentsPath + '\Glazing-LTH\Cases\';
   OpenDialog.Filter := 'Sparfiler (.dat)|*.dat';
   // -------------------------------
   if OpenDialog.Execute then
   begin
     GeometryClear;
     DerobModel.Filename := OpenDialog.Filename;
-    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := false;
+    DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
     DerobModel.Open;
     pressed := True;
     SetCurrentDir('../');
@@ -1009,7 +1016,7 @@ begin
   ArgPath := GetCurrentDir + '\Winter\Indata1.txt';
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
-  KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "'+ArgPath+'"';
+  KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "' + ArgPath + '"';
 
   ExecProcess(KGKPath, '', False);
   DeleteFile('KGK_Show.ini');
@@ -1245,7 +1252,7 @@ begin
   SetCurrentDir('Derob');
 
   for Idx := 1 to 5 do
- // IDX 1: Vinterfall, 2:3 Sommarfall, 3: Vinterfall med öppning, 4: Sommarfall med öppning, 5: Referensfall
+  // IDX 1: Vinterfall, 2:3 Sommarfall, 3: Vinterfall med öppning, 4: Sommarfall med öppning, 5: Referensfall
   begin
     if Idx = 1 then
     begin
@@ -1292,8 +1299,7 @@ begin
       DerobModel.HouseProperties.StringValue['CaseName'] + '\' + season + '\' +
       datanumber + '"';
 
-
-//De tre vanliga beräkningsfallen
+    // De tre vanliga beräkningsfallen
     if (Idx = 1) or (Idx = 2) or (Idx = 5) then
     begin
       ExitCode := ExecProcess(dig, '', True);
@@ -1328,9 +1334,9 @@ begin
       end;
     end;
 
-    //Kollar om användaren har valt att göra beräkningar för automatisk öppning
-    if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True)
-      and ((Idx = 3) or (Idx = 4)) then
+    // Kollar om användaren har valt att göra beräkningar för automatisk öppning
+    if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True) and
+      ((Idx = 3) or (Idx = 4)) then
     begin
       ExitCode := ExecProcess(dig, '', True);
       if ExitCode <> 0 then
@@ -1532,7 +1538,8 @@ begin
     GlazeTempRadioButton.IsChecked := True;
     TempMaxNumberBox.Value := DerobModel.HouseProperties.IntValue['TMaxGlaze'];
     TempMinNumberBox.Value := DerobModel.HouseProperties.IntValue['TMinGlaze'];
-    GlazeControlComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['ChosenGlaze'] - 2;
+    GlazeControlComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
+      ['ChosenGlaze'] - 2;
   end;
   TempMinNumberBox.Value := DerobModel.HouseProperties.IntValue['TMinRoom'];
   IntHeatNumberBox.Value := DerobModel.HouseProperties.IntValue['IntHeat'];
@@ -1554,10 +1561,13 @@ begin
   if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
   begin
     IntGlazeCheckBox1.IsChecked := True;
-    OpeningNrBox.Value:=DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'];
-    OpeningNrBox2.Value:=DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'];
+    OpeningNrBox.Value := DerobModel.VentilationProperties.DoubleValue
+      ['OpeningLeakage'];
+    OpeningNrBox2.Value := DerobModel.VentilationProperties.DoubleValue
+      ['OpeningMaxTemp'];
   end;
-  if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True then
+  if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True
+  then
   begin
     IntGlazeCheckBox2.IsChecked := True;
   end;
@@ -1797,6 +1807,10 @@ end;
 
 procedure TForm1.PropConstrButtonClick(Sender: TObject);
 begin
+  mainGeometrySave;
+  mainPropertiesSave;
+  mainEnergySave;
+  mainClimateSave;
   Form2.DerobModel := Self.DerobModel;
   CurrentCategory := 'Wall';
   Form2.CMenuItem1.IsSelected := True;
@@ -1867,7 +1881,7 @@ var
   buffer: string;
   holder: TStringList;
   Construction: TConstruction;
-//  Material: TMaterial;
+  // Material: TMaterial;
   i: integer;
 begin
   SetCurrentDir(StartDir);
@@ -2065,7 +2079,7 @@ var
   holder: TStringList;
   Material: TMaterial;
 begin
-//  Idx := 0;
+  // Idx := 0;
   holder := TStringList.Create;
   SetCurrentDir(StartDir);
   AssignFile(SomeTxtFile, 'Library/WallMaterial.lib');
@@ -2241,23 +2255,23 @@ end;
 procedure TForm1.IntGlazeCheckBox1Change(Sender: TObject);
 begin
   if IntGlazeCheckBox1.IsChecked then
-    begin
-      OpeningNrBox.Enabled := True;
-      Label50.Enabled := True;
-      OpeningNrBox2.Enabled := True;
-      Label56.Enabled := True;
-      Label57.Enabled := True;
-      Label58.Enabled := True;
-    end
+  begin
+    OpeningNrBox.Enabled := True;
+    Label50.Enabled := True;
+    OpeningNrBox2.Enabled := True;
+    Label56.Enabled := True;
+    Label57.Enabled := True;
+    Label58.Enabled := True;
+  end
   else
-    begin
-      OpeningNrBox.Enabled := False;
-      Label50.Enabled := False;
-      OpeningNrBox2.Enabled := False;
-      Label56.Enabled := False;
-      Label57.Enabled := False;
-      Label58.Enabled := False;
-    end;
+  begin
+    OpeningNrBox.Enabled := False;
+    Label50.Enabled := False;
+    OpeningNrBox2.Enabled := False;
+    Label56.Enabled := False;
+    Label57.Enabled := False;
+    Label58.Enabled := False;
+  end;
 end;
 
 procedure TForm1.IntheatVent;
