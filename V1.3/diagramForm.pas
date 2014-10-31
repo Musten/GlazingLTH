@@ -188,8 +188,8 @@ begin
 
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
-    GlazeTemp.ShowInLegend := True;
     GlazeTemp := TLineSeries.Create(Chart1);
+     GlazeTemp.ShowInLegend := True;
     Chart1.AddSeries(GlazeTemp);
     GlazeTemp.Title := 'Vald Inglasning';
     Chart1.Series[2].Color := TAlphaColorRec.Green;

@@ -104,7 +104,6 @@ object Form5: TForm5
   end
   object Panel2: TPanel
     Align = alFitLeft
-    DesignVisible = False
     Height = 630.389648437500000000
     Position.Y = 135.000000000000000000
     Width = 809.000000000000000000

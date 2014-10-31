@@ -836,8 +836,8 @@ procedure TForm1.simulateMenuCalculateClick(Sender: TObject);
 begin
   SetCurrentDir(StartDir); // NY
   DerobModel.HouseProperties.BoolValue['KGK'] := False;
-  PropertiesClick(Self);
-  GeometryClick(Self);
+//  PropertiesClick(Self);
+//  GeometryClick(Self);
   mainGeometrySave;
   VolumeCount;
   mainPropertiesSave;
@@ -1559,13 +1559,19 @@ begin
     DoubleValue['Eta'];
 
   if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
-  begin
-    IntGlazeCheckBox1.IsChecked := True;
-    OpeningNrBox.Value := DerobModel.VentilationProperties.DoubleValue
+    begin
+      IntGlazeCheckBox1.IsChecked := True;
+      OpeningNrBox.Value := DerobModel.VentilationProperties.DoubleValue
       ['OpeningLeakage'];
-    OpeningNrBox2.Value := DerobModel.VentilationProperties.DoubleValue
+      OpeningNrBox2.Value := DerobModel.VentilationProperties.DoubleValue
       ['OpeningMaxTemp'];
-  end;
+    end
+    else
+      begin
+         DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'] := 0;
+         DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'] := 9999;
+      end;
+
   if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True
   then
   begin
