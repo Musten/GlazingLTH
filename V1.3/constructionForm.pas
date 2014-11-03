@@ -49,6 +49,7 @@ type
     UNumberBox: TNumberBox;
     Button1: TButton;
     PopupBox1: TPopupBox;
+    Label3: TLabel;
     procedure ConstrExitButtonClick(Sender: TObject);
     procedure CMenuItem1Click(Sender: TObject);
     procedure CMenuItem2Click(Sender: TObject);
@@ -517,6 +518,14 @@ procedure TForm2.MaterialListBoxItemClick(const Sender: TCustomListBox;
   const Item: TListBoxItem);
 begin
   UpdateMaterialConstants;
+  if MaterialListBox.ItemIndex < 10 then
+    begin
+      RemoveMaterialButton.Enabled := False;
+    end
+    else
+      begin
+        RemoveMaterialButton.Enabled := True;
+      end;
 end;
 
 procedure TForm2.menuSelected;
@@ -542,6 +551,7 @@ begin
     DerobModel.HouseProperties.BoolValue['ConstructionLib'] := True;
     DerobModel.FileName := PopupBox1.Text;
     DerobModel.Open;
+    UpdateMaterialList;
     UpdateConstructionList;
     if ConstructionListBox.Count > 0 then
     begin
