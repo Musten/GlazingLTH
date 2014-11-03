@@ -263,6 +263,7 @@ end;
 procedure TForm2.CreateConstructionButtonClick(Sender: TObject);
 var
   Construction: TConstruction;
+  ConstructionName: String;
 begin
   DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
   // Create new construction instance
@@ -271,17 +272,20 @@ begin
   Construction.StringValue['ConstructionType'] := CurrentCategory;
 
   // Assign a sensible name to the new instance
-
-  Construction.Name := InputBox('Skapa konstruktion', 'Namn: ',
-    Construction.Name);
-
-  // Add instance to DerobModel
-
-  if Construction.Name <> '' then
+  if InputQuery('Skapa konstruktion', 'Namn: ', ConstructionName) then
   begin
-    DerobModel.HouseProperties.BoolValue['ConstructionChange'] := True;
-    DerobModel.AddConstruction(Construction);
+    Construction.Name := ConstructionName;
+    if Construction.Name <> '' then
+    begin
+      DerobModel.HouseProperties.BoolValue['ConstructionChange'] := True;
+      // Add instance to DerobModel
+      DerobModel.AddConstruction(Construction);
+    end;
   end;
+
+
+
+
 
   // Update list boxes to reflect changes
 
@@ -519,13 +523,13 @@ procedure TForm2.MaterialListBoxItemClick(const Sender: TCustomListBox;
 begin
   UpdateMaterialConstants;
   if MaterialListBox.ItemIndex < 10 then
-    begin
-      RemoveMaterialButton.Enabled := False;
-    end
-    else
-      begin
-        RemoveMaterialButton.Enabled := True;
-      end;
+  begin
+    RemoveMaterialButton.Enabled := False;
+  end
+  else
+  begin
+    RemoveMaterialButton.Enabled := True;
+  end;
 end;
 
 procedure TForm2.menuSelected;
@@ -573,18 +577,18 @@ var
   searchResult: TSearchRec;
 begin
   CurrentCategory := 'Wall';
-   if ConstructionListBox.Count > 0 then
-   begin
-   ConstructionListBox.ItemIndex := 0;
-   UpdateLayerList;
-   if DerobModel.Constructions[23].LayerCount > 0 then
-   begin
-   Form2.LayerListBox.ItemIndex := 0;
-   UpdateLayerThicknessBox;
-   end;
-   end;
-   MaterialListBox.ItemIndex := 0;
-   UpdateMaterialConstants;
+  if ConstructionListBox.Count > 0 then
+  begin
+    ConstructionListBox.ItemIndex := 0;
+    UpdateLayerList;
+    if DerobModel.Constructions[23].LayerCount > 0 then
+    begin
+      Form2.LayerListBox.ItemIndex := 0;
+      UpdateLayerThicknessBox;
+    end;
+  end;
+  MaterialListBox.ItemIndex := 0;
+  UpdateMaterialConstants;
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Constructions');
   PopupBox1.Items.Clear;
