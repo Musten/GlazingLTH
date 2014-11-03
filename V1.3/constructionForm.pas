@@ -346,7 +346,7 @@ begin
   end
   else
   begin
-    ShowMessage('Välj lager att ta bort för konstruktionen');
+    ShowMessage('Välj lager och konstruktion');
   end;
 
 end;
@@ -488,6 +488,7 @@ end;
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
 var
   Material: TMaterial;
+  j: Integer;
 begin
   if MaterialListBox.ItemIndex <> -1 then
   begin
@@ -496,6 +497,19 @@ begin
 
     Material := DerobModel.Materials[MaterialListBox.ItemIndex +
       (GlassMatCount + GasMatCount)];
+
+    //Kollar om det borttagna materialet finns i någon konstruktion och tar då bort det materiallagret
+  for i := 0 to DerobModel.ConstructionCount - 1 do
+    begin
+      for j := 0 to DerobModel.Constructions[i].LayerCount - 1 do
+        begin
+          if DerobModel.Constructions[i].Layers[j].Name = Material.Name then
+            begin
+              DerobModel.Constructions[i].RemoveLayer(Material);
+              break;
+            end;
+        end;
+    end;
 
     // Remove material from DerobModel
 
@@ -506,6 +520,7 @@ begin
     UpdateMaterialList;
     MaterialListBox.ItemIndex := MaterialListBox.Count - 1;
     UpdateMaterialConstants;
+    UpdateLayerList;
   end;
 end;
 

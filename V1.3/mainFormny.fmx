@@ -109,8 +109,9 @@ object Form1: TForm1
     TabOrder = 1
     object Viewport3D1: TViewport3D
       Height = 190.000000000000000000
+      Position.X = 1.000000000000000000
       Visible = False
-      Width = 193.000000000000000000
+      Width = 192.000000000000000000
       object Rectangle3D6: TRectangle3D
         RotationAngle.X = 51.991050720214840000
         RotationAngle.Y = 164.412872314453100000
