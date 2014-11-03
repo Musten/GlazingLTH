@@ -189,7 +189,7 @@ begin
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
     GlazeTemp := TLineSeries.Create(Chart1);
-     GlazeTemp.ShowInLegend := True;
+    GlazeTemp.ShowInLegend := True;
     Chart1.AddSeries(GlazeTemp);
     GlazeTemp.Title := 'Vald Inglasning';
     Chart1.Series[2].Color := TAlphaColorRec.Green;
@@ -1799,8 +1799,8 @@ var
   i, colCount: Integer;
   TLPath, buffer: string;
   TLResult: TextFile;
-  UteT, RumT, RumEnergi, Ball, Vol5T, Vol2T, Vol3T, Vol4T,
-  RefT, RefEnergi: array of double;
+  UteT, RumT, RumEnergi, Ball, Vol5T, Vol2T, Vol3T, Vol4T, RefT,
+    RefEnergi: array of double;
   col: TStringColumn;
 
 begin
@@ -1851,7 +1851,7 @@ begin
     end;
     ResultGrid.AddObject(col);
   end;
-
+  //
   TLPath := GetCurrentDir + '\Resultat.txt';
   AssignFile(TLResult, TLPath);
   Reset(TLResult);
@@ -1900,7 +1900,7 @@ begin
   end;
   CloseFile(TLResult);
 
-  //In i rätt mapp där Vol_Load för referensfallet NoGlaze finns
+  // In i rätt mapp där Vol_Load för referensfallet NoGlaze finns
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
   SetCurrentDir('NoGlaze');
@@ -1915,16 +1915,17 @@ begin
   end;
 
   for i := 12 to 8771 do
-    begin
-      ReadLn(TLResult, Ball[i - 12], Ball[i - 12], Ball[i - 12], RefT[i - 12],
+  begin
+    ReadLn(TLResult, Ball[i - 12], Ball[i - 12], Ball[i - 12], RefT[i - 12],
       Ball[i - 12], RefEnergi[i - 12]);
-    end;
+  end;
+  CloseFile(TLResult);
 
   // Rumsvolym i aktuell byggnad och referensbyggnad finns alltid i tabellen
   ResultGrid.Cells[0, 0] := 'ReferensRum';
-  ResultGrid.Cells[1, 0] := FloatToStr(Round(Mean(RefT) * 10) /10) + ' °C';
+  ResultGrid.Cells[1, 0] := FloatToStr(Round(Mean(RefT) * 10) / 10) + ' °C';
   ResultGrid.Cells[2, 0] := FloatToStr(Round(Sum(RefEnergi) / 100) / 10) +
-   ' kWh/år';
+    ' kWh/år';
   ResultGrid.Cells[3, 0] := FloatToStr(MinValue(RefT)) + ' °C';
   ResultGrid.Cells[4, 0] := FloatToStr(MaxValue(RefT)) + ' °C';
 
@@ -1989,7 +1990,6 @@ begin // Med inglasning- linje
   if HeatRadioButton.IsChecked = True then
   begin
     Chart1.LeftAxis.Title.Caption := 'Energibehov';
-    // 'Energibehov/dag (kWh)';
     Chart1.BottomAxis.Title.Caption := 'Månad';
 
     With Chart1.Series[0] Do
