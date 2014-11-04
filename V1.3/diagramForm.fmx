@@ -25,7 +25,7 @@ object Form5: TForm5
     object HeatRadioButton: TRadioButton
       GroupName = 'DiagramRadioButton'
       Height = 25.000000000000000000
-      Position.X = 16.000000000000000000
+      Position.X = 64.000000000000000000
       Position.Y = 80.000000000000000000
       TabOrder = 0
       Text = 'Energianv'#228'ndning'
@@ -34,63 +34,54 @@ object Form5: TForm5
     end
     object Label1: TLabel
       Height = 24.000000000000000000
-      Position.X = 40.000000000000000000
+      Position.X = 70.000000000000000000
       Position.Y = 200.000000000000000000
       Text = 'Energianv'#228'ndning, utan inglasning'
       Width = 185.000000000000000000
     end
     object Label2: TLabel
       Height = 25.000000000000000000
-      Position.X = 40.000000000000000000
+      Position.X = 70.000000000000000000
       Position.Y = 160.000000000000000000
       Width = 137.000000000000000000
     end
     object Label3: TLabel
       Height = 24.000000000000000000
-      Position.X = 40.000000000000000000
+      Position.X = 70.000000000000000000
       Position.Y = 128.000000000000000000
       Text = 'Energianv'#228'ndning, med inglasning'
       Width = 169.000000000000000000
     end
     object Label4: TLabel
       Height = 24.000000000000000000
-      Position.X = 40.000000000000000000
+      Position.X = 70.000000000000000000
       Position.Y = 224.000000000000000000
       Width = 145.000000000000000000
     end
     object ResultTxtBtn: TButton
       Height = 24.000000000000000000
-      Position.X = 32.000000000000000000
-      Position.Y = 840.000000000000000000
+      Position.X = 160.000000000000000000
+      Position.Y = 1000.000000000000000000
       TabOrder = 5
-      Text = 'Spara resultat'
+      Text = #214'ppna Resultatfil'
       Width = 137.000000000000000000
       OnClick = ResultTxtBtnClick
     end
     object TempRadioButton: TRadioButton
       GroupName = 'DiagramRadioButton'
       Height = 24.000000000000000000
-      Position.X = 16.000000000000000000
+      Position.X = 64.000000000000000000
       Position.Y = 48.000000000000000000
       TabOrder = 6
       Text = 'Temperatur i vald volym'
       Width = 153.000000000000000000
       OnChange = TempRadioButtonChange
     end
-    object Button1: TButton
-      Height = 22.000000000000000000
-      Position.X = 32.000000000000000000
-      Position.Y = 792.000000000000000000
-      TabOrder = 7
-      Text = 'Button1'
-      Width = 80.000000000000000000
-      OnClick = Button1Click
-    end
     object ResultGrid: TStringGrid
       Height = 157.000000000000000000
-      Position.X = 40.000000000000000000
+      Position.X = 70.000000000000000000
       Position.Y = 528.000000000000000000
-      TabOrder = 8
+      TabOrder = 7
       Width = 306.000000000000000000
       CanFocus = False
       RowCount = 6

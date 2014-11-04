@@ -23,7 +23,6 @@ type
     ResultTxtBtn: TButton;
     Panel1: TPanel;
     Panel2: TPanel;
-    Button1: TButton;
     ResultGrid: TStringGrid;
     StringColumn1: TStringColumn;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
