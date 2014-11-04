@@ -50,7 +50,6 @@ type
     Button1: TButton;
     PopupBox1: TPopupBox;
     Label3: TLabel;
-    procedure ConstrExitButtonClick(Sender: TObject);
     procedure CMenuItem1Click(Sender: TObject);
     procedure CMenuItem2Click(Sender: TObject);
     procedure CMenuItem3Click(Sender: TObject);
@@ -72,6 +71,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure PopupBox1Change(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     FDerobModel: TDerobModel;
@@ -87,6 +87,7 @@ type
     procedure UpdateUValue;
     procedure UpdateMaterialConstants;
     procedure UpdateLayerThicknessBox;
+    procedure SaveBeforeExit;
 
     // procedure SetData;
     procedure SetCurrentCategory(const Value: string);
@@ -108,65 +109,10 @@ implementation
 
 uses mainFormny;
 
-procedure TForm2.ConstrExitButtonClick(Sender: TObject);
-begin
-  Form2.Close;
-end;
-
 procedure TForm2.ConstrSaveButtonClick(Sender: TObject);
-var
-  SaveChange, FileReWrite, val: Integer;
-  FileName: String;
 begin
-  CUpdateComboBox;
-  // Kollar om det har skett ändringar
-  if DerobModel.HouseProperties.BoolValue['ConstructionChange'] = True then
-  begin
-    // Visar ruta som frågar om man vill spara ändringarna
-    SaveChange := MessageDlg
-      ('Ändringar har skett, spara konstruktionsbibliotek?',
-      TMsgDlgType.mtWarning, mbYesNo, 0);
-    // Om användaren vill spara...
-    if SaveChange = mrYes then
-    begin
-      // Namnet på biblioteket användaren vill spara
-      if InputQuery('Spara konstruktionsbibliotek', 'Biblioteksnamn: ', FileName)
-      then
-      begin
-        DerobModel.FileName := FileName + '.con';
-        // Kollar om det redan finns ett sparat konstruktionsbibliotek med det namnet
-        if FileExists(DerobModel.FileName) then
-        begin
-          // Frågar användaren om man vill skriva över biblioteket
-          FileReWrite :=
-            MessageDlg('Konstruktionsbibliotek existerar redan, skriv över?',
-            TMsgDlgType.mtWarning, mbYesNo, 0);
-          // Sparar om biblioteket
-          if FileReWrite = mrYes then
-          begin
-            DerobModel.Save;
-            DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
-          end
-          // Om användaren inte vill spara över filen så sparas den som "aktuellt datum.con"
-          else
-          begin
-            DerobModel.FileName := DateToStr(Now) + '.con';
-            repeat
-              if FileExists(DerobModel.FileName) then
-                inc(val);
-              DerobModel.FileName := DateToStr(Now) + '(' + IntToStr(val)
-                + ').con';
-            until FileExists(DerobModel.FileName) = False;
-            DerobModel.Save;
-            DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
-          end;
-        end;
-      end;
-    end;
-  end;
-
   Form2.Close;
-  DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
+
 end;
 
 procedure TForm2.CUpdateComboBox;
@@ -264,8 +210,10 @@ procedure TForm2.CreateConstructionButtonClick(Sender: TObject);
 var
   Construction: TConstruction;
   ConstructionName: String;
+  ConstructionExists: Boolean;
 begin
   DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
+  ConstructionExists := False;
   // Create new construction instance
 
   Construction := TConstruction.Create;
@@ -275,11 +223,22 @@ begin
   if InputQuery('Skapa konstruktion', 'Namn: ', ConstructionName) then
   begin
     Construction.Name := ConstructionName;
-    if Construction.Name <> '' then
+    // Loopar genom befintliga konstruktioner
+    for i := 0 to DerobModel.ConstructionCount - 1 do
     begin
-      DerobModel.HouseProperties.BoolValue['ConstructionChange'] := True;
-      // Add instance to DerobModel
+      // Kollar om den nya konstruktionens namn redan är använt
+      if Construction.Name = DerobModel.Constructions[i].Name then
+      begin
+        ShowMessage('Konstruktionen existerar redan, välj nytt namn');
+        ConstructionExists := True;
+        break;
+      end;
+    end;
+    // Lägger till den nya konstruktionen om den har ett unikt namn
+    if (Construction.Name <> '') and (ConstructionExists = False) then
+    begin
       DerobModel.AddConstruction(Construction);
+      DerobModel.HouseProperties.BoolValue['ConstructionChange'] := True;
     end;
   end;
 
@@ -374,11 +333,12 @@ begin
 
     // Add material as a layer in the construction instance.
     Thickness := '';
-    Thickness := InputBox('Lagertjocklek', 'Tjocklek (mm):', Thickness);
-    if Thickness <> '' then
+    if InputQuery('Lagertjocklek', 'Tjocklek (mm):', Thickness) then
     begin
-
-      Construction.AddLayer(Material, StrToFloat(Thickness));
+      if Thickness <> '' then
+      begin
+        Construction.AddLayer(Material, StrToFloat(Thickness));
+      end;
     end;
     // Update layer list box
 
@@ -395,7 +355,14 @@ end;
 procedure TForm2.AddMaterialButtonClick(Sender: TObject);
 var
   Material: TMaterial;
+  MaterialName, Lambda, Density, HeatCapacity: string;
+  MaterialExists: Boolean;
 begin
+  // Tillsätter standard värden
+  Lambda := '1';
+  Density := '1';
+  HeatCapacity := '1';
+  MaterialExists := False;
 
   // Create a new material instance
 
@@ -404,26 +371,45 @@ begin
   Material.StringValue['MaterialType'] := 'Opaque';
 
   // Set name to a sensible default
-  Material.Name := InputBox('Nytt Material', 'Namn:', Material.Name);
-  Material.DoubleValue['Lambda'] :=
-    StrToFloat(InputBox('Nytt Material', 'Lambdavärde (W/m*K):', '0'));
-  Material.DoubleValue['Density'] :=
-    StrToFloat(InputBox('Nytt Material', 'Densitet (kg/m3):', '0'));
-  Material.DoubleValue['HeatCapacity'] :=
-    (StrToFloat(InputBox('Nytt Material', 'Spec.Värmekap (J/kg*K):',
-    '0'))) / 3600;
+  if InputQuery('Nytt Material', 'Namn:', MaterialName) and
+    (InputQuery('Nytt Material', 'Lambdavärde (W/m*K):', Lambda)) and
+    (InputQuery('Nytt Material', 'Densitet (kg/m3):', Density)) and
+    (InputQuery('Nytt Material', 'Spec.Värmekap (J/kg*K):', HeatCapacity)) then
+  begin
+    Material.Name := MaterialName;
+    Material.DoubleValue['Lambda'] := StrToFloat(Lambda);
+    Material.DoubleValue['Density'] := StrToFloat(Density);
+    Material.DoubleValue['  HeatCapacity'] := StrToFloat(HeatCapacity) / 3600;
+    // Loopar över materialen
+    for i := 0 to DerobModel.MaterialCount - 1 do
+    begin
+      // Kollar om materialnamnet är unikt
+      if Material.Name = DerobModel.Materials[i].Name then
+      begin
+        ShowMessage('Konstruktionen existerar redan, välj nytt namn');
+        MaterialExists := True;
+        break;
+      end;
+    end;
+    // Försöker ej lägga till materialet om det inte har ett unikt namn
+    if (MaterialExists = False) then
+    begin
+      if (Material.Name <> '') and (Material.DoubleValue['Lambda'] > 0) and
+        (Material.DoubleValue['Density'] > 0) and
+        (Material.DoubleValue['HeatCapacity'] > 0) then
+      begin
+        DerobModel.AddMaterial(Material);
+        DerobModel.HouseProperties.BoolValue['ConstructionChange'] := True;
+      end
+      else
+      begin
+        ShowMessage('Var god och fyll i all information om materialet');
+      end;
+    end;
+  end;
 
   // Add material to the DerobModel
-  if (Material.Name <> '') and (Material.DoubleValue['Lambda'] > 0) and
-    (Material.DoubleValue['Density'] > 0) and
-    (Material.DoubleValue['HeatCapacity'] > 0) then
-  begin
-    DerobModel.AddMaterial(Material);
-  end
-  else
-  begin
-    ShowMessage('Var god och fyll i all information om materialet');
-  end;
+
 
   // Update the material list box
 
@@ -498,17 +484,17 @@ begin
     Material := DerobModel.Materials[MaterialListBox.ItemIndex +
       (GlassMatCount + GasMatCount)];
 
-    //Kollar om det borttagna materialet finns i någon konstruktion och tar då bort det materiallagret
-  for i := 0 to DerobModel.ConstructionCount - 1 do
+    // Kollar om det borttagna materialet finns i någon konstruktion och tar då bort det materiallagret
+    for i := 0 to DerobModel.ConstructionCount - 1 do
     begin
       for j := 0 to DerobModel.Constructions[i].LayerCount - 1 do
+      begin
+        if DerobModel.Constructions[i].Layers[j].Name = Material.Name then
         begin
-          if DerobModel.Constructions[i].Layers[j].Name = Material.Name then
-            begin
-              DerobModel.Constructions[i].RemoveLayer(Material);
-              break;
-            end;
+          DerobModel.Constructions[i].RemoveLayer(Material);
+          break;
         end;
+      end;
     end;
 
     // Remove material from DerobModel
@@ -587,6 +573,11 @@ begin
   end;
 end;
 
+procedure TForm2.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  SaveBeforeExit;
+end;
+
 procedure TForm2.FormShow(Sender: TObject);
 var
   searchResult: TSearchRec;
@@ -617,12 +608,67 @@ begin
     until FindNext(searchResult) <> 0;
     findClose(searchResult);
   end;
+  DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
 end;
 
 procedure TForm2.LayerListBoxItemClick(const Sender: TCustomListBox;
   const Item: TListBoxItem);
 begin
   UpdateLayerThicknessBox;
+end;
+
+procedure TForm2.SaveBeforeExit;
+var
+  SaveChange, FileReWrite, val: Integer;
+  FileName: String;
+begin
+  // Kollar om det har skett ändringar
+  if DerobModel.HouseProperties.BoolValue['ConstructionChange'] = True then
+  begin
+    // Visar ruta som frågar om man vill spara ändringarna
+    SaveChange := MessageDlg
+      ('Ändringar har skett, spara konstruktionsbibliotek?',
+      TMsgDlgType.mtWarning, mbYesNo, 0);
+    // Om användaren vill spara...
+    if SaveChange = mrYes then
+    begin
+      // Namnet på biblioteket användaren vill spara
+      if InputQuery('Spara konstruktionsbibliotek', 'Biblioteksnamn: ', FileName)
+      then
+      begin
+        DerobModel.FileName := FileName + '.con';
+        // Kollar om det redan finns ett sparat konstruktionsbibliotek med det namnet
+        if FileExists(DerobModel.FileName) then
+        begin
+          // Frågar användaren om man vill skriva över biblioteket
+          FileReWrite :=
+            MessageDlg('Konstruktionsbibliotek existerar redan, skriv över?',
+            TMsgDlgType.mtWarning, mbYesNo, 0);
+          // Sparar om biblioteket
+          if FileReWrite = mrYes then
+          begin
+            DerobModel.Save;
+            DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
+          end
+          // Om användaren inte vill spara över filen så sparas den som "aktuellt datum.con"
+          else
+          begin
+            DerobModel.FileName := DateToStr(Now) + '.con';
+            repeat
+              if FileExists(DerobModel.FileName) then
+                inc(val);
+              DerobModel.FileName := DateToStr(Now) + '(' + IntToStr(val)
+                + ').con';
+            until FileExists(DerobModel.FileName) = False;
+            DerobModel.Save;
+            DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
+          end;
+        end;
+      end;
+    end;
+  end;
+  DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
+  CUpdateComboBox;
 end;
 
 procedure TForm2.SetCurrentCategory(const Value: string);

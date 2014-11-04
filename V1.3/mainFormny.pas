@@ -771,7 +771,7 @@ begin
   DerobModel.Floors[0].Width := HouseNumberBox2.Value;
 
   { 3D drawing }
-  // Draw solid cube (even though it's hollow, just for looks)   //KHOAN
+  // Draw solid cube (even though it's hollow, just for looks)
   Rectangle3D6.Visible := True;
   Rectangle3D6.Width := HouseNumberBox1.Value;
   Rectangle3D6.Depth := HouseNumberBox2.Value;
@@ -836,8 +836,8 @@ procedure TForm1.simulateMenuCalculateClick(Sender: TObject);
 begin
   SetCurrentDir(StartDir); // NY
   DerobModel.HouseProperties.BoolValue['KGK'] := False;
-//  PropertiesClick(Self);
-//  GeometryClick(Self);
+  // PropertiesClick(Self);
+  // GeometryClick(Self);
   mainGeometrySave;
   VolumeCount;
   mainPropertiesSave;
@@ -850,7 +850,7 @@ begin
   SetCurrentDir('Cases/' + DerobModel.HouseProperties.StringValue['CaseName']);
   // Skapa en temporär sparfil om det blir något fel vid sparning
   DerobModel.Filename := 'Sparfil.bak';
-  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := false;
+  DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
   DerobModel.Save;
   // Ta bort den gamla filen om det inte är något fel
   DeleteFile('Sparfil.dat');
@@ -888,44 +888,54 @@ begin
 end;
 
 procedure TForm1.fileMenuNewClick(Sender: TObject);
+var
+  CaseName: String;
 begin
   DerobModel.Destroy;
   FDerobModel := TDerobModel.Create;
   DefaultAbsorption;
-  // Ändrad av Musten 17/7 - Ser till att man inte kan skapa ett Case som redan finns
-  try
-    DerobModel.HouseProperties.StringValue['CaseName'] :=
-      InputBox('Beräkningsfall', 'Namn:', DerobModel.HouseProperties.StringValue
-      ['CaseName']);
-    SetCurrentDir('Cases');
-  finally
-    if DirectoryExists(DerobModel.HouseProperties.StringValue['CaseName']) then
-    begin
-      ShowMessage('Fallet existerar redan, v.v. ladda fallet istället.');
-    end
-    else
-      DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
-    CreateDir(DerobModel.HouseProperties.StringValue['CaseName']);
-    SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
-    SetCurrentDir(StartDir);
-    TreeView1.Enabled := True;
-    TreeView1.HitTest := True;
+  // Ser till att man inte kan skapa ett Case som redan finns
+
+  if InputQuery('Beräkningsfall', 'Namn:', CaseName) then
+  begin
+    DerobModel.HouseProperties.StringValue['CaseName'] := CaseName;
+    // Kollar att ett fall inte redan existerar med det valda namnet i Cases mappen
+    try
+      SetCurrentDir('Cases');
+    finally
+      if DirectoryExists(DerobModel.HouseProperties.StringValue['CaseName'])
+      then
+      begin
+        ShowMessage('Fallet existerar redan, v.v. ladda fallet istället.');
+      end
+      //Om mappen inte redan existerar så skapas den och programmet initieras
+      else
+      begin
+        DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
+        CreateDir(DerobModel.HouseProperties.StringValue['CaseName']);
+        SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+        SetCurrentDir(StartDir);
+        TreeView1.Enabled := True;
+        TreeView1.HitTest := True;
+        Rectangle3D6.Visible := False;
+        Formatsettings.DecimalSeparator := '.';
+        LoadGlasses;
+        LoadGas;
+        LoadMaterials;
+        LoadGlassConstructions;
+        mainUpdateComboBox;
+      end;
+
+    end;
   end;
 
   // ---------------------------------
 
-  Rectangle3D6.Visible := False;
-  Formatsettings.DecimalSeparator := '.';
-  LoadGlasses;
-  LoadGas;
-  LoadMaterials;
-  LoadGlassConstructions;
-  mainUpdateComboBox;
 end;
 
 procedure TForm1.fileMenuSaveClick(Sender: TObject);
 begin
-  // Ändrad av Musten 17/7 - Sparar filerna i mappen för caset i "Cases" mappen
+  //  Sparar filerna i mappen för caset i "Cases" mappen
   SetCurrentDir(StartDir);
   SetCurrentDir('Cases');
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
@@ -947,7 +957,7 @@ end;
 
 procedure TForm1.fileMenuLoadClick(Sender: TObject);
 begin
-  // Ändrad av Musten 17/7 - Öppnar "Cases" mappen och kan endast välja .dat filer
+  // Öppnar "Cases" mappen och kan endast välja .dat filer
   SetCurrentDir(TPath.GetSharedDocumentsPath + '\Glazing-LTH\Cases\');
   OpenDialog.Filename := '';
   OpenDialog.InitialDir := TPath.GetSharedDocumentsPath + '\Glazing-LTH\Cases\';
@@ -1440,7 +1450,8 @@ begin
     DerobModel.HouseProperties.StringValue['LocationPath'] := GetCurrentDir +
       '\' + ClimateComboBox.Selected.Text;
     sl.LoadFromFile(ClimateComboBox.Selected.Text);
-    Latitude := sl[11]; // line 12
+    Latitude := sl[11];
+    // line 12
     Latitude := Copy(Latitude, 19, 24);
     Latitude := Copy(Latitude, 1, 6);
     Longitude := sl[12]; // line 13
@@ -1559,18 +1570,18 @@ begin
     DoubleValue['Eta'];
 
   if DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True then
-    begin
-      IntGlazeCheckBox1.IsChecked := True;
-      OpeningNrBox.Value := DerobModel.VentilationProperties.DoubleValue
+  begin
+    IntGlazeCheckBox1.IsChecked := True;
+    OpeningNrBox.Value := DerobModel.VentilationProperties.DoubleValue
       ['OpeningLeakage'];
-      OpeningNrBox2.Value := DerobModel.VentilationProperties.DoubleValue
+    OpeningNrBox2.Value := DerobModel.VentilationProperties.DoubleValue
       ['OpeningMaxTemp'];
-    end
-    else
-      begin
-         DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'] := 0;
-         DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'] := 9999;
-      end;
+  end
+  else
+  begin
+    DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'] := 0;
+    DerobModel.VentilationProperties.DoubleValue['OpeningMaxTemp'] := 9999;
+  end;
 
   if DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True
   then

@@ -1384,7 +1384,7 @@ begin
 
     SetCurrentDir(StartDir);
 
-    if Idx = 1 then // Khoan
+    if Idx = 1 then
     begin
       AssignFile(T, 'Cases/' + CaseName + '/Winter/Indata' + IntToStr(Idx)
         + '.txt');
