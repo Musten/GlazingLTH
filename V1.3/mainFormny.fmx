@@ -1081,7 +1081,7 @@ object Form1: TForm1
       TabOrder = 2
       Cursor = crIBeam
       Max = 100000.000000000000000000
-      Value = 600.000000000000000000
+      Value = 300.000000000000000000
       TextAlign = taCenter
       Position.X = 432.000000000000000000
       Position.Y = 120.000000000000000000
