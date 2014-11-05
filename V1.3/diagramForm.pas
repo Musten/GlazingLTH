@@ -39,6 +39,7 @@ type
     procedure NoGlazeHistogram;
     procedure TLSumValues;
     procedure UpdateChart;
+    procedure Compare;
     { Private declarations }
   public
     { Public declarations }
@@ -47,13 +48,13 @@ type
 
 var
   Form5: TForm5;
-  Resultat, ResVolLoad, ResNoGlaze: TStrings;
+  Resultat, ResVolLoad, ResNoGlaze, Comparefile: TStrings;
   GlazeTemp: TLineSeries;
   HeatJan, HeatFeb, HeatMar, HeatApr, HeatMay, HeatJun, HeatJul, HeatAug,
     HeatSep, HeatOct, HeatNov, HeatDec, totalHeat, HeatJanNoGl, HeatFebNoGl,
     HeatMarNoGl, HeatAprNoGl, HeatMayNoGl, HeatJunNoGl, HeatJulNoGl,
     HeatAugNoGl, HeatSepNoGl, HeatOctNoGl, HeatNovNoGl, HeatDecNoGl: Real;
-  Temp: array of double;
+  Temp, EtaPrim, UPrim: array of double;
   TimeGlaze, Time, TimeNoGl: array of Real;
   intervall: Integer;
 
@@ -164,6 +165,164 @@ begin
   Grid.Visible := True;
 end;
 
+procedure TForm5.Compare;
+// Procedur som visar vad icke-inglasningsfallet behöver för värmeväxlare
+// alterntivt U-värde för att motsvara inglasningsfallet
+var
+  i: Integer;
+  TLPath, buffer: string;
+  TLResult: TextFile;
+  TInne, TUte, TotEnergi, TotEnergiGlas, Ball, Area, WindowH, WindowW,
+    DeltaT: array of double;
+  ATot, Langd, Bredd, Hojd, Dens, SpecVarme, Flode, UVal: double;
+  // Total area för fyra väggar (Tak,Golv exkl.)
+begin
+  SetLength(TInne, 8760); // Inomhustemperatur (NoGlaze)
+  SetLength(TUte, 8760); // Utomhustemperatur (NoGlaze)
+  SetLength(Ball, 8760); // Skräpvektor
+  SetLength(TotEnergi, 8760); // Total energianvändning per år (NoGlaze)
+  SetLength(TotEnergiGlas, 8760); // Total energianvändning per år (Glaze)
+  SetLength(EtaPrim, 8760); // Ny effektivitet på värmeväxlare på NoGlaze-Fall
+  SetLength(UPrim, 8760); // Nytt U-Värde för väggar på NoGlaze-Fall
+  SetLength(Area, 4);
+  // Area för de fyra väggarna på varsin plats (exkl fönster)
+  SetLength(WindowW, 4); // Fönsterbredd för de fyra väggarna på varsin plats
+  SetLength(WindowH, 4); // Fönsterhöjd --"--"--
+  SetLength(DeltaT, 8760); // Temperaturskillnad mellan ute och inne
+
+  Langd := DerobModel.Surface.Length;
+  Bredd := DerobModel.Surface.Width;
+  Hojd := DerobModel.Surface.Height;
+
+  if DerobModel.Walls[0].Properties.BoolValue['HoleNorth'] = True then
+  begin
+    Area[0] := Bredd * Hojd - DerobModel.Windows[0].Width * DerobModel.Windows
+      [0].Height;
+  end
+  else
+  begin
+    Area[0] := Bredd * Hojd;
+  end;
+
+  if DerobModel.Walls[1].Properties.BoolValue['HoleEast'] = True then
+  begin
+    Area[1] := Langd * Hojd - DerobModel.Windows[1].Width * DerobModel.Windows
+      [1].Height;
+  end
+  else
+  begin
+    Area[1] := Langd * Hojd;
+  end;
+  if DerobModel.Walls[2].Properties.BoolValue['HoleSouth'] = True then
+  begin
+    Area[2] := Bredd * Hojd - DerobModel.Windows[2].Width * DerobModel.Windows
+      [2].Height;
+  end
+  else
+  begin
+    Area[2] := Bredd * Hojd;
+  end;
+  if DerobModel.Walls[3].Properties.BoolValue['HoleWest'] = True then
+  begin
+    Area[3] := Langd * Hojd - DerobModel.Windows[3].Width * DerobModel.Windows
+      [3].Height;
+  end
+  else
+  begin
+    Area[0] := Langd * Hojd;
+  end;
+
+  ATot := Sum(Area);
+  Dens := 1.2; // Densitet för luft vid 21 grader
+  SpecVarme := 1000; // För luft, [J/kgK];
+  Flode := ((1 - DerobModel.VentilationProperties.DoubleValue['Eta'] / 100) *
+    DerobModel.VentilationProperties.DoubleValue['Flow']) / 1000;
+  // Ventilationsflöde q i [m^3/s];
+
+  // Hitta konstruktion som används i väggarna och ta fram U-värdet
+  for i := 0 to DerobModel.ConstructionCount - 1 do
+  begin
+    if DerobModel.Constructions[i].Name = DerobModel.HouseProperties.StringValue
+      ['Wall'] then
+    begin
+      UVal := DerobModel.Constructions[i].DoubleValue['UValue'];
+    end;
+  end;
+
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  TLPath := GetCurrentDir + '\Resultat.txt';
+  AssignFile(TLResult, TLPath);
+  Reset(TLResult);
+  for i := 0 to 9 do // Hoppa över de första 10 raderna (text)
+  begin
+    ReadLn(TLResult, buffer);
+  end;
+  for i := 10 to 8769 do
+  begin
+    ReadLn(TLResult, Ball[i - 10], Ball[i - 10], Ball[i - 10],
+      // Hämta energianvändning timme för timme från Resultat.txt
+      Ball[i - 10], Ball[i - 10], TotEnergiGlas[i - 10]);
+  end;
+  CloseFile(TLResult);
+
+  // In i rätt mapp där Vol_Load för referensfallet NoGlaze finns
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  SetCurrentDir('NoGlaze');
+
+  TLPath := GetCurrentDir + '\Vol_Load.txt';
+  AssignFile(TLResult, TLPath);
+  Reset(TLResult);
+
+  for i := 0 to 11 do // Hoppa över de första 10 raderna (text)
+  begin
+    ReadLn(TLResult, buffer);
+  end;
+
+  for i := 12 to 8771 do
+  begin
+    ReadLn(TLResult, Ball[i - 12], TUte[i - 12], Ball[i - 12], TInne[i - 12],
+      Ball[i - 12], TotEnergi[i - 12]);
+  end;
+  CloseFile(TLResult);
+  Comparefile := TStringList.Create;
+  // Räkna ut de nya värdena på EtaPrim och UPrim och skriv ned till fil
+  Comparefile.Add('h  Timme [h]');
+  Comparefile.Add('dT Temperaturskillnad  [°C]');
+  Comparefile.Add('EnergiG  Energianvändning för fall med inglasning  [Wh/h]');
+  Comparefile.Add('Energi Energianvändning för fall utan inglasning [Wh/h]');
+  Comparefile.Add('U  U-Värde [W/m^2]');
+  Comparefile.Add('Eta  Värmeväxlarens effektivitet [-]');
+  Comparefile.Add('');
+  Comparefile.Add('h  dT  EnergiG  Energi U Eta');
+  for i := 0 to 8759 do
+  begin
+    DeltaT[i] := TInne[i] - TUte[i];
+    if DeltaT[i] > 0.1 then
+    begin
+      EtaPrim[i] := (TotEnergi[i] - TotEnergiGlas[i]) /
+        (Flode * Dens * SpecVarme * (TInne[i] - TUte[i]));
+      UPrim[i] := (TotEnergiGlas[i] - TotEnergi[i] + UVal * ATot *
+        (TInne[i] - TUte[i])) / (ATot * (TInne[i] - TUte[i]));
+    end
+    else
+    begin
+      UPrim[i] := UVal;
+      EtaPrim[i] := 0;
+    end;
+    Comparefile.Add(FloatToStr(i + 1) + ' ' + FloatToStr(DeltaT[i]) + ' ' +
+      FloatToStr(TotEnergiGlas[i]) + ' ' + FloatToStr(TotEnergi[i]) + '  ' +
+      FloatToStr(UPrim[i]) + '  ' + FloatToStr(EtaPrim[i]));
+  end;
+
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
+  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+  Comparefile.SaveToFile('Comparision.txt');
+  Comparefile.Free;
+
+end;
+
 procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Chart1.Series[0].Clear;
@@ -198,6 +357,7 @@ begin
   TempRadioButton.IsChecked := True;
   UpdateChart;
   TLSumValues;
+  Compare;
 end;
 
 procedure TForm5.GlazeHistogram;
