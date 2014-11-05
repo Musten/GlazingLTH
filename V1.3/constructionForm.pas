@@ -513,7 +513,6 @@ end;
 procedure TForm2.ConstructionListBoxItemClick(const Sender: TCustomListBox;
   const Item: TListBoxItem);
 begin
-
   UpdateLayerList;
   UpdateLayerThicknessBox;
   // SetData;
@@ -885,9 +884,6 @@ begin
   begin
     for i := 0 to DerobModel.ConstructionCount - 1 do
     begin
-      if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions[i].Name
-      then
-      begin
         if DerobModel.Constructions[i].LayerCount > 0 then
         begin
           SetLength(RValue, DerobModel.Constructions[i].LayerCount);
@@ -896,10 +892,17 @@ begin
             RValue[j] := DerobModel.Constructions[i].LayerThickness[j] / 1000 /
               DerobModel.Constructions[i].Layers[j].DoubleValue['Lambda'];
           end;
-          UNumberBox.Value := 1 / (0.04 + 0.13 + Sum(RValue));
+          DerobModel.Constructions[i].DoubleValue['UValue'] :=
+          1 / (0.04 + 0.13 + Sum(RValue));
         end;
-      end;
     end;
+    for i := 0 to DerobModel.ConstructionCount - 1 do
+      begin
+        if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions[i].Name then
+          begin
+             UNumberBox.Value := DerobModel.Constructions[i].DoubleValue['UValue'];
+          end;
+      end;
   end;
 end;
 
