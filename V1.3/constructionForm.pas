@@ -597,7 +597,7 @@ begin
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
   SetCurrentDir('Constructions');
   PopupBox1.Items.Clear;
-  if FindFirst('*.*', faReadOnly, searchResult) = 0 then
+  if FindFirst('*.con', faReadOnly, searchResult) = 0 then
   begin
     repeat
     begin
