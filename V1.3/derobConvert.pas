@@ -444,22 +444,22 @@ begin
     EmittanceBack[i] := 87;
   end;
 
-  for i := 0 to WallCount - 1 do
+  for i := 0 to WallCount - 1 do      //huhu
   begin
     if (i = 0) or (i = 2) then
     begin
-      A[i] := Surface.Width;
-      B[i] := Surface.Height;
+      A[i] := DerobModel.Surface.Width;
+      B[i] := DerobModel.Surface.Height;
     end;
     if (i = 1) or (i = 3) then
     begin
-      A[i] := Surface.Length;
-      B[i] := Surface.Height;
+      A[i] := DerobModel.Surface.Length;
+      B[i] := DerobModel.Surface.Height;
     end;
     if (i = 4) or (i = 5) then
     begin
-      A[i] := Surface.Width;
-      B[i] := Surface.Length;
+      A[i] := DerobModel.Surface.Width;
+      B[i] := DerobModel.Surface.Length;
     end;
     igSurf[i] := 1;
   end;
@@ -511,12 +511,12 @@ begin
     end;
   end;
 
-  X[1] := Surface.Length;
-  X[2] := Surface.Length;
-  X[4] := Surface.Length;
-  Y[0] := Surface.Width;
-  Y[1] := Surface.Width;
-  Z[4] := Surface.Height;
+  X[1] := DerobModel.Surface.Length;
+  X[2] := DerobModel.Surface.Length;
+  X[4] := DerobModel.Surface.Length;
+  Y[0] := DerobModel.Surface.Width;
+  Y[1] := DerobModel.Surface.Width;
+  Z[4] := DerobModel.Surface.Height;
   Zenith[0] := 90;
   Zenith[1] := 90;
   Zenith[2] := 90;
@@ -571,16 +571,16 @@ begin
       ['CavityNorth'];
     X[GlazeIndex + 3] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
-    Y[GlazeIndex] := Surface.Width;
-    Z[GlazeIndex + 2] := Surface.Height;
+    Y[GlazeIndex] := DerobModel.Surface.Width;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     Z[GlazeIndex + 3] := 0;
-    A[GlazeIndex] := Surface.Width;
+    A[GlazeIndex] := DerobModel.Surface.Width;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
-    A[GlazeIndex + 2] := Surface.Width;
-    A[GlazeIndex + 3] := Surface.Width;
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
+    A[GlazeIndex + 2] := DerobModel.Surface.Width;
+    A[GlazeIndex + 3] := DerobModel.Surface.Width;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
     B[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
     B[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue
@@ -619,33 +619,33 @@ begin
     idSurf[GlazeIndex + 3] := GroundConstruction;
     igSurf[GlazeIndex + 3] := 1;
     GlazeIndex := GlazeIndex + 4;
-    DistanceNorth := Surface.Height / 2;
+    DistanceNorth := DerobModel.Surface.Height / 2;
     AreaNorth := (DerobModel.GlazingProperties.DoubleValue['CavityEast'] *
-      Surface.Height) / 2;
+      DerobModel.Surface.Height) / 2;
     // NordExtra
     Name[GlazeIndex] := 'NorthEastExtra';
     X[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityNorth'];
-    Y[GlazeIndex] := Surface.Width + DerobModel.GlazingProperties.DoubleValue
+    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
       ['CavityEast'];
     A[GlazeIndex] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
-    B[GlazeIndex] := Surface.Height;
+    B[GlazeIndex] := DerobModel.Surface.Height;
     Zenith[GlazeIndex] := 90;
     Azimuth[GlazeIndex] := 180;
     ivol2[GlazeIndex] := NorthVol;
     // ÖstExtra
     Name[GlazeIndex + 1] := 'EastNorthExtra';
-    Y[GlazeIndex + 1] := Surface.Width + DerobModel.GlazingProperties.
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width + DerobModel.GlazingProperties.
       DoubleValue['CavityEast'];
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
-    B[GlazeIndex + 1] := Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
     Zenith[GlazeIndex + 1] := 90;
     Azimuth[GlazeIndex + 1] := 90;
     ivol2[GlazeIndex + 1] := NorthVol;
     // HörnTak
     Name[GlazeIndex + 2] := 'NorthEastRoof';
-    Y[GlazeIndex + 2] := Surface.Width;
-    Z[GlazeIndex + 2] := Surface.Height;
+    Y[GlazeIndex + 2] := DerobModel.Surface.Width;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     B[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
@@ -654,7 +654,7 @@ begin
     Name[GlazeIndex + 3] := 'NorthEastFloor';
     X[GlazeIndex + 3] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
-    Y[GlazeIndex + 3] := Surface.Width;
+    Y[GlazeIndex + 3] := DerobModel.Surface.Width;
     A[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     B[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
@@ -679,19 +679,19 @@ begin
       ['CavityNorth'];
     X[GlazeIndex + 4] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
-    Y[GlazeIndex] := Surface.Width;
-    Y[GlazeIndex + 2] := Surface.Width;
-    Z[GlazeIndex + 3] := Surface.Height;
-    A[GlazeIndex] := Surface.Width;
+    Y[GlazeIndex] := DerobModel.Surface.Width;
+    Y[GlazeIndex + 2] := DerobModel.Surface.Width;
+    Z[GlazeIndex + 3] := DerobModel.Surface.Height;
+    A[GlazeIndex] := DerobModel.Surface.Width;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
-    A[GlazeIndex + 3] := Surface.Width;
-    A[GlazeIndex + 4] := Surface.Width;
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
-    B[GlazeIndex + 2] := Surface.Height;
+    A[GlazeIndex + 3] := DerobModel.Surface.Width;
+    A[GlazeIndex + 4] := DerobModel.Surface.Width;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
+    B[GlazeIndex + 2] := DerobModel.Surface.Height;
     B[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
     B[GlazeIndex + 4] := DerobModel.GlazingProperties.DoubleValue
@@ -743,24 +743,24 @@ begin
 
   if DerobModel.GlazingProperties.BoolValue['EastSouth'] = true then
   begin
-    X[GlazeIndex] := Surface.Length;
-    X[GlazeIndex + 2] := Surface.Length;
-    Y[GlazeIndex] := Surface.Width + DerobModel.GlazingProperties.DoubleValue
+    X[GlazeIndex] := DerobModel.Surface.Length;
+    X[GlazeIndex + 2] := DerobModel.Surface.Length;
+    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
       ['CavityEast'];
-    Y[GlazeIndex + 1] := Surface.Width + DerobModel.GlazingProperties.
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width + DerobModel.GlazingProperties.
       DoubleValue['CavityEast'];
-    Y[GlazeIndex + 2] := Surface.Width;
-    Y[GlazeIndex + 3] := Surface.Width;
-    Z[GlazeIndex + 2] := Surface.Height;
+    Y[GlazeIndex + 2] := DerobModel.Surface.Width;
+    Y[GlazeIndex + 3] := DerobModel.Surface.Width;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     Z[GlazeIndex + 3] := 0;
-    A[GlazeIndex] := Surface.Length;
+    A[GlazeIndex] := DerobModel.Surface.Length;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
-    B[GlazeIndex + 2] := Surface.Length;
-    B[GlazeIndex + 3] := Surface.Length;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
+    B[GlazeIndex + 2] := DerobModel.Surface.Length;
+    B[GlazeIndex + 3] := DerobModel.Surface.Length;
     Zenith[GlazeIndex] := 90;
     Zenith[GlazeIndex + 1] := 90;
     Zenith[GlazeIndex + 2] := 0;
@@ -796,43 +796,43 @@ begin
     igSurf[GlazeIndex + 3] := 1;
 
     GlazeIndex := GlazeIndex + 4;
-    DistanceEast := Surface.Height / 2;
+    DistanceEast := DerobModel.Surface.Height / 2;
     AreaEast := (DerobModel.GlazingProperties.DoubleValue['CavitySouth'] *
-      Surface.Height) / 2;
+      DerobModel.Surface.Height) / 2;
     // ÖstExtra
     Name[GlazeIndex] := 'EastSouthExtra';
-    X[GlazeIndex] := Surface.Length + DerobModel.GlazingProperties.DoubleValue
+    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
-    Y[GlazeIndex] := Surface.Width + DerobModel.GlazingProperties.DoubleValue
+    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
       ['CavityEast'];
     A[GlazeIndex] := DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
-    B[GlazeIndex] := Surface.Height;
+    B[GlazeIndex] := DerobModel.Surface.Height;
     Zenith[GlazeIndex] := 90;
     Azimuth[GlazeIndex] := 90;
     ivol2[GlazeIndex] := EastVol;
     // SydExtra
     Name[GlazeIndex + 1] := 'SouthEastExtra';
-    X[GlazeIndex + 1] := Surface.Length +
+    X[GlazeIndex + 1] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
-    Y[GlazeIndex + 1] := Surface.Width;
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
-    B[GlazeIndex + 1] := Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
     Zenith[GlazeIndex + 1] := 90;
     ivol2[GlazeIndex + 1] := EastVol;
     // HörnTak
     Name[GlazeIndex + 2] := 'EastSouthRoof';
-    X[GlazeIndex + 2] := Surface.Length +
+    X[GlazeIndex + 2] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
-    Y[GlazeIndex + 2] := Surface.Width;
-    Z[GlazeIndex + 2] := Surface.Height;
+    Y[GlazeIndex + 2] := DerobModel.Surface.Width;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     B[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
     ivol2[GlazeIndex + 2] := EastVol;
     // HörnGolv
     Name[GlazeIndex + 3] := 'EastSouthFloor';
-    X[GlazeIndex + 3] := Surface.Length;
-    Y[GlazeIndex + 3] := Surface.Width;
+    X[GlazeIndex + 3] := DerobModel.Surface.Length;
+    Y[GlazeIndex + 3] := DerobModel.Surface.Width;
     A[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     B[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
@@ -851,27 +851,27 @@ begin
   end
   else if DerobModel.GlazingProperties.BoolValue['GlazingEast'] = true then
   begin
-    X[GlazeIndex] := Surface.Length;
-    X[GlazeIndex + 2] := Surface.Length;
-    X[GlazeIndex + 3] := Surface.Length;
-    Y[GlazeIndex] := Surface.Width + DerobModel.GlazingProperties.DoubleValue
+    X[GlazeIndex] := DerobModel.Surface.Length;
+    X[GlazeIndex + 2] := DerobModel.Surface.Length;
+    X[GlazeIndex + 3] := DerobModel.Surface.Length;
+    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
       ['CavityEast'];
-    Y[GlazeIndex + 1] := Surface.Width + DerobModel.GlazingProperties.
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width + DerobModel.GlazingProperties.
       DoubleValue['CavityEast'];
-    Y[GlazeIndex + 2] := Surface.Width;
-    Y[GlazeIndex + 3] := Surface.Width;
-    Y[GlazeIndex + 4] := Surface.Width;
-    Z[GlazeIndex + 3] := Surface.Height;
-    A[GlazeIndex] := Surface.Length;
+    Y[GlazeIndex + 2] := DerobModel.Surface.Width;
+    Y[GlazeIndex + 3] := DerobModel.Surface.Width;
+    Y[GlazeIndex + 4] := DerobModel.Surface.Width;
+    Z[GlazeIndex + 3] := DerobModel.Surface.Height;
+    A[GlazeIndex] := DerobModel.Surface.Length;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex + 4] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
-    B[GlazeIndex + 2] := Surface.Height;
-    B[GlazeIndex + 3] := Surface.Length;
-    B[GlazeIndex + 4] := Surface.Length;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
+    B[GlazeIndex + 2] := DerobModel.Surface.Height;
+    B[GlazeIndex + 3] := DerobModel.Surface.Length;
+    B[GlazeIndex + 4] := DerobModel.Surface.Length;
     Zenith[GlazeIndex] := 90;
     Zenith[GlazeIndex + 1] := 90;
     Zenith[GlazeIndex + 2] := 90;
@@ -918,23 +918,23 @@ begin
 
   if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
   begin
-    X[GlazeIndex] := Surface.Length + DerobModel.GlazingProperties.DoubleValue
+    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
-    X[GlazeIndex + 1] := Surface.Length +
+    X[GlazeIndex + 1] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
-    X[GlazeIndex + 2] := Surface.Length +
+    X[GlazeIndex + 2] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
-    X[GlazeIndex + 3] := Surface.Length;
-    Y[GlazeIndex + 1] := Surface.Width;
-    Z[GlazeIndex + 2] := Surface.Height;
+    X[GlazeIndex + 3] := DerobModel.Surface.Length;
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     Z[GlazeIndex + 3] := 0;
-    A[GlazeIndex] := Surface.Width;
+    A[GlazeIndex] := DerobModel.Surface.Width;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
-    A[GlazeIndex + 2] := Surface.Width;
-    A[GlazeIndex + 3] := Surface.Width;
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
+    A[GlazeIndex + 2] := DerobModel.Surface.Width;
+    A[GlazeIndex + 3] := DerobModel.Surface.Width;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
     B[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
     B[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue
@@ -973,44 +973,44 @@ begin
     igSurf[GlazeIndex + 3] := 1;
 
     GlazeIndex := GlazeIndex + 4;
-    DistanceSouth := Surface.Height / 2;
+    DistanceSouth := DerobModel.Surface.Height / 2;
     AreaSouth := (DerobModel.GlazingProperties.DoubleValue['CavityWest'] *
-      Surface.Height) / 2;
+      DerobModel.Surface.Height) / 2;
 
     // SydExtra
     Name[GlazeIndex] := 'SouthWestExtra';
-    X[GlazeIndex] := Surface.Length + DerobModel.GlazingProperties.DoubleValue
+    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
     Y[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
-    B[GlazeIndex] := Surface.Height;
+    B[GlazeIndex] := DerobModel.Surface.Height;
     Zenith[GlazeIndex] := 90;
     ivol2[GlazeIndex] := SouthVol;
     // VästExtra
     Name[GlazeIndex + 1] := 'WestSouthExtra';
-    X[GlazeIndex + 1] := Surface.Length;
+    X[GlazeIndex + 1] := DerobModel.Surface.Length;
     Y[GlazeIndex + 1] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
-    B[GlazeIndex + 1] := Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
     Zenith[GlazeIndex + 1] := 90;
     Azimuth[GlazeIndex + 1] := 270;
     ivol2[GlazeIndex + 1] := SouthVol;
     // HörnTak
     Name[GlazeIndex + 2] := 'SouthWestRoof';
-    X[GlazeIndex + 2] := Surface.Length +
+    X[GlazeIndex + 2] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
     Y[GlazeIndex + 2] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
-    Z[GlazeIndex + 2] := Surface.Height;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     B[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
     ivol2[GlazeIndex + 2] := SouthVol;
     // HörnGolv
     Name[GlazeIndex + 3] := 'SouthWestFloor';
-    X[GlazeIndex + 3] := Surface.Length;
+    X[GlazeIndex + 3] := DerobModel.Surface.Length;
     Y[GlazeIndex + 3] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
     A[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
@@ -1032,28 +1032,28 @@ begin
   end
   else if DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = true then
   begin
-    X[GlazeIndex] := Surface.Length + DerobModel.GlazingProperties.DoubleValue
+    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
-    X[GlazeIndex + 1] := Surface.Length +
+    X[GlazeIndex + 1] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
-    X[GlazeIndex + 2] := Surface.Length;
-    X[GlazeIndex + 3] := Surface.Length +
+    X[GlazeIndex + 2] := DerobModel.Surface.Length;
+    X[GlazeIndex + 3] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
-    X[GlazeIndex + 4] := Surface.Length;
-    Y[GlazeIndex + 1] := Surface.Width;
+    X[GlazeIndex + 4] := DerobModel.Surface.Length;
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width;
     Y[GlazeIndex + 4] := 0;
     Z[GlazeIndex + 2] := 0;
-    Z[GlazeIndex + 3] := Surface.Height;
-    A[GlazeIndex] := Surface.Width;
+    Z[GlazeIndex + 3] := DerobModel.Surface.Height;
+    A[GlazeIndex] := DerobModel.Surface.Width;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
-    A[GlazeIndex + 3] := Surface.Width;
-    A[GlazeIndex + 4] := Surface.Width;
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
-    B[GlazeIndex + 2] := Surface.Height;
+    A[GlazeIndex + 3] := DerobModel.Surface.Width;
+    A[GlazeIndex + 4] := DerobModel.Surface.Width;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
+    B[GlazeIndex + 2] := DerobModel.Surface.Height;
     B[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue
       ['CavitySouth'];
     B[GlazeIndex + 4] := DerobModel.GlazingProperties.DoubleValue
@@ -1104,8 +1104,8 @@ begin
 
   if DerobModel.GlazingProperties.BoolValue['WestNorth'] = true then
   begin
-    X[GlazeIndex + 1] := Surface.Length;
-    X[GlazeIndex + 2] := Surface.Length;
+    X[GlazeIndex + 1] := DerobModel.Surface.Length;
+    X[GlazeIndex + 2] := DerobModel.Surface.Length;
     Y[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     Y[GlazeIndex + 1] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
@@ -1113,16 +1113,16 @@ begin
       ['CavityWest'];
     Y[GlazeIndex + 3] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
-    Z[GlazeIndex + 2] := Surface.Height;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     Z[GlazeIndex + 3] := 0;
-    A[GlazeIndex] := Surface.Length;
+    A[GlazeIndex] := DerobModel.Surface.Length;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
-    B[GlazeIndex + 2] := Surface.Length;
-    B[GlazeIndex + 3] := Surface.Length;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
+    B[GlazeIndex + 2] := DerobModel.Surface.Length;
+    B[GlazeIndex + 3] := DerobModel.Surface.Length;
     Zenith[GlazeIndex] := 90;
     Zenith[GlazeIndex + 1] := 90;
     Zenith[GlazeIndex + 2] := 0;
@@ -1159,16 +1159,16 @@ begin
     igSurf[GlazeIndex + 3] := 1;
 
     GlazeIndex := GlazeIndex + 4;
-    DistanceWest := Surface.Height / 2;
+    DistanceWest := DerobModel.Surface.Height / 2;
     AreaWest := (DerobModel.GlazingProperties.DoubleValue['CavityNorth'] *
-      Surface.Height) / 2;
+      DerobModel.Surface.Height) / 2;
 
     // VästExtra
     Name[GlazeIndex] := 'WestNorthExtra';
     X[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityNorth'];
     Y[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex] := DerobModel.GlazingProperties.DoubleValue['CavityNorth'];
-    B[GlazeIndex] := Surface.Height;
+    B[GlazeIndex] := DerobModel.Surface.Height;
     Zenith[GlazeIndex] := 90;
     Azimuth[GlazeIndex] := 270;
     ivol2[GlazeIndex] := WestVol;
@@ -1177,7 +1177,7 @@ begin
     X[GlazeIndex + 1] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
-    B[GlazeIndex + 1] := Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
     Zenith[GlazeIndex + 1] := 90;
     Azimuth[GlazeIndex + 1] := 180;
     ivol2[GlazeIndex + 1] := WestVol;
@@ -1185,7 +1185,7 @@ begin
     Name[GlazeIndex + 2] := 'WestNorthRoof';
     Y[GlazeIndex + 2] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
-    Z[GlazeIndex + 2] := Surface.Height;
+    Z[GlazeIndex + 2] := DerobModel.Surface.Height;
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     B[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
@@ -1215,8 +1215,8 @@ begin
   end
   else if DerobModel.GlazingProperties.BoolValue['GlazingWest'] = true then
   begin
-    X[GlazeIndex + 1] := Surface.Length;
-    X[GlazeIndex + 3] := Surface.Length;
+    X[GlazeIndex + 1] := DerobModel.Surface.Length;
+    X[GlazeIndex + 3] := DerobModel.Surface.Length;
     Y[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     Y[GlazeIndex + 1] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
@@ -1224,17 +1224,17 @@ begin
       ['CavityWest'];
     Y[GlazeIndex + 4] := -DerobModel.GlazingProperties.DoubleValue
       ['CavityWest'];
-    Z[GlazeIndex + 3] := Surface.Height;
-    A[GlazeIndex] := Surface.Length;
+    Z[GlazeIndex + 3] := DerobModel.Surface.Height;
+    A[GlazeIndex] := DerobModel.Surface.Length;
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex + 2] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex + 3] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex + 4] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
-    B[GlazeIndex] := Surface.Height;
-    B[GlazeIndex + 1] := Surface.Height;
-    B[GlazeIndex + 2] := Surface.Height;
-    B[GlazeIndex + 3] := Surface.Length;
-    B[GlazeIndex + 4] := Surface.Length;
+    B[GlazeIndex] := DerobModel.Surface.Height;
+    B[GlazeIndex + 1] := DerobModel.Surface.Height;
+    B[GlazeIndex + 2] := DerobModel.Surface.Height;
+    B[GlazeIndex + 3] := DerobModel.Surface.Length;
+    B[GlazeIndex + 4] := DerobModel.Surface.Length;
     Zenith[GlazeIndex] := 90;
     Zenith[GlazeIndex + 1] := 90;
     Zenith[GlazeIndex + 2] := 90;
@@ -1364,6 +1364,7 @@ begin
 
   end;
 end;
+
 
 procedure TDerobConvert.writeInputFile;
 var

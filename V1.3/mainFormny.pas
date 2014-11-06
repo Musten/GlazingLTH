@@ -1256,6 +1256,7 @@ var
   Idx, CalcCount, CalcCase: integer;
   ProgStep: Double;
 begin
+  ProgressBar1.Value := 0;
   CaseDir := DerobModel.HouseProperties.StringValue['CaseDir'];
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
