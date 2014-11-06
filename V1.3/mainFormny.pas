@@ -525,9 +525,9 @@ begin
     (HouseNumberBox3.Value <> 0) then
   begin
 
-    Surface.Length := HouseNumberBox1.Value;
-    Surface.Width := HouseNumberBox2.Value;
-    Surface.Height := HouseNumberBox3.Value;
+    DerobModel.Surface.Length := HouseNumberBox1.Value;
+    DerobModel.Surface.Width := HouseNumberBox2.Value;
+    DerobModel.Surface.Height := HouseNumberBox3.Value;
   end;
 
   { ---------------------
@@ -827,7 +827,6 @@ procedure TForm1.resultMenuChartClick(Sender: TObject);
 begin
   SetCurrentDir(StartDir);
   Form5.DerobModel := Self.DerobModel;
-  Form5.Surface := Self.Surface;
   Form5.Show;
 end;
 
@@ -1269,7 +1268,7 @@ begin
   end
   else
   begin
-    // 'Standard' fall
+  // 'Standard' fall
     CalcCount := 3;
     ProgStep := 100 / (CalcCount * 6);
   end;
@@ -1287,7 +1286,7 @@ begin
   // IDX (CalcCase) 1: Vinterfall, 2: Sommarfall, 3: Vinterfall med öppning,
   // 4: Sommarfall med öppning, 5: Referensfall
   begin
-    // Vilket beräkningsfall som ska användas
+  // Vilket beräkningsfall som ska användas
     CalcCase := Idx;
     // Om det bara är en körning går vi direkt till fall 5, referens
     if CalcCount = 1 then
@@ -1405,7 +1404,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i TL');
-        Break;
+        break;
       end
       else
       begin
@@ -1421,7 +1420,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i DIG');
-        Break;
+        break;
       end
       else
       begin
@@ -1431,7 +1430,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i WAL');
-        Break;
+        break;
       end
       else
       begin
@@ -1441,7 +1440,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i GF');
-        Break;
+        break;
       end
       else
       begin
@@ -1451,7 +1450,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i LUM');
-        Break;
+        break;
       end
       else
       begin
@@ -1461,7 +1460,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i SOL');
-        Break;
+        break;
       end
       else
       begin
@@ -1471,7 +1470,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i TL');
-        Break;
+        break;
       end
       else
       begin
