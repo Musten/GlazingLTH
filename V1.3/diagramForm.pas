@@ -66,9 +66,10 @@ var
     HeatSep, HeatOct, HeatNov, HeatDec, totalHeat, HeatJanNoGl, HeatFebNoGl,
     HeatMarNoGl, HeatAprNoGl, HeatMayNoGl, HeatJunNoGl, HeatJulNoGl,
     HeatAugNoGl, HeatSepNoGl, HeatOctNoGl, HeatNovNoGl, HeatDecNoGl: Real;
-  Temp, EtaPrim, UPrim: array of double;
+  Temp, EtaPrim, UPrim, UTime, EtaTime, UIntervall, EtaIntervall
+    : array of double;
   TimeGlaze, Time, TimeNoGl: array of Real;
-  intervall: Integer;
+  intervall, USteg, EtaSteg: Integer;
 
 implementation
 
@@ -187,6 +188,8 @@ var
   TInne, TUte, TotEnergi, TotEnergiGlas, Ball, Area, WindowH, WindowW,
     DeltaT: array of double;
   ATot, Langd, Bredd, Hojd, Dens, SpecVarme, Flode, UVal: double;
+  j: Integer;
+  k: Integer;
   // Total area för fyra väggar (Tak,Golv exkl.)
 begin
   SetLength(TInne, 8760); // Inomhustemperatur (NoGlaze)
@@ -201,6 +204,26 @@ begin
   SetLength(WindowW, 4); // Fönsterbredd för de fyra väggarna på varsin plats
   SetLength(WindowH, 4); // Fönsterhöjd --"--"--
   SetLength(DeltaT, 8760); // Temperaturskillnad mellan ute och inne
+  SetLength(UTime, 25);
+  // UTime = Antal timmar UPrim behöver vara under ett visst värde
+  SetLength(EtaTime, 150);
+  // EtaTime = Antal timmar EtaPrim behöver ökas med ett visst värde
+  USteg := 250;
+  EtaSteg := 150;
+  SetLength(UIntervall, USteg);
+  SetLength(EtaIntervall, EtaSteg);
+  UIntervall[0] := -0.5;
+  EtaIntervall[0] := 0;
+
+  for i := 1 to USteg do
+  begin
+    UIntervall[i] := UIntervall[i - 1] + 0.01;
+  end;
+
+  for i := 1 to EtaSteg do
+  begin
+    EtaIntervall[i] := EtaIntervall[i - 1] + 0.01;
+  end;
 
   Langd := DerobModel.Surface.Length;
   Bredd := DerobModel.Surface.Width;
@@ -330,30 +353,53 @@ begin
       FloatToStr(UPrim[i]) + '  ' + FloatToStr(EtaPrim[i]));
   end;
 
+  for i := 0 to USteg - 1 do
+  begin
+    for j := 0 to 8759 do
+    begin
+      if UPrim[j] < UIntervall[i] then
+      begin
+        UTime[i] := UTime[i] + 1;
+      end;
+    end;
+  end;
+
+  for i := 0 to EtaSteg - 1 do
+  begin
+    for j := 0 to 8759 do
+    begin
+      if EtaPrim[j] > EtaIntervall[i] then
+      begin
+        EtaTime[i] := EtaTime[i] + 1;
+      end;
+    end;
+  end;
+
   Label5.Text := FloatToStr(Round(1000 * Sum(UPrim) / 8760) / 1000) + ' W/m^2';
   Label7.Text := FloatToStr(Round(100 * Sum(EtaPrim) / 8760)) + ' %';
-  Label12.Text := FloatToStr(Round(1000*UVal)/1000) + ' W/m^2';;
+  Label12.Text := FloatToStr(Round(1000 * UVal) / 1000) + ' W/m^2';;
   Label9.Text := FloatToStr(DerobModel.VentilationProperties.DoubleValue
     ['Eta']) + ' %';
 
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
-  Comparefile.SaveToFile('Comparision.txt');
+  Comparefile.SaveToFile('Comparison.txt');
   Comparefile.Free;
 
 end;
 
 procedure TForm5.EtaRadioButtonChange(Sender: TObject);
 begin
-   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+  if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
 
-  GlazeTemp.ShowInLegend := False;
+    GlazeTemp.ShowInLegend := False;
   end;
   Chart1.Series[0].ShowInLegend := False;
   Chart1.Series[1].ShowInLegend := False;
   ULine.ShowInLegend := False;
   EtaLine.ShowInLegend := True;
+  UpdateChart;
 end;
 
 procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -370,45 +416,53 @@ begin
   begin
     GlazeTemp.Free;
   end;
+  ULine.Free;
+  EtaLine.Free;
   SetCurrentDir(DerobModel.HouseProperties.StringValue['StartDir']);
 end;
 
 procedure TForm5.FormShow(Sender: TObject);
 begin
+  if DerobModel.HouseProperties.BoolValue['Simulated'] = True then
+  begin
+    DerobModel.HouseProperties.BoolValue['Simulated'] := True;
+  end
+  else
+  begin
+    DerobModel.HouseProperties.BoolValue['Simulated'] := False;
+  end;
   Chart1.Legend.Visible := True;
+  ULine := TLineSeries.Create(Chart1);
+  Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
+  EtaLine := TLineSeries.Create(Chart1);
+  Chart1.AddSeries(EtaLine);
+  Chart1.Series[2].Color := TAlphaColorRec.Purple;
+  Chart1.Series[3].Color := TAlphaColorRec.Black;
+  ULine.Title := 'U* [W/m^2]';
+  EtaLine.Title := 'Eta* [%]';
+
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
     GlazeTemp := TLineSeries.Create(Chart1);
     GlazeTemp.ShowInLegend := True;
     Chart1.AddSeries(GlazeTemp);
     GlazeTemp.Title := 'Vald Inglasning';
-    ULine := TLineSeries.Create(Chart1);
-    Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
-    EtaLine := TLineSeries.Create(Chart1);
-    Chart1.AddSeries(EtaLine);
-    Chart1.Series[2].Color := TAlphaColorRec.Green;
-    Chart1.Series[3].Color := TAlphaColorRec.Purple;
-    Chart1.Series[4].Color := TAlphaColorRec.Black;
-  end
-  else
-    begin
-      ULine := TLineSeries.Create(Chart1);
-      Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
-      EtaLine := TLineSeries.Create(Chart1);
-      Chart1.AddSeries(EtaLine);
-      Chart1.Series[2].Color := TAlphaColorRec.Purple;
-      Chart1.Series[3].Color := TAlphaColorRec.Black;
-    end;
-  ULine.Title := 'U* [W/m^2]';
-  EtaLine.Title := 'Eta* [%]';
+    Chart1.Series[4].Color := TAlphaColorRec.Green;
+  end;
+
   ULine.ShowInLegend := False;
   EtaLine.ShowInLegend := False;
-  GlazeHistogram;
-  NoGlazeHistogram;
+  if DerobModel.HouseProperties.BoolValue['Simulated'] = False then
+  begin
+    GlazeHistogram;
+    NoGlazeHistogram;
+    TempRadioButton.IsChecked := True;
+    UpdateChart;
+    TLSumValues;
+    Compare;
+    DerobModel.HouseProperties.BoolValue['Simulated'] := True;
+  end;
   TempRadioButton.IsChecked := True;
-  UpdateChart;
-  TLSumValues;
-  Compare;
 end;
 
 procedure TForm5.GlazeHistogram;
@@ -450,7 +504,7 @@ var
     SunSummerOpen, SunWinterOpen: Array of Real;
 
   i, j, SkipLine: Integer;
-  IgnoreText: Boolean;
+  IgnoreText: boolean;
 
   Temp, Hour, YearlyTemp, YearlyTempGlaze, Heat, TempSummer, TempWinter,
     OpTempSummer, OpTempWinter, SunSummer, SunWinter: Array of Real;
@@ -1856,7 +1910,7 @@ begin
   Chart1.Legend.Visible := True;
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
-    Chart1.Series[2].Clear;
+    Chart1.Series[4].Clear;
     GlazeTemp.ShowInLegend := False;
   end;
   UpdateChart;
@@ -1872,12 +1926,12 @@ var
   VolPath: String;
   buffer: String;
   Hour, OutTemp, GlobalRadiation, Temp1, OpTemp1, Heat1, Time: array of Real;
-  IgnoreText: Boolean;
+  IgnoreText: boolean;
   i, j: Integer;
 begin
   // Definering av vektorer och variabler
   intervall := (40 - DerobModel.HouseProperties.IntValue['TMinRoom']) * 10;
-  intervall := intervall + 1;
+  intervall := intervall + 1; // Lösning endast för estetik
   SetLength(Hour, 8760);
   SetLength(OutTemp, 8760);
   SetLength(GlobalRadiation, 8760);
@@ -2234,11 +2288,40 @@ var
 begin // Med inglasning- linje
   Chart1.Series[0].Clear;
   Chart1.Series[1].Clear;
+  Chart1.Series[2].Clear;
+  Chart1.Series[3].Clear;
   if DerobModel.VentilationProperties.BoolValue['GlazeTemp'] = True then
   begin
-    Chart1.Series[2].Clear;
+    Chart1.Series[4].Clear;
   end;
-  if HeatRadioButton.IsChecked = True then
+
+  if URadioButton.IsChecked = True then
+  begin
+    Chart1.LeftAxis.Title.Caption := 'Timmar';
+    Chart1.RightAxis.Title.Caption := 'U*';
+
+    With Chart1.Series[2] Do
+    begin
+      for i := 0 to USteg - 1 do
+      begin
+        AddXY(UIntervall[i], UTime[i], '', clTeeColor);
+      end;
+    end;
+  end
+  else if EtaRadioButton.IsChecked = True then
+  begin
+    Chart1.LeftAxis.Title.Caption := 'Timmar';
+    Chart1.RightAxis.Title.Caption := 'Eta*';
+
+    With Chart1.Series[3] Do
+    begin
+      for i := 0 to EtaSteg - 1 do
+      begin
+        AddXY(EtaIntervall[i], EtaTime[i], '', clTeeColor);
+      end;
+    end;
+  end
+  else if HeatRadioButton.IsChecked = True then
   begin
     Chart1.LeftAxis.Title.Caption := 'Energibehov';
     Chart1.BottomAxis.Title.Caption := 'Månad';
@@ -2273,7 +2356,7 @@ begin // Med inglasning- linje
     if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
     begin
 
-      With Chart1.Series[2] Do
+      With Chart1.Series[4] Do
       Begin
         for i := 0 to intervall do
         begin
@@ -2286,7 +2369,7 @@ begin // Med inglasning- linje
   // Utan inglasning-linjen
   if DerobModel.VentilationProperties.BoolValue['GlazeTemp'] = True then
   begin
-    Chart1.Series[2].Clear;
+    Chart1.Series[4].Clear;
   end;
   if HeatRadioButton.IsChecked = True then
   begin
@@ -2324,12 +2407,14 @@ begin
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
 
-  GlazeTemp.ShowInLegend := False;
+    GlazeTemp.ShowInLegend := False;
   end;
   Chart1.Series[0].ShowInLegend := False;
   Chart1.Series[1].ShowInLegend := False;
+  UpdateChart;
   ULine.ShowInLegend := True;
   EtaLine.ShowInLegend := False;
+
 end;
 
 end.
