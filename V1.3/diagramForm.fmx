@@ -26,7 +26,7 @@ object Form5: TForm5
       GroupName = 'DiagramRadioButton'
       Height = 25.000000000000000000
       Position.X = 64.000000000000000000
-      Position.Y = 80.000000000000000000
+      Position.Y = 88.000000000000000000
       TabOrder = 0
       Text = 'Energianv'#228'ndning'
       Width = 161.000000000000000000
@@ -35,27 +35,27 @@ object Form5: TForm5
     object Label1: TLabel
       Height = 24.000000000000000000
       Position.X = 70.000000000000000000
-      Position.Y = 200.000000000000000000
-      Text = 'Energianv'#228'ndning, utan inglasning'
+      Position.Y = 280.000000000000000000
+      Text = 'Energianv'#228'ndning, utan inglasning:'
       Width = 185.000000000000000000
     end
     object Label2: TLabel
       Height = 25.000000000000000000
       Position.X = 70.000000000000000000
-      Position.Y = 160.000000000000000000
+      Position.Y = 240.000000000000000000
       Width = 137.000000000000000000
     end
     object Label3: TLabel
       Height = 24.000000000000000000
       Position.X = 70.000000000000000000
-      Position.Y = 128.000000000000000000
-      Text = 'Energianv'#228'ndning, med inglasning'
+      Position.Y = 208.000000000000000000
+      Text = 'Energianv'#228'ndning, med inglasning:'
       Width = 169.000000000000000000
     end
     object Label4: TLabel
       Height = 24.000000000000000000
       Position.X = 70.000000000000000000
-      Position.Y = 224.000000000000000000
+      Position.Y = 312.000000000000000000
       Width = 145.000000000000000000
     end
     object ResultTxtBtn: TButton
@@ -92,9 +92,82 @@ object Form5: TForm5
         Width = 75.000000000000000000
       end
     end
+    object URadioButton: TRadioButton
+      GroupName = 'DiagramRadioButton'
+      Height = 19.000000000000000000
+      Position.X = 64.000000000000000000
+      Position.Y = 128.000000000000000000
+      TabOrder = 8
+      Text = 'U'#39
+      Width = 120.000000000000000000
+      OnChange = URadioButtonChange
+    end
+    object EtaRadioButton: TRadioButton
+      GroupName = 'DiagramRadioButton'
+      Height = 19.000000000000000000
+      Position.X = 64.000000000000000000
+      Position.Y = 168.000000000000000000
+      TabOrder = 9
+      Text = 'Eta'#39
+      Width = 120.000000000000000000
+      OnChange = EtaRadioButtonChange
+    end
+    object Label5: TLabel
+      Height = 25.000000000000000000
+      Position.X = 70.000000000000000000
+      Position.Y = 384.000000000000000000
+      Width = 137.000000000000000000
+    end
+    object Label6: TLabel
+      Height = 24.000000000000000000
+      Position.X = 70.000000000000000000
+      Position.Y = 352.000000000000000000
+      Text = 'U*, medel '#246'ver hela '#229'ret:'
+      Width = 169.000000000000000000
+    end
+    object Label7: TLabel
+      Height = 25.000000000000000000
+      Position.X = 70.000000000000000000
+      Position.Y = 456.000000000000000000
+      Width = 99.000000000000000000
+    end
+    object Label8: TLabel
+      Height = 24.000000000000000000
+      Position.X = 70.000000000000000000
+      Position.Y = 424.000000000000000000
+      Text = 'Eta*, medel '#246'ver hela '#229'ret:'
+      Width = 169.000000000000000000
+    end
+    object Label9: TLabel
+      Height = 25.000000000000000000
+      Position.X = 254.000000000000000000
+      Position.Y = 456.000000000000000000
+      Width = 91.000000000000000000
+    end
+    object Label10: TLabel
+      Height = 24.000000000000000000
+      Position.X = 256.000000000000000000
+      Position.Y = 424.000000000000000000
+      Text = 'Aktuellt Eta:'
+      Width = 65.000000000000000000
+    end
+    object Label11: TLabel
+      Height = 24.000000000000000000
+      Position.X = 256.000000000000000000
+      Position.Y = 352.000000000000000000
+      Text = 'Aktuellt U:'
+      Width = 57.000000000000000000
+    end
+    object Label12: TLabel
+      Height = 25.000000000000000000
+      Position.X = 254.000000000000000000
+      Position.Y = 384.000000000000000000
+      Width = 91.000000000000000000
+    end
   end
   object Panel2: TPanel
     Align = alFitLeft
+    DesignVisible = False
     Height = 630.389648437500000000
     Position.Y = 135.000000000000000000
     Width = 809.000000000000000000

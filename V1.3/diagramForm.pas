@@ -25,6 +25,16 @@ type
     Panel2: TPanel;
     ResultGrid: TStringGrid;
     StringColumn1: TStringColumn;
+    URadioButton: TRadioButton;
+    EtaRadioButton: TRadioButton;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure TempRadioButtonChange(Sender: TObject);
     procedure HeatRadioButtonChange(Sender: TObject);
@@ -32,6 +42,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure URadioButtonChange(Sender: TObject);
+    procedure EtaRadioButtonChange(Sender: TObject);
   private
     FDerobModel: TDerobModel;
     procedure SetDerobModel(const Value: TDerobModel);
@@ -49,7 +61,7 @@ type
 var
   Form5: TForm5;
   Resultat, ResVolLoad, ResNoGlaze, Comparefile: TStrings;
-  GlazeTemp: TLineSeries;
+  GlazeTemp, ULine, EtaLine: TLineSeries;
   HeatJan, HeatFeb, HeatMar, HeatApr, HeatMay, HeatJun, HeatJul, HeatAug,
     HeatSep, HeatOct, HeatNov, HeatDec, totalHeat, HeatJanNoGl, HeatFebNoGl,
     HeatMarNoGl, HeatAprNoGl, HeatMayNoGl, HeatJunNoGl, HeatJulNoGl,
@@ -194,6 +206,7 @@ begin
   Bredd := DerobModel.Surface.Width;
   Hojd := DerobModel.Surface.Height;
 
+  //Räkna ut total area för väggarna genom att ta bort eventuell fönsterarea
   if DerobModel.Walls[0].Properties.BoolValue['HoleNorth'] = True then
   begin
     Area[0] := Bredd * Hojd - DerobModel.Windows[0].Width * DerobModel.Windows
@@ -316,11 +329,25 @@ begin
       FloatToStr(UPrim[i]) + '  ' + FloatToStr(EtaPrim[i]));
   end;
 
+  Label5.Text := FloatToStr(Round(1000*Sum(UPrim)/8760)/1000) + ' W/m^2';
+  Label7.Text := FloatToStr(Round(100*Sum(EtaPrim)/8760)) + ' %';
+  Label12.Text :=  FloatToStr(UVal) + ' W/m^2';
+  Label9.Text :=  FloatToStr(DerobModel.VentilationProperties.DoubleValue['Eta']) + ' %';
+
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
   Comparefile.SaveToFile('Comparision.txt');
   Comparefile.Free;
 
+end;
+
+procedure TForm5.EtaRadioButtonChange(Sender: TObject);
+begin
+  GlazeTemp.ShowInLegend := False;
+  Chart1.Series[0].ShowInLegend := False;
+  Chart1.Series[1].ShowInLegend := False;
+  ULine.ShowInLegend := False;
+  EtaLine.ShowInLegend := True;
 end;
 
 procedure TForm5.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -352,6 +379,12 @@ begin
     GlazeTemp.Title := 'Vald Inglasning';
     Chart1.Series[2].Color := TAlphaColorRec.Green;
   end;
+  ULine := TLineSeries.Create(Chart1);
+  Chart1.AddSeries(ULine);                //Skapa linjer för U', Eta'
+  EtaLine := TLineSeries.Create(Chart1);
+  Chart1.AddSeries(EtaLine);
+  ULine.ShowInLegend := False;
+  EtaLine.ShowInLegend := False;
   GlazeHistogram;
   NoGlazeHistogram;
   TempRadioButton.IsChecked := True;
@@ -1787,6 +1820,10 @@ begin
     GlazeTemp.ShowInLegend := False;
   end;
   UpdateChart;
+  Chart1.Series[0].ShowInLegend := True;
+  Chart1.Series[1].ShowInLegend := True;
+  ULine.ShowInLegend := False;
+  EtaLine.ShowInLegend := False;
 end;
 
 procedure TForm5.NoGlazeHistogram;
@@ -1947,6 +1984,10 @@ begin
     GlazeTemp.ShowInLegend := True;
   end;
   UpdateChart;
+  Chart1.Series[0].ShowInLegend := True;
+  Chart1.Series[1].ShowInLegend := True;
+  ULine.ShowInLegend := False;
+  EtaLine.ShowInLegend := False;
 end;
 
 procedure TForm5.TLSumValues;
@@ -2224,6 +2265,15 @@ begin // Med inglasning- linje
       end;
     end;
   end;
+end;
+
+procedure TForm5.URadioButtonChange(Sender: TObject);
+begin
+  GlazeTemp.ShowInLegend := False;
+  Chart1.Series[0].ShowInLegend := False;
+  Chart1.Series[1].ShowInLegend := False;
+  ULine.ShowInLegend := True;
+  EtaLine.ShowInLegend := False;
 end;
 
 end.
