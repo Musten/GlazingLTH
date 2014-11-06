@@ -181,7 +181,7 @@ procedure TForm5.Compare;
 // Procedur som visar vad icke-inglasningsfallet behöver för värmeväxlare
 // alterntivt U-värde för att motsvara inglasningsfallet
 var
-  i: Integer;
+  i, Skipper: Integer;
   TLPath, buffer: string;
   TLResult: TextFile;
   TInne, TUte, TotEnergi, TotEnergiGlas, Ball, Area, WindowH, WindowW,
@@ -242,7 +242,7 @@ begin
   end
   else
   begin
-    Area[0] := Langd * Hojd;
+    Area[3] := Langd * Hojd;
   end;
 
   ATot := Sum(Area);
@@ -267,15 +267,16 @@ begin
   TLPath := GetCurrentDir + '\Resultat.txt';
   AssignFile(TLResult, TLPath);
   Reset(TLResult);
-  for i := 0 to 9 do // Hoppa över de första 10 raderna (text)
+  for i := 0 to 14 do // Hoppa över de första 15 raderna (text)
   begin
     ReadLn(TLResult, buffer);
   end;
-  for i := 10 to 8769 do
+  Skipper := 15;
+  for i := Skipper to 8774 do
   begin
-    ReadLn(TLResult, Ball[i - 10], Ball[i - 10], Ball[i - 10],
+    ReadLn(TLResult, Ball[i - Skipper], Ball[i - Skipper], Ball[i - Skipper],
       // Hämta energianvändning timme för timme från Resultat.txt
-      Ball[i - 10], Ball[i - 10], TotEnergiGlas[i - 10]);
+      Ball[i - Skipper], Ball[i - Skipper], TotEnergiGlas[i - Skipper]);
   end;
   CloseFile(TLResult);
 
@@ -288,7 +289,7 @@ begin
   AssignFile(TLResult, TLPath);
   Reset(TLResult);
 
-  for i := 0 to 11 do // Hoppa över de första 10 raderna (text)
+  for i := 0 to 11 do // Hoppa över de första 12 raderna (text)
   begin
     ReadLn(TLResult, buffer);
   end;
@@ -317,7 +318,7 @@ begin
       EtaPrim[i] := (TotEnergi[i] - TotEnergiGlas[i]) /
         (Flode * Dens * SpecVarme * (TInne[i] - TUte[i]));
       UPrim[i] := (TotEnergiGlas[i] - TotEnergi[i] + UVal * ATot *
-        (TInne[i] - TUte[i])) / (ATot * (TInne[i] - TUte[i]));
+        (TInne[i] - TUte[i])) / (ATot * DeltaT[i]);
     end
     else
     begin
@@ -331,7 +332,7 @@ begin
 
   Label5.Text := FloatToStr(Round(1000 * Sum(UPrim) / 8760) / 1000) + ' W/m^2';
   Label7.Text := FloatToStr(Round(100 * Sum(EtaPrim) / 8760)) + ' %';
-  Label12.Text := FloatToStr(UVal) + ' W/m^2';
+  Label12.Text := FloatToStr(Round(1000*UVal)/1000) + ' W/m^2';;
   Label9.Text := FloatToStr(DerobModel.VentilationProperties.DoubleValue
     ['Eta']) + ' %';
 
@@ -344,7 +345,11 @@ end;
 
 procedure TForm5.EtaRadioButtonChange(Sender: TObject);
 begin
+   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+  begin
+
   GlazeTemp.ShowInLegend := False;
+  end;
   Chart1.Series[0].ShowInLegend := False;
   Chart1.Series[1].ShowInLegend := False;
   ULine.ShowInLegend := False;
@@ -371,19 +376,31 @@ end;
 procedure TForm5.FormShow(Sender: TObject);
 begin
   Chart1.Legend.Visible := True;
-
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
     GlazeTemp := TLineSeries.Create(Chart1);
     GlazeTemp.ShowInLegend := True;
     Chart1.AddSeries(GlazeTemp);
     GlazeTemp.Title := 'Vald Inglasning';
+    ULine := TLineSeries.Create(Chart1);
+    Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
+    EtaLine := TLineSeries.Create(Chart1);
+    Chart1.AddSeries(EtaLine);
     Chart1.Series[2].Color := TAlphaColorRec.Green;
-  end;
-  ULine := TLineSeries.Create(Chart1);
-  Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
-  EtaLine := TLineSeries.Create(Chart1);
-  Chart1.AddSeries(EtaLine);
+    Chart1.Series[3].Color := TAlphaColorRec.Purple;
+    Chart1.Series[4].Color := TAlphaColorRec.Black;
+  end
+  else
+    begin
+      ULine := TLineSeries.Create(Chart1);
+      Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
+      EtaLine := TLineSeries.Create(Chart1);
+      Chart1.AddSeries(EtaLine);
+      Chart1.Series[2].Color := TAlphaColorRec.Purple;
+      Chart1.Series[3].Color := TAlphaColorRec.Black;
+    end;
+  ULine.Title := 'U* [W/m^2]';
+  EtaLine.Title := 'Eta* [%]';
   ULine.ShowInLegend := False;
   EtaLine.ShowInLegend := False;
   GlazeHistogram;
@@ -2018,12 +2035,13 @@ procedure TForm5.TLSumValues;
 
 var
 
-  i, colCount: Integer;
+  i, Skipper, colCount: Integer;
   TLPath, buffer: string;
   TLResult: TextFile;
   UteT, RumT, RumEnergi, Ball, Vol5T, Vol2T, Vol3T, Vol4T, RefT,
     RefEnergi: array of double;
   col: TStringColumn;
+  Ball2: array of string;
 
 begin
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
@@ -2034,7 +2052,8 @@ begin
   SetLength(RumEnergi, 8760);
   // Definiera vektorernas storlekar, 8760 timvärden
   SetLength(Ball, 8760);
-  // Vektor som tillfälligt håller värden som ej ska visas i denna procedur
+  SetLength(Ball2, 8760);
+  // Vektorer som tillfälligt håller värden som ej ska visas i denna procedur, Ball (double) och Ball2 (Strings)
   SetLength(Vol2T, 8760);
   SetLength(Vol3T, 8760);
   SetLength(Vol4T, 8760);
@@ -2077,46 +2096,56 @@ begin
   TLPath := GetCurrentDir + '\Resultat.txt';
   AssignFile(TLResult, TLPath);
   Reset(TLResult);
-  for i := 0 to 9 do // Hoppa över de första 10 raderna (text)
+  for i := 0 to 14 do // Hoppa över de första 15 raderna (text)
   begin
     ReadLn(TLResult, buffer);
   end;
-  for i := 10 to 8769 do
+  Skipper := 15;
+  for i := Skipper to 8774 do
   // Beroende på hur många volymer, läs in temperaturer och energianvändning för rum
   // Ball-vektorn får innehålla variabler vi inte vill visa, ex. Solabsorptans
   begin
     case DerobModel.HouseProperties.IntValue['nvol'] of
       1:
         begin
-          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
-            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10]);
+          ReadLn(TLResult, Ball[i - Skipper], UteT[i - Skipper],
+            Ball[i - Skipper], RumT[i - Skipper], Ball[i - Skipper],
+            RumEnergi[i - Skipper], Ball2[i - Skipper]);
         end;
       2:
         begin
-          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
-            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10]);
+          ReadLn(TLResult, Ball[i - Skipper], UteT[i - Skipper],
+            Ball[i - Skipper], RumT[i - Skipper], Ball[i - Skipper],
+            RumEnergi[i - Skipper], Ball[i - Skipper], Vol2T[i - Skipper],
+            Ball2[i - Skipper]);
         end;
       3:
         begin
-          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
-            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10]);
+          ReadLn(TLResult, Ball[i - Skipper], UteT[i - Skipper],
+            Ball[i - Skipper], RumT[i - Skipper], Ball[i - Skipper],
+            RumEnergi[i - Skipper], Ball[i - Skipper], Vol2T[i - Skipper],
+            Ball[i - Skipper], Ball[i - Skipper], Vol3T[i - Skipper],
+            Ball2[i - Skipper]);
         end;
       4:
         begin
-          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
-            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10],
-            Ball[i - 10], Ball[i - 10], Vol4T[i - 10]);
+          ReadLn(TLResult, Ball[i - Skipper], UteT[i - Skipper],
+            Ball[i - Skipper], RumT[i - Skipper], Ball[i - Skipper],
+            RumEnergi[i - Skipper], Ball[i - Skipper], Vol2T[i - Skipper],
+            Ball[i - Skipper], Ball[i - Skipper], Vol3T[i - Skipper],
+            Ball[i - Skipper], Ball[i - Skipper], Vol4T[i - Skipper],
+            Ball2[i - Skipper]);
         end;
       5:
         begin
-          ReadLn(TLResult, Ball[i - 10], UteT[i - 10], Ball[i - 10],
-            RumT[i - 10], Ball[i - 10], RumEnergi[i - 10], Ball[i - 10],
-            Vol2T[i - 10], Ball[i - 10], Ball[i - 10], Vol3T[i - 10],
-            Ball[i - 10], Ball[i - 10], Vol4T[i - 10], Ball[i - 10],
-            Ball[i - 10], Vol5T[i - 10]);
+          ReadLn(TLResult, Ball[i - Skipper], UteT[i - Skipper],
+            Ball[i - Skipper], RumT[i - Skipper], Ball[i - Skipper],
+            RumEnergi[i - Skipper], Ball[i - Skipper], Vol2T[i - Skipper],
+            Ball[i - Skipper], Ball[i - Skipper], Vol3T[i - Skipper],
+            Ball[i - Skipper], Ball[i - Skipper], Vol4T[i - Skipper],
+            Ball[i - Skipper], Ball[i - Skipper], Vol5T[i - Skipper],
+            Ball2[i - Skipper]);
+
         end;
     end;
   end;
@@ -2291,9 +2320,12 @@ begin // Med inglasning- linje
 end;
 
 procedure TForm5.URadioButtonChange(Sender: TObject);
-
 begin
+  if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+  begin
+
   GlazeTemp.ShowInLegend := False;
+  end;
   Chart1.Series[0].ShowInLegend := False;
   Chart1.Series[1].ShowInLegend := False;
   ULine.ShowInLegend := True;

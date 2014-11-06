@@ -229,7 +229,6 @@ object Form5: TForm5
       Zoom.Pen.Fill.Color = claWhite
       TabOrder = 0
       Anchors = [akLeft, akTop, akRight, akBottom]
-      DesignVisible = False
       ColorPaletteIndex = 13
       object Series1: TLineSeries
         Marks.Visible = False
