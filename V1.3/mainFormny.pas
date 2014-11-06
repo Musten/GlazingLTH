@@ -306,7 +306,6 @@ type
     procedure SetWindowMaxDim;
     procedure UncheckWindows;
     procedure ResetWindowDims;
-    procedure UpdateLayerList;
   public
     pressed: boolean;
     nvol, advec: integer;
@@ -1666,31 +1665,7 @@ begin
 
 end;
 
-procedure TForm1.UpdateLayerList;
-var
-  i: integer;
-  Construction: TConstruction;
-begin
 
-  // Clear all items in the list box
-
-  Form2.LayerListBox.Clear;
-
-  // Is a construction instance selected?
-
-  if Form2.ConstructionListBox.ItemIndex <> -1 then
-  begin
-
-    // Loop over layers in construction
-
-    Construction := Form2.ConstructionListBox.Items.Objects
-      [Form2.ConstructionListBox.ItemIndex] as TConstruction;
-
-    for i := 0 to Construction.LayerCount - 1 do
-      Form2.LayerListBox.Items.AddObject(Construction.Layers[i].Name,
-        Construction.Layers[i]);
-  end;
-end;
 
 procedure TForm1.UpdateMaterialList;
 var

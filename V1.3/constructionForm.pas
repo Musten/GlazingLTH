@@ -101,7 +101,7 @@ type
 
 var
   Form2: TForm2;
-  i, GlassMatCount, GasMatCount, OpaqueMatCount: Integer;
+  GlassMatCount, GasMatCount, OpaqueMatCount: Integer;
 
 implementation
 
@@ -211,6 +211,7 @@ var
   Construction: TConstruction;
   ConstructionName: String;
   ConstructionExists: Boolean;
+  i:integer;
 begin
   DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
   ConstructionExists := False;
@@ -357,6 +358,7 @@ var
   Material: TMaterial;
   MaterialName, Lambda, Density, HeatCapacity: string;
   MaterialExists: Boolean;
+  i:integer;
 begin
   // Tillsätter standard värden
   Lambda := '1';
@@ -474,7 +476,7 @@ end;
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
 var
   Material: TMaterial;
-  j: Integer;
+  i,j: Integer;
 begin
   if MaterialListBox.ItemIndex <> -1 then
   begin
