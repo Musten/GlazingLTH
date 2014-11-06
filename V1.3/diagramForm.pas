@@ -1929,7 +1929,6 @@ procedure TForm5.ResultTxtBtnClick(Sender: TObject);
 var
   ResultatPath: String;
 begin
-
   ResultatPath := DerobModel.HouseProperties.StringValue['CaseDir'] + '\' +
     DerobModel.HouseProperties.StringValue['CaseName'] + '\Resultat.txt';
   ShellExecute(0, 'open', PChar(ResultatPath), nil, '', 1);
