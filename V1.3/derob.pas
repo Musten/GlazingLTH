@@ -2049,6 +2049,8 @@ begin
 
   FillChar(StartInfo, SizeOf(TStartupInfo), #0);
   FillChar(ProcInfo, SizeOf(TProcessInformation), #0);
+  StartInfo.dwFlags := STARTF_USESHOWWINDOW;
+  StartInfo.wShowWindow := SW_HIDE;
   StartInfo.cb := SizeOf(TStartupInfo);
 
   if WorkDir <> '' then
