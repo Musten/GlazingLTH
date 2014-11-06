@@ -46,16 +46,19 @@ type
     procedure EtaRadioButtonChange(Sender: TObject);
   private
     FDerobModel: TDerobModel;
+    FSurface: TSurface;
     procedure SetDerobModel(const Value: TDerobModel);
     procedure GlazeHistogram;
     procedure NoGlazeHistogram;
     procedure TLSumValues;
     procedure UpdateChart;
     procedure Compare;
+    procedure SetSurface(const Value: TSurface);
     { Private declarations }
   public
     { Public declarations }
     property DerobModel: TDerobModel read FDerobModel write SetDerobModel;
+    property Surface: TSurface read FSurface write SetSurface;
   end;
 
 var
@@ -202,9 +205,9 @@ begin
   SetLength(WindowH, 4); // Fönsterhöjd --"--"--
   SetLength(DeltaT, 8760); // Temperaturskillnad mellan ute och inne
 
-  Langd := DerobModel.Surface.Length;
-  Bredd := DerobModel.Surface.Width;
-  Hojd := DerobModel.Surface.Height;
+  Langd := Surface.Length;
+  Bredd := Surface.Width;
+  Hojd := Surface.Height;
 
   // Räkna ut total area för väggarna genom att ta bort eventuell fönsterarea
   if DerobModel.Walls[0].Properties.BoolValue['HoleNorth'] = True then
@@ -332,7 +335,7 @@ begin
 
   Label5.Text := FloatToStr(Round(1000 * Sum(UPrim) / 8760) / 1000) + ' W/m^2';
   Label7.Text := FloatToStr(Round(100 * Sum(EtaPrim) / 8760)) + ' %';
-  Label12.Text := FloatToStr(Round(1000*UVal)/1000) + ' W/m^2';;
+  Label12.Text := FloatToStr(Round(1000 * UVal) / 1000) + ' W/m^2';;
   Label9.Text := FloatToStr(DerobModel.VentilationProperties.DoubleValue
     ['Eta']) + ' %';
 
@@ -345,10 +348,10 @@ end;
 
 procedure TForm5.EtaRadioButtonChange(Sender: TObject);
 begin
-   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+  if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
 
-  GlazeTemp.ShowInLegend := False;
+    GlazeTemp.ShowInLegend := False;
   end;
   Chart1.Series[0].ShowInLegend := False;
   Chart1.Series[1].ShowInLegend := False;
@@ -391,14 +394,14 @@ begin
     Chart1.Series[4].Color := TAlphaColorRec.Black;
   end
   else
-    begin
-      ULine := TLineSeries.Create(Chart1);
-      Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
-      EtaLine := TLineSeries.Create(Chart1);
-      Chart1.AddSeries(EtaLine);
-      Chart1.Series[2].Color := TAlphaColorRec.Purple;
-      Chart1.Series[3].Color := TAlphaColorRec.Black;
-    end;
+  begin
+    ULine := TLineSeries.Create(Chart1);
+    Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
+    EtaLine := TLineSeries.Create(Chart1);
+    Chart1.AddSeries(EtaLine);
+    Chart1.Series[2].Color := TAlphaColorRec.Purple;
+    Chart1.Series[3].Color := TAlphaColorRec.Black;
+  end;
   ULine.Title := 'U* [W/m^2]';
   EtaLine.Title := 'Eta* [%]';
   ULine.ShowInLegend := False;
@@ -2016,6 +2019,11 @@ begin
   FDerobModel := Value;
 end;
 
+procedure TForm5.SetSurface(const Value: TSurface);
+begin
+  FSurface := Value;
+end;
+
 procedure TForm5.TempRadioButtonChange(Sender: TObject);
 begin
   Chart1.Legend.Visible := True;
@@ -2324,7 +2332,7 @@ begin
   if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
   begin
 
-  GlazeTemp.ShowInLegend := False;
+    GlazeTemp.ShowInLegend := False;
   end;
   Chart1.Series[0].ShowInLegend := False;
   Chart1.Series[1].ShowInLegend := False;
