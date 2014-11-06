@@ -100,9 +100,7 @@ type
     GeoClearButton: TButton;
     Viewport3D1: TViewport3D;
     ColorMaterialSource3: TColorMaterialSource;
-    ColorMaterialSource4: TColorMaterialSource;
     Rectangle3D6: TRectangle3D;
-    ColorMaterialSource6: TColorMaterialSource;
     SaveDialog: TSaveDialog;
     OpenDialog: TOpenDialog;
     PropAbsLabel: TLabel;
@@ -216,6 +214,7 @@ type
     Label56: TLabel;
     Label57: TLabel;
     Label58: TLabel;
+    ProgressBar1: TProgressBar;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -526,9 +525,9 @@ begin
     (HouseNumberBox3.Value <> 0) then
   begin
 
-    Surface.Length := HouseNumberBox1.Value;
-    Surface.Width := HouseNumberBox2.Value;
-    Surface.Height := HouseNumberBox3.Value;
+    DerobModel.Surface.Length := HouseNumberBox1.Value;
+    DerobModel.Surface.Width := HouseNumberBox2.Value;
+    DerobModel.Surface.Height := HouseNumberBox3.Value;
   end;
 
   { ---------------------
@@ -907,7 +906,7 @@ begin
       begin
         ShowMessage('Fallet existerar redan, v.v. ladda fallet istället.');
       end
-      //Om mappen inte redan existerar så skapas den och programmet initieras
+      // Om mappen inte redan existerar så skapas den och programmet initieras
       else
       begin
         DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
@@ -934,7 +933,7 @@ end;
 
 procedure TForm1.fileMenuSaveClick(Sender: TObject);
 begin
-  //  Sparar filerna i mappen för caset i "Cases" mappen
+  // Sparar filerna i mappen för caset i "Cases" mappen
   SetCurrentDir(StartDir);
   SetCurrentDir('Cases');
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
@@ -1254,36 +1253,76 @@ var
   ExitCode: integer;
   dig, wal, gf, lum, sol, tl: string;
   CaseDir, season, datanumber: String;
-  Idx: integer;
+  Idx, CalcCount, CalcCase: integer;
+  ProgStep: Double;
 begin
   CaseDir := DerobModel.HouseProperties.StringValue['CaseDir'];
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
-
-  for Idx := 1 to 5 do
-  // IDX 1: Vinterfall, 2:3 Sommarfall, 3: Vinterfall med öppning, 4: Sommarfall med öppning, 5: Referensfall
+  // Kollar om användaren har automatisk öppning
+  if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True) then
   begin
-    if Idx = 1 then
+    CalcCount := 5;
+    // Värde för att fylla progressbar under körning
+    ProgStep := 100 / (CalcCount * 6);
+  end
+  else
+  begin
+  // 'Standard' fall
+    CalcCount := 3;
+    ProgStep := 100 / (CalcCount * 6);
+  end;
+  // Om användaren bara vill räkna på referensfall så ändras antalet körningar
+  if (DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = False) and
+    (DerobModel.GlazingProperties.BoolValue['GlazingEast'] = False) and
+    (DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = False) and
+    (DerobModel.GlazingProperties.BoolValue['GlazingWest'] = False) then
+  begin
+    CalcCount := 1;
+    ProgStep := 100 / (CalcCount * 6);
+  end;
+
+  for Idx := 1 to CalcCount do
+  // IDX (CalcCase) 1: Vinterfall, 2: Sommarfall, 3: Vinterfall med öppning,
+  // 4: Sommarfall med öppning, 5: Referensfall
+  begin
+  // Vilket beräkningsfall som ska användas
+    CalcCase := Idx;
+    // Om det bara är en körning går vi direkt till fall 5, referens
+    if CalcCount = 1 then
+    begin
+      CalcCase := 5;
+    end
+    // Om det är 3 körningar så går vi till referensfall (5) när det är tredje beräkningen (Vinter med öppning)
+    else if CalcCount = 3 then
+    begin
+      if (Idx = 3) then
+      begin
+        CalcCase := 5;
+      end;
+    end;
+
+    if CalcCase = 1 then
     begin
       season := 'Winter';
       datanumber := 'Indata1.txt';
     end;
-    if Idx = 2 then
+    if CalcCase = 2 then
     begin
       season := 'Summer';
       datanumber := 'Indata2.txt';
     end;
-    if Idx = 3 then
+    if CalcCase = 3 then
     begin
       season := 'WinterOpen';
       datanumber := 'Indata3.txt';
     end;
-    if Idx = 4 then
+    if CalcCase = 4 then
     begin
       season := 'SummerOpen';
       datanumber := 'Indata4.txt';
     end;
-    if Idx = 5 then
+    if CalcCase = 5 then
     begin
       season := 'NoGlaze';
       datanumber := 'Indata5.txt';
@@ -1309,73 +1348,133 @@ begin
       datanumber + '"';
 
     // De tre vanliga beräkningsfallen
-    if (Idx = 1) or (Idx = 2) or (Idx = 5) then
+    if (CalcCase = 1) or (CalcCase = 2) or (CalcCase = 5) then
     begin
       ExitCode := ExecProcess(dig, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i DIG');
+        Break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(wal, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i WAL');
+        Break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(gf, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i GF');
+        Break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(lum, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i LUM');
+        Break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(sol, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i SOL');
+        Break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(tl, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i TL');
+        break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
     end;
 
     // Kollar om användaren har valt att göra beräkningar för automatisk öppning
     if (DerobModel.VentilationProperties.BoolValue['AutoOpening'] = True) and
-      ((Idx = 3) or (Idx = 4)) then
+      ((CalcCase = 3) or (CalcCase = 4)) then
     begin
       ExitCode := ExecProcess(dig, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i DIG');
+        break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(wal, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i WAL');
+        break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(gf, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i GF');
+        break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(lum, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i LUM');
+        break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(sol, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i SOL');
+        break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
       ExitCode := ExecProcess(tl, '', True);
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i TL');
+        break;
+      end
+      else
+      begin
+        ProgressBar1.Value := ProgressBar1.Value + ProgStep;
       end;
     end;
 
@@ -1664,8 +1763,6 @@ begin
   end;
 
 end;
-
-
 
 procedure TForm1.UpdateMaterialList;
 var
