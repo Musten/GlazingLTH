@@ -204,12 +204,13 @@ begin
   SetLength(WindowW, 4); // Fönsterbredd för de fyra väggarna på varsin plats
   SetLength(WindowH, 4); // Fönsterhöjd --"--"--
   SetLength(DeltaT, 8760); // Temperaturskillnad mellan ute och inne
-  SetLength(UTime, 25);
-  // UTime = Antal timmar UPrim behöver vara under ett visst värde
-  SetLength(EtaTime, 150);
+
   // EtaTime = Antal timmar EtaPrim behöver ökas med ett visst värde
   USteg := 250;
   EtaSteg := 150;
+   SetLength(UTime, USteg);
+  // UTime = Antal timmar UPrim behöver vara under ett visst värde
+  SetLength(EtaTime, EtaSteg);
   SetLength(UIntervall, USteg);
   SetLength(EtaIntervall, EtaSteg);
   UIntervall[0] := -0.5;
@@ -422,6 +423,8 @@ begin
 end;
 
 procedure TForm5.FormShow(Sender: TObject);
+var
+  i: Integer;
 begin
   if DerobModel.HouseProperties.BoolValue['Simulated'] = True then
   begin
@@ -454,12 +457,33 @@ begin
   EtaLine.ShowInLegend := False;
   if DerobModel.HouseProperties.BoolValue['Simulated'] = False then
   begin
+    SetLength(Time, 8760);
+    SetLength(TimeNoGl, 8760);
+    SetLength(UTime, 8760);
+    SetLength(EtaTime, 8760);
+    if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+    begin
+      SetLength(TimeGlaze, 8760);
+    end;
+    for i := 0 to 8759 do
+    begin
+      Time[i] := 0;
+      TimeNoGl[i] := 0;
+      UTime[i] := 0;
+      EtaTime[i] := 0;
+      if DerobModel.HouseProperties.BoolValue['GlazeTemp'] = True then
+      begin
+        TimeGlaze[i] := 0;
+      end;
+    end;
+
     GlazeHistogram;
     NoGlazeHistogram;
     TempRadioButton.IsChecked := True;
+
+    Compare;
     UpdateChart;
     TLSumValues;
-    Compare;
     DerobModel.HouseProperties.BoolValue['Simulated'] := True;
   end;
   TempRadioButton.IsChecked := True;
@@ -2365,7 +2389,6 @@ begin // Med inglasning- linje
       end;
     end;
   end;
-
   // Utan inglasning-linjen
   if DerobModel.VentilationProperties.BoolValue['GlazeTemp'] = True then
   begin

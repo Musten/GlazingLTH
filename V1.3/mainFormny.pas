@@ -215,6 +215,8 @@ type
     Label57: TLabel;
     Label58: TLabel;
     ProgressBar1: TProgressBar;
+    EmptyPanel: TPanel;
+    EmptyTreeView: TTreeViewItem;
     procedure WindowCheckBox1Change(Sender: TObject);
     procedure WindowCheckBox2Change(Sender: TObject);
     procedure WindowCheckBox3Change(Sender: TObject);
@@ -254,6 +256,10 @@ type
     procedure HouseNumberBox1Change(Sender: TObject);
     procedure HouseNumberBox2Change(Sender: TObject);
     procedure HouseNumberBox3Change(Sender: TObject);
+    procedure ProgressBar1Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure EmptyTreeViewClick(Sender: TObject);
+    procedure RestorePanelView;
 
   private
     { Private declarations }
@@ -341,6 +347,7 @@ begin
   ClimatePanel.Visible := False;
   Label51.Visible := False;
   Image1.Visible := False;
+  EmptyPanel.Visible := False;
 end;
 
 procedure TForm1.mainPropertiesSave;
@@ -832,10 +839,10 @@ end;
 
 procedure TForm1.simulateMenuCalculateClick(Sender: TObject);
 begin
-  SetCurrentDir(StartDir); // NY
+  SetCurrentDir(StartDir);
   DerobModel.HouseProperties.BoolValue['KGK'] := False;
-  // PropertiesClick(Self);
-  // GeometryClick(Self);
+  // Lösning för att spara värden som användaren anger i rutorna och inte klickar på annan plats innan beräkning
+  EmptyTreeViewClick(Self);
   mainGeometrySave;
   VolumeCount;
   mainPropertiesSave;
@@ -967,6 +974,7 @@ begin
     DerobModel.Filename := OpenDialog.Filename;
     DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
     DerobModel.Open;
+    DerobModel.HouseProperties.BoolValue['Simulated']:=False; //Återställer flaggan för diagramm
     pressed := True;
     SetCurrentDir('../');
     DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
@@ -1069,6 +1077,32 @@ begin
   WindowNumberBox8.Value := 0;
 end;
 
+procedure TForm1.RestorePanelView;
+begin
+  mainHide;
+  if Form1.Caption = 'Egenskaper' then
+  begin
+    PropertiesPanel.Visible := True;
+  end
+  else if Form1.Caption = 'Internvärme och Ventilation' then
+  begin
+    EnergyPanel.Visible := True;
+  end
+  else if Form1.Caption = 'Klimat och Period' then
+  begin
+    ClimatePanel.Visible := True;
+  end
+  else if Form1.Caption = 'Geometri' then
+  begin
+    GeometryPanel.Visible := True;
+  end
+  else
+  begin
+    GeometryPanel.Visible := True;
+  end;
+
+end;
+
 procedure TForm1.AbsComboBoxChange(Sender: TObject);
 begin
   ChangeAbsCombo;
@@ -1088,6 +1122,11 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 begin
   OrientationTrackBar.Value := OrientationTrackBar.Value - 1;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  ProgressBar1.Value := 50;
 end;
 
 procedure TForm1.ChangeAbsCombo;
@@ -1269,17 +1308,8 @@ begin
   end
   else
   begin
-  // 'Standard' fall
+    // 'Standard' fall
     CalcCount := 3;
-    ProgStep := 100 / (CalcCount * 6);
-  end;
-  // Om användaren bara vill räkna på referensfall så ändras antalet körningar
-  if (DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = False) and
-    (DerobModel.GlazingProperties.BoolValue['GlazingEast'] = False) and
-    (DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = False) and
-    (DerobModel.GlazingProperties.BoolValue['GlazingWest'] = False) then
-  begin
-    CalcCount := 1;
     ProgStep := 100 / (CalcCount * 6);
   end;
 
@@ -1287,15 +1317,10 @@ begin
   // IDX (CalcCase) 1: Vinterfall, 2: Sommarfall, 3: Vinterfall med öppning,
   // 4: Sommarfall med öppning, 5: Referensfall
   begin
-  // Vilket beräkningsfall som ska användas
+    // Vilket beräkningsfall som ska användas
     CalcCase := Idx;
-    // Om det bara är en körning går vi direkt till fall 5, referens
-    if CalcCount = 1 then
-    begin
-      CalcCase := 5;
-    end
     // Om det är 3 körningar så går vi till referensfall (5) när det är tredje beräkningen (Vinter med öppning)
-    else if CalcCount = 3 then
+    if CalcCount = 3 then
     begin
       if (Idx = 3) then
       begin
@@ -1405,7 +1430,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i TL');
-        break;
+        Break;
       end
       else
       begin
@@ -1421,7 +1446,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i DIG');
-        break;
+        Break;
       end
       else
       begin
@@ -1431,7 +1456,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i WAL');
-        break;
+        Break;
       end
       else
       begin
@@ -1441,7 +1466,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i GF');
-        break;
+        Break;
       end
       else
       begin
@@ -1451,7 +1476,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i LUM');
-        break;
+        Break;
       end
       else
       begin
@@ -1461,7 +1486,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i SOL');
-        break;
+        Break;
       end
       else
       begin
@@ -1471,7 +1496,7 @@ begin
       if ExitCode <> 0 then
       begin
         ShowMessage('Fel i TL');
-        break;
+        Break;
       end
       else
       begin
@@ -1487,7 +1512,11 @@ begin
   // Enable start button after thread execution
 
   if ExitCode = 0 then
+  begin
     resultMenuChart.Enabled := True;
+    RestorePanelView;
+    DerobModel.HouseProperties.BoolValue['Simulated'] := False;
+  end;
 end;
 
 procedure TForm1.OrientationTrackBarChange(Sender: TObject);
@@ -1868,31 +1897,14 @@ begin
   begin
     advec := advec + 1;
   end;
-
-  // end;
-  // if (DerobModel.Glazing[0].Properties.BoolValue['GlazeNorth']=true)
-  // and (DerobModel.Glazing[5].Properties.BoolValue['GlazeEast']=true) then
-  // begin
-  // advec:=advec+1;
-  // end;
-  // if (DerobModel.Glazing[10].Properties.BoolValue['GlazeSouth']=true)
-  // and (DerobModel.Glazing[5].Properties.BoolValue['GlazeEast']=true) then
-  // begin
-  // advec:=advec+1;
-  // end;
-  // if (DerobModel.Glazing[10].Properties.BoolValue['GlazeSouth']=true)
-  // and (DerobModel.Glazing[15].Properties.BoolValue['GlazeWest']=true) then
-  // begin
-  // advec:=advec+1;
-  // end;
-  // if (DerobModel.Glazing[0].Properties.BoolValue['GlazeNorth']=true)
-  // and (DerobModel.Glazing[15].Properties.BoolValue['GlazeWest']=true) then
-  // begin
-  // advec:=advec+1;
-  // end;
   DerobModel.HouseProperties.IntValue['nvol'] := nvol;
   DerobModel.HouseProperties.IntValue['advec'] := advec;
 
+end;
+
+procedure TForm1.ProgressBar1Click(Sender: TObject);
+begin
+  ProgressBar1.Value := 0;
 end;
 
 procedure TForm1.PropConstrButtonClick(Sender: TObject);
@@ -2335,6 +2347,7 @@ end;
 procedure TForm1.HouseNumberBox3Typing(Sender: TObject);
 begin
   UncheckWindows;
+
 end;
 
 procedure TForm1.InternalHeatButtonClick(Sender: TObject);
@@ -2459,6 +2472,17 @@ begin
     DerobModel.HouseProperties.IntValue['ChosenGlaze'] := 0;
     DerobModel.HouseProperties.BoolValue['GlazeChange'] := False;
   end;
+
+end;
+
+procedure TForm1.EmptyTreeViewClick(Sender: TObject);
+begin
+  // Gömmer alla paneler
+  mainHide;
+  // Visar upp den tomma panelen
+  EmptyPanel.Visible := True;
+  // Nollsätller räknaren i programmet
+  ProgressBar1Click(Self);
 
 end;
 

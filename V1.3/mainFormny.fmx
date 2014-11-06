@@ -53,6 +53,15 @@ object Form1: TForm1
       Text = 'Klimat och Period'
       OnClick = ClimateClick
     end
+    object EmptyTreeView: TTreeViewItem
+      IsChecked = False
+      IsExpanded = False
+      IsSelected = False
+      TabOrder = 4
+      Text = 'EmptyTreeView'
+      Visible = False
+      OnClick = EmptyTreeViewClick
+    end
   end
   object MainMenu1: TMainMenu
     Left = 16
@@ -132,13 +141,14 @@ object Form1: TForm1
     end
     object ProgressBar1: TProgressBar
       Height = 25.000000000000000000
+      HitTest = False
       Orientation = orHorizontal
       Position.Y = 168.000000000000000000
       Width = 193.000000000000000000
+      OnClick = ProgressBar1Click
     end
   end
   object GeometryPanel: TPanel
-    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
@@ -1041,6 +1051,7 @@ object Form1: TForm1
     Top = 224
   end
   object EnergyPanel: TPanel
+    DesignVisible = False
     Height = 455.000000000000000000
     Position.X = 192.000000000000000000
     Visible = False
@@ -10609,5 +10620,13 @@ object Form1: TForm1
     Text = 'Glazing-LTH'
     TextAlign = taCenter
     Width = 457.000000000000000000
+  end
+  object EmptyPanel: TPanel
+    DesignVisible = False
+    Height = 457.000000000000000000
+    Position.X = 192.000000000000000000
+    Visible = False
+    Width = 609.000000000000000000
+    TabOrder = 8
   end
 end
