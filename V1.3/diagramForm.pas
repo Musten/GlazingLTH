@@ -206,7 +206,7 @@ begin
   Bredd := DerobModel.Surface.Width;
   Hojd := DerobModel.Surface.Height;
 
-  //Räkna ut total area för väggarna genom att ta bort eventuell fönsterarea
+  // Räkna ut total area för väggarna genom att ta bort eventuell fönsterarea
   if DerobModel.Walls[0].Properties.BoolValue['HoleNorth'] = True then
   begin
     Area[0] := Bredd * Hojd - DerobModel.Windows[0].Width * DerobModel.Windows
@@ -329,10 +329,11 @@ begin
       FloatToStr(UPrim[i]) + '  ' + FloatToStr(EtaPrim[i]));
   end;
 
-  Label5.Text := FloatToStr(Round(1000*Sum(UPrim)/8760)/1000) + ' W/m^2';
-  Label7.Text := FloatToStr(Round(100*Sum(EtaPrim)/8760)) + ' %';
-  Label12.Text :=  FloatToStr(UVal) + ' W/m^2';
-  Label9.Text :=  FloatToStr(DerobModel.VentilationProperties.DoubleValue['Eta']) + ' %';
+  Label5.Text := FloatToStr(Round(1000 * Sum(UPrim) / 8760) / 1000) + ' W/m^2';
+  Label7.Text := FloatToStr(Round(100 * Sum(EtaPrim) / 8760)) + ' %';
+  Label12.Text := FloatToStr(UVal) + ' W/m^2';
+  Label9.Text := FloatToStr(DerobModel.VentilationProperties.DoubleValue
+    ['Eta']) + ' %';
 
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseDir']);
   SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
@@ -380,7 +381,7 @@ begin
     Chart1.Series[2].Color := TAlphaColorRec.Green;
   end;
   ULine := TLineSeries.Create(Chart1);
-  Chart1.AddSeries(ULine);                //Skapa linjer för U', Eta'
+  Chart1.AddSeries(ULine); // Skapa linjer för U', Eta'
   EtaLine := TLineSeries.Create(Chart1);
   Chart1.AddSeries(EtaLine);
   ULine.ShowInLegend := False;
@@ -957,29 +958,35 @@ begin
   Resultat.Add('Heat_i  Heating load in volume i          [Wh/h]');
   Resultat.Add('Cool_i  Cooling load in volume i          [Wh/h]');
   Resultat.Add(' Sun_i  Sun absorbed in volume i          [Wh/h]');
+  Resultat.Add('  Case  Denotes which case is used           [-]');
+  Resultat.Add('S - Summer case');
+  Resultat.Add('SO - Opened glaze, summer case');
+  Resultat.Add('W - Winter case');
+  Resultat.Add('WO - Opened glaze, winter case');
   Resultat.Add('');
   if (DerobModel.HouseProperties.IntValue['nvol'] = 2) then
   begin
-    Resultat.Add('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2');
+    Resultat.Add
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Case');
   end
   else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
   begin
     Resultat.Add
-      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3');
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Case');
   end
   else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
   begin
     Resultat.Add
-      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_4 Opt_4 Sun_4')
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_4 Opt_4 Sun_4 Case')
   end
   else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
   begin
     Resultat.Add
-      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_4 Opt_4 Sun_4 Tmp_5 Opt_5 Sun_5')
+      ('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Tmp_2 Opt_2 Sun_2 Tmp_3 Opt_3 Sun_3 Tmp_4 Opt_4 Sun_4 Tmp_5 Opt_5 Sun_5 Case')
   end
   else
   begin
-    Resultat.Add('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1');
+    Resultat.Add('Hour  Tmp_O Igl Tmp_1 Opt_1 Heat_1  Sun_1 Case');
   end;
 
   for i := 0 to 8759 do
@@ -1008,7 +1015,7 @@ begin
               FloatToStr(Sun1SummerOpen[i]) + ' ' +
               FloatToStr(Temp2SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-              FloatToStr(Sun2SummerOpen[i]));
+              FloatToStr(Sun2SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1019,7 +1026,8 @@ begin
               FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
               ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
               ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
-              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]));
+              FloatToStr(OpTemp2Summer[i]) + '  ' +
+              FloatToStr(Sun2Summer[i]) + ' S');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
@@ -1043,7 +1051,7 @@ begin
               FloatToStr(Sun2SummerOpen[i]) + ' ' +
               FloatToStr(Temp3SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-              FloatToStr(Sun3SummerOpen[i]));
+              FloatToStr(Sun3SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1056,7 +1064,8 @@ begin
               ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
               FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
               ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
-              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]));
+              FloatToStr(OpTemp3Summer[i]) + '  ' +
+              FloatToStr(Sun3Summer[i]) + ' S');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
@@ -1085,7 +1094,7 @@ begin
               FloatToStr(Sun3SummerOpen[i]) + ' ' +
               FloatToStr(Temp4SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
-              FloatToStr(Sun4SummerOpen[i]));
+              FloatToStr(Sun4SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1100,7 +1109,8 @@ begin
               ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
               FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]) +
               ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
-              FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]));
+              FloatToStr(OpTemp4Summer[i]) + '  ' +
+              FloatToStr(Sun4Summer[i]) + ' S');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
@@ -1134,7 +1144,7 @@ begin
               FloatToStr(Sun4SummerOpen[i]) + ' ' +
               FloatToStr(Temp5SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp5SummerOpen[i]) + '  ' +
-              FloatToStr(Sun5SummerOpen[i]));
+              FloatToStr(Sun5SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1151,7 +1161,8 @@ begin
               ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
               FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]) +
               ' ' + FloatToStr(Temp5Summer[i]) + '  ' +
-              FloatToStr(OpTemp5Summer[i]) + '  ' + FloatToStr(Sun5Summer[i]));
+              FloatToStr(OpTemp5Summer[i]) + '  ' +
+              FloatToStr(Sun5Summer[i]) + ' S');
           end;
         end
         else
@@ -1162,7 +1173,7 @@ begin
             '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
             FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
             ' ' + FloatToStr(Heat1Summer[i]) + '  ' +
-            FloatToStr(Sun1Summer[i]));
+            FloatToStr(Sun1Summer[i]) + ' S');
         end;
 
       end
@@ -1187,7 +1198,7 @@ begin
               FloatToStr(Sun1WinterOpen[i]) + ' ' +
               FloatToStr(Temp2WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-              FloatToStr(Sun2WinterOpen[i]));
+              FloatToStr(Sun2WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1198,7 +1209,8 @@ begin
               FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
               ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
               ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
-              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+              FloatToStr(OpTemp2Winter[i]) + '  ' +
+              FloatToStr(Sun2Winter[i]) + ' W');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
@@ -1222,7 +1234,7 @@ begin
               FloatToStr(Sun2WinterOpen[i]) + ' ' +
               FloatToStr(Temp3WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-              FloatToStr(Sun3WinterOpen[i]));
+              FloatToStr(Sun3WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1235,7 +1247,8 @@ begin
               ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
               FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
               ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
-              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]));
+              FloatToStr(OpTemp3Winter[i]) + '  ' +
+              FloatToStr(Sun3Winter[i]) + ' W');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 4) then
@@ -1264,7 +1277,7 @@ begin
               FloatToStr(Sun3WinterOpen[i]) + ' ' +
               FloatToStr(Temp4WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
-              FloatToStr(Sun4WinterOpen[i]));
+              FloatToStr(Sun4WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1279,7 +1292,8 @@ begin
               ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
               FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]) +
               ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
-              FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]));
+              FloatToStr(OpTemp4Winter[i]) + '  ' +
+              FloatToStr(Sun4Winter[i]) + ' W');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
@@ -1313,7 +1327,7 @@ begin
               FloatToStr(Sun4WinterOpen[i]) + ' ' +
               FloatToStr(Temp5WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp5WinterOpen[i]) + '  ' +
-              FloatToStr(Sun5WinterOpen[i]));
+              FloatToStr(Sun5WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1330,7 +1344,8 @@ begin
               ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
               FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]) +
               ' ' + FloatToStr(Temp5Winter[i]) + '  ' +
-              FloatToStr(OpTemp5Winter[i]) + '  ' + FloatToStr(Sun5Winter[i]));
+              FloatToStr(OpTemp5Winter[i]) + '  ' +
+              FloatToStr(Sun5Winter[i]) + ' W');
           end;
         end
         else
@@ -1341,7 +1356,7 @@ begin
             '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
             FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
             ' ' + FloatToStr(Heat1Winter[i]) + '  ' +
-            FloatToStr(Sun1Winter[i]));
+            FloatToStr(Sun1Winter[i]) + ' W');
         end;
       end;
     end
@@ -1368,7 +1383,7 @@ begin
               FloatToStr(Sun1SummerOpen[i]) + ' ' +
               FloatToStr(Temp2SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp2SummerOpen[i]) + '  ' +
-              FloatToStr(Sun2SummerOpen[i]));
+              FloatToStr(Sun2SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1380,7 +1395,8 @@ begin
               FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
               ' ' + FloatToStr(Heat1Summer[i]) + '  ' + FloatToStr(Sun1Summer[i]
               ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
-              FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]));
+              FloatToStr(OpTemp2Summer[i]) + '  ' +
+              FloatToStr(Sun2Summer[i]) + ' S');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
@@ -1405,7 +1421,7 @@ begin
               FloatToStr(Sun2SummerOpen[i]) + ' ' +
               FloatToStr(Temp3SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp3SummerOpen[i]) + '  ' +
-              FloatToStr(Sun3SummerOpen[i]));
+              FloatToStr(Sun3SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1419,7 +1435,8 @@ begin
               ) + ' ' + FloatToStr(Temp2Summer[i]) + '  ' +
               FloatToStr(OpTemp2Summer[i]) + '  ' + FloatToStr(Sun2Summer[i]) +
               ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
-              FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]));
+              FloatToStr(OpTemp3Summer[i]) + '  ' +
+              FloatToStr(Sun3Summer[i]) + ' S');
 
           end;
         end
@@ -1450,7 +1467,7 @@ begin
               FloatToStr(Sun3SummerOpen[i]) + ' ' +
               FloatToStr(Temp4SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp4SummerOpen[i]) + '  ' +
-              FloatToStr(Sun4SummerOpen[i]));
+              FloatToStr(Sun4SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1466,7 +1483,8 @@ begin
               ' ' + FloatToStr(Temp3Summer[i]) + '  ' +
               FloatToStr(OpTemp3Summer[i]) + '  ' + FloatToStr(Sun3Summer[i]) +
               ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
-              FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]));
+              FloatToStr(OpTemp4Summer[i]) + '  ' +
+              FloatToStr(Sun4Summer[i]) + ' S');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
@@ -1501,7 +1519,7 @@ begin
               FloatToStr(Sun4SummerOpen[i]) + ' ' +
               FloatToStr(Temp5SummerOpen[i]) + '  ' +
               FloatToStr(OpTemp5SummerOpen[i]) + '  ' +
-              FloatToStr(Sun5SummerOpen[i]));
+              FloatToStr(Sun5SummerOpen[i]) + ' SO');
           end
           else
           begin
@@ -1519,7 +1537,8 @@ begin
               ' ' + FloatToStr(Temp4Summer[i]) + '  ' +
               FloatToStr(OpTemp4Summer[i]) + '  ' + FloatToStr(Sun4Summer[i]) +
               ' ' + FloatToStr(Temp5Summer[i]) + '  ' +
-              FloatToStr(OpTemp5Summer[i]) + '  ' + FloatToStr(Sun5Summer[i]));
+              FloatToStr(OpTemp5Summer[i]) + '  ' +
+              FloatToStr(Sun5Summer[i]) + ' S');
           end;
         end
         else
@@ -1530,7 +1549,7 @@ begin
             '  ' + FloatToStr(GlobalRadiationSummer[i]) + '  ' +
             FloatToStr(Temp1Summer[i]) + '  ' + FloatToStr(OpTemp1Summer[i]) +
             ' ' + FloatToStr(Heat1Summer[i]) + '  ' +
-            FloatToStr(Sun1Summer[i]));
+            FloatToStr(Sun1Summer[i]) + ' S');
         end;
       end
       // Om vinter temperaturen inte överstiger det angivna värdet
@@ -1553,7 +1572,7 @@ begin
               FloatToStr(Sun1WinterOpen[i]) + ' ' +
               FloatToStr(Temp2WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp2WinterOpen[i]) + '  ' +
-              FloatToStr(Sun2WinterOpen[i]));
+              FloatToStr(Sun2WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1565,7 +1584,8 @@ begin
               FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
               ' ' + FloatToStr(Heat1Winter[i]) + '  ' + FloatToStr(Sun1Winter[i]
               ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
-              FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]));
+              FloatToStr(OpTemp2Winter[i]) + '  ' +
+              FloatToStr(Sun2Winter[i]) + ' W');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 3) then
@@ -1590,7 +1610,7 @@ begin
               FloatToStr(Sun2WinterOpen[i]) + ' ' +
               FloatToStr(Temp3WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp3WinterOpen[i]) + '  ' +
-              FloatToStr(Sun3WinterOpen[i]));
+              FloatToStr(Sun3WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1604,7 +1624,8 @@ begin
               ) + ' ' + FloatToStr(Temp2Winter[i]) + '  ' +
               FloatToStr(OpTemp2Winter[i]) + '  ' + FloatToStr(Sun2Winter[i]) +
               ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
-              FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]));
+              FloatToStr(OpTemp3Winter[i]) + '  ' +
+              FloatToStr(Sun3Winter[i]) + ' W');
 
           end;
         end
@@ -1635,7 +1656,7 @@ begin
               FloatToStr(Sun3WinterOpen[i]) + ' ' +
               FloatToStr(Temp4WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp4WinterOpen[i]) + '  ' +
-              FloatToStr(Sun4WinterOpen[i]));
+              FloatToStr(Sun4WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1651,7 +1672,8 @@ begin
               ' ' + FloatToStr(Temp3Winter[i]) + '  ' +
               FloatToStr(OpTemp3Winter[i]) + '  ' + FloatToStr(Sun3Winter[i]) +
               ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
-              FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]));
+              FloatToStr(OpTemp4Winter[i]) + '  ' +
+              FloatToStr(Sun4Winter[i]) + ' W');
           end;
         end
         else if (DerobModel.HouseProperties.IntValue['nvol'] = 5) then
@@ -1686,7 +1708,7 @@ begin
               FloatToStr(Sun4WinterOpen[i]) + ' ' +
               FloatToStr(Temp5WinterOpen[i]) + '  ' +
               FloatToStr(OpTemp5WinterOpen[i]) + '  ' +
-              FloatToStr(Sun5WinterOpen[i]));
+              FloatToStr(Sun5WinterOpen[i]) + ' WO');
           end
           else
           begin
@@ -1704,7 +1726,8 @@ begin
               ' ' + FloatToStr(Temp4Winter[i]) + '  ' +
               FloatToStr(OpTemp4Winter[i]) + '  ' + FloatToStr(Sun4Winter[i]) +
               ' ' + FloatToStr(Temp5Winter[i]) + '  ' +
-              FloatToStr(OpTemp5Winter[i]) + '  ' + FloatToStr(Sun5Winter[i]));
+              FloatToStr(OpTemp5Winter[i]) + '  ' +
+              FloatToStr(Sun5Winter[i]) + ' W');
           end;
         end
         else
@@ -1715,7 +1738,7 @@ begin
             '  ' + FloatToStr(GlobalRadiationWinter[i]) + '  ' +
             FloatToStr(Temp1Winter[i]) + '  ' + FloatToStr(OpTemp1Winter[i]) +
             ' ' + FloatToStr(Heat1Winter[i]) + '  ' +
-            FloatToStr(Sun1Winter[i]));
+            FloatToStr(Sun1Winter[i]) + ' W');
         end;
 
       end;
@@ -2268,7 +2291,8 @@ begin // Med inglasning- linje
 end;
 
 procedure TForm5.URadioButtonChange(Sender: TObject);
-begin
+
+begin
   GlazeTemp.ShowInLegend := False;
   Chart1.Series[0].ShowInLegend := False;
   Chart1.Series[1].ShowInLegend := False;
