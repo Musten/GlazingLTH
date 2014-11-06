@@ -211,7 +211,7 @@ var
   Construction: TConstruction;
   ConstructionName: String;
   ConstructionExists: Boolean;
-  i:integer;
+  i: Integer;
 begin
   DerobModel.HouseProperties.BoolValue['ConstructionChange'] := False;
   ConstructionExists := False;
@@ -358,7 +358,7 @@ var
   Material: TMaterial;
   MaterialName, Lambda, Density, HeatCapacity: string;
   MaterialExists: Boolean;
-  i:integer;
+  i: Integer;
 begin
   // Tillsätter standard värden
   Lambda := '1';
@@ -476,7 +476,7 @@ end;
 procedure TForm2.RemoveMaterialButtonClick(Sender: TObject);
 var
   Material: TMaterial;
-  i,j: Integer;
+  i, j: Integer;
 begin
   if MaterialListBox.ItemIndex <> -1 then
   begin
@@ -876,7 +876,7 @@ end;
 
 procedure TForm2.UpdateUValue;
 var
-  i, j: Integer;
+  i, j, k: Integer;
   RValue: array of double;
 
 begin
@@ -886,6 +886,11 @@ begin
   begin
     for i := 0 to DerobModel.ConstructionCount - 1 do
     begin
+      if (DerobModel.Constructions[i].StringValue['ConstructionType'] = 'Wall')
+        or (DerobModel.Constructions[i].StringValue['ConstructionType']
+        = 'Floor') or (DerobModel.Constructions[i].StringValue
+        ['ConstructionType'] = 'Roof') then
+      begin
         if DerobModel.Constructions[i].LayerCount > 0 then
         begin
           SetLength(RValue, DerobModel.Constructions[i].LayerCount);
@@ -895,15 +900,17 @@ begin
               DerobModel.Constructions[i].Layers[j].DoubleValue['Lambda'];
           end;
           DerobModel.Constructions[i].DoubleValue['UValue'] :=
-          1 / (0.04 + 0.13 + Sum(RValue));
+            1 / (0.04 + 0.13 + Sum(RValue));
         end;
+      end;
     end;
-    for i := 0 to DerobModel.ConstructionCount - 1 do
+    for k := 0 to DerobModel.ConstructionCount - 1 do
       begin
-        if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions[i].Name then
-          begin
-             UNumberBox.Value := DerobModel.Constructions[i].DoubleValue['UValue'];
-          end;
+        if trim(ConstructionListBox.Selected.Text) = DerobModel.Constructions
+          [k].Name then
+        begin
+          UNumberBox.Value := DerobModel.Constructions[k].DoubleValue['UValue'];
+        end;
       end;
   end;
 end;

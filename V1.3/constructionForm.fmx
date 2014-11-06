@@ -140,6 +140,7 @@ object Form2: TForm2
       Touch.InteractiveGestures = [igLongTap, igDoubleTap]
       TabOrder = 9
       Cursor = crIBeam
+      DecimalDigits = 3
       Min = -1000.000000000000000000
       Max = 1000.000000000000000000
       Value = -999.000000000000000000
