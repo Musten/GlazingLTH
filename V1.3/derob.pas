@@ -550,9 +550,13 @@ type
       write SetGlazingProperties;
     property WindowProperties: TWindowProperties read FWindowProperties
       write SetWindowProperties;
+
   end;
 
 function ExecProcess(ProgramName: String; WorkDir: string;
+  Wait: boolean): integer;
+
+function ProcessExec(ProgramName: String; WorkDir: string;
   Wait: boolean): integer;
 
 implementation
@@ -2050,6 +2054,7 @@ begin
   FillChar(StartInfo, SizeOf(TStartupInfo), #0);
   FillChar(ProcInfo, SizeOf(TProcessInformation), #0);
   StartInfo.dwFlags := STARTF_USESHOWWINDOW;
+
   StartInfo.wShowWindow := SW_HIDE;
   StartInfo.cb := SizeOf(TStartupInfo);
 
@@ -2095,6 +2100,59 @@ begin
   inherited;
   CallExecute;
   Self.Synchronize(CallExecuteFinished);
+
+end;
+ function ProcessExec(ProgramName, WorkDir: string; Wait: boolean): integer;
+var
+  StartInfo: TStartupInfo;
+  ProcInfo: TProcessInformation;
+  CreateOK: boolean;
+  ExitCode: integer;
+  dwExitCode: DWORD;
+begin
+  ExitCode := -1;
+
+  FillChar(StartInfo, SizeOf(TStartupInfo), #0);
+  FillChar(ProcInfo, SizeOf(TProcessInformation), #0);
+  StartInfo.dwFlags := STARTF_USESHOWWINDOW;
+
+  StartInfo.wShowWindow := SW_SHOWNORMAL;
+  StartInfo.cb := SizeOf(TStartupInfo);
+
+  if WorkDir <> '' then
+  begin
+    CreateOK := CreateProcess(nil, Addr(ProgramName[1]), nil, Addr(WorkDir[1]),
+      false, CREATE_NEW_PROCESS_GROUP + NORMAL_PRIORITY_CLASS, nil, nil,
+      StartInfo, ProcInfo);
+  end
+  else
+  begin
+    CreateOK := CreateProcess(nil, Addr(ProgramName[1]), nil, nil, false,
+      CREATE_NEW_PROCESS_GROUP + NORMAL_PRIORITY_CLASS, nil, Addr(WorkDir[1]),
+      StartInfo, ProcInfo);
+  end;
+
+  { check to see if successful }
+
+  if CreateOK then
+  begin
+    // may or may not be needed. Usually wait for child processes
+    if Wait then
+    begin
+      WaitForSingleObject(ProcInfo.hProcess, INFINITE);
+      GetExitCodeProcess(ProcInfo.hProcess, dwExitCode);
+      ExitCode := dwExitCode;
+    end;
+  end
+  else
+  begin
+    ShowMessage('Unable to run ' + ProgramName);
+  end;
+
+  CloseHandle(ProcInfo.hProcess);
+  CloseHandle(ProcInfo.hThread);
+
+  Result := ExitCode;
 
 end;
 

@@ -141,11 +141,9 @@ object Form1: TForm1
     end
     object ProgressBar1: TProgressBar
       Height = 25.000000000000000000
-      HitTest = False
       Orientation = orHorizontal
-      Position.Y = 168.000000000000000000
+      Position.Y = 160.000000000000000000
       Width = 193.000000000000000000
-      OnClick = ProgressBar1Click
     end
   end
   object GeometryPanel: TPanel

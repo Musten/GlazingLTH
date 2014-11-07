@@ -256,7 +256,6 @@ type
     procedure HouseNumberBox1Change(Sender: TObject);
     procedure HouseNumberBox2Change(Sender: TObject);
     procedure HouseNumberBox3Change(Sender: TObject);
-    procedure ProgressBar1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure EmptyTreeViewClick(Sender: TObject);
     procedure RestorePanelView;
@@ -929,6 +928,7 @@ begin
         LoadMaterials;
         LoadGlassConstructions;
         mainUpdateComboBox;
+        DerobModel.HouseProperties.BoolValue['KGK'] := True;
       end;
 
     end;
@@ -974,7 +974,8 @@ begin
     DerobModel.Filename := OpenDialog.Filename;
     DerobModel.HouseProperties.BoolValue['ConstructionLib'] := False;
     DerobModel.Open;
-    DerobModel.HouseProperties.BoolValue['Simulated']:=False; //Återställer flaggan för diagramm
+    // Återställer flaggan för diagram
+    DerobModel.HouseProperties.BoolValue['Simulated'] := False;
     pressed := True;
     SetCurrentDir('../');
     DerobModel.HouseProperties.StringValue['CaseDir'] := GetCurrentDir;
@@ -986,7 +987,11 @@ begin
     UpdateEnergyPanel;
     UpdateAbsorption;
     UpdateClimatePanel;
-    UpdateClimate;
+    // Försöker inte att ladda in en klimatfil i boxen om användaren inte valde en innan de sparade.
+    if DerobModel.HouseProperties.IntValue['LocationIndex'] <> -1 then
+    begin
+      UpdateClimate;
+    end;
     mainHide;
     Geometry.IsSelected := True;
     GeometryPanel.Visible := True;
@@ -1034,7 +1039,7 @@ begin
   SetCurrentDir('Derob');
   KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "' + ArgPath + '"';
 
-  ExecProcess(KGKPath, '', False);
+  ProcessExec(KGKPath, '', False);
   DeleteFile('KGK_Show.ini');
 end;
 
@@ -1100,6 +1105,16 @@ begin
   begin
     GeometryPanel.Visible := True;
   end;
+
+  // Återaktiverar trädvyn och huvudmenyn efter körning
+  TreeView1.Enabled := True;
+  mainMenuFile.Enabled := True;
+  mainMenuResult.Enabled := True;
+  mainMenuSimulate.Enabled := True;
+  TreeView1.HitTest := True;
+  mainMenuFile.HitTest := True;
+  mainMenuResult.HitTest := True;
+  mainMenuSimulate.HitTest := True;
 
 end;
 
@@ -1296,6 +1311,15 @@ var
   ProgStep: Double;
 begin
   ProgressBar1.Value := 0;
+  // Inaktiverar menyerna och trädvyn under körning
+  TreeView1.Enabled := False;
+  mainMenuFile.Enabled := False;
+  mainMenuResult.Enabled := False;
+  mainMenuSimulate.Enabled := False;
+  TreeView1.HitTest := False;
+  mainMenuFile.HitTest := False;
+  mainMenuResult.HitTest := False;
+  mainMenuSimulate.HitTest := False;
   CaseDir := DerobModel.HouseProperties.StringValue['CaseDir'];
   SetCurrentDir(StartDir);
   SetCurrentDir('Derob');
@@ -1578,8 +1602,7 @@ begin
     DerobModel.HouseProperties.StringValue['LocationPath'] := GetCurrentDir +
       '\' + ClimateComboBox.Selected.Text;
     sl.LoadFromFile(ClimateComboBox.Selected.Text);
-    Latitude := sl[11];
-    // line 12
+    Latitude := sl[11]; // line 12
     Latitude := Copy(Latitude, 19, 24);
     Latitude := Copy(Latitude, 1, 6);
     Longitude := sl[12]; // line 13
@@ -1635,9 +1658,12 @@ end;
 procedure TForm1.UpdateClimatePanel;
 begin
   LoadClimateFiles;
-  ClimateComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
-    ['LocationIndex'];
-  UpdateClimate;
+  if DerobModel.HouseProperties.IntValue['LocationIndex'] <> -1 then
+  begin
+    ClimateComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
+      ['LocationIndex'];
+    UpdateClimate;
+  end;
   OrientationNumberBox.Value := DerobModel.HouseProperties.IntValue['Rotation'];
   OrientationTrackBar.Value := OrientationNumberBox.Value;
 end;
@@ -1823,14 +1849,33 @@ end;
 
 procedure TForm1.UpdatePropertiesPanel;
 begin
+  // If-satser försöker inte läsa in konstruktionerna om användaren inte hade
+  // valt konstruktioner innan de sparade. Leder till break annars.
 
-  RoofComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['RoofHolder'];
-  FloorComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['FloorHolder'];
+  if DerobModel.HouseProperties.IntValue['RoofHolder'] <> -1 then
+  begin
+    RoofComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['RoofHolder'];
+  end;
+  if DerobModel.HouseProperties.IntValue['FloorHolder'] <> -1 then
+  begin
+    FloorComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
+      ['FloorHolder'];
 
-  WallComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['WallHolder'];
-  GlazeComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['GlazeHolder'];
-  WindowComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
-    ['WindowHolder'];
+  end;
+  if DerobModel.HouseProperties.IntValue['WallHolder'] <> -1 then
+  begin
+    WallComboBox.ItemIndex := DerobModel.HouseProperties.IntValue['WallHolder'];
+  end;
+  if DerobModel.HouseProperties.IntValue['GlazeHolder'] <> -1 then
+  begin
+    GlazeComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
+      ['GlazeHolder'];
+  end;
+  if DerobModel.HouseProperties.IntValue['WindowHolder'] <> -1 then
+  begin
+    WindowComboBox.ItemIndex := DerobModel.HouseProperties.IntValue
+      ['WindowHolder'];
+  end;
 end;
 
 procedure TForm1.VolumeCount;
@@ -1900,11 +1945,6 @@ begin
   DerobModel.HouseProperties.IntValue['nvol'] := nvol;
   DerobModel.HouseProperties.IntValue['advec'] := advec;
 
-end;
-
-procedure TForm1.ProgressBar1Click(Sender: TObject);
-begin
-  ProgressBar1.Value := 0;
 end;
 
 procedure TForm1.PropConstrButtonClick(Sender: TObject);
@@ -2482,8 +2522,6 @@ begin
   // Visar upp den tomma panelen
   EmptyPanel.Visible := True;
   // Nollsätller räknaren i programmet
-  ProgressBar1Click(Self);
-
 end;
 
 procedure TForm1.EnergyBalanceClick(Sender: TObject);
