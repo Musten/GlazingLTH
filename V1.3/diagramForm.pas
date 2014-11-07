@@ -2147,25 +2147,30 @@ begin
     ResultGrid.Columns[i].Free;
   end;
 
-  for i := 0 to 3 do // Skapa rubriker i tabellen
+  for i := 0 to 4 do // Skapa rubriker i tabellen
   begin
     col := TStringColumn.Create(self);
     col.Width := 47;
     case i of
       0:
         begin
-          col.Header := 'MedelT';
+          col.Header := ' ';
+          col.Width := 75;
         end;
       1:
+        begin
+          col.Header := 'MedelT';
+        end;
+      2:
         begin
           col.Header := 'Tot.Energi';
           col.Width := 85
         end;
-      2:
+      3:
         begin
           col.Header := 'Min.T';
         end;
-      3:
+      4:
         begin
           col.Header := 'Max.T';
         end;
