@@ -35,6 +35,7 @@ type
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
+    Panel3: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure TempRadioButtonChange(Sender: TObject);
     procedure HeatRadioButtonChange(Sender: TObject);
