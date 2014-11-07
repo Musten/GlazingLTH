@@ -21,7 +21,6 @@ type
     Series2: TLineSeries;
     Series1: TLineSeries;
     ResultTxtBtn: TButton;
-    Panel1: TPanel;
     Panel2: TPanel;
     ResultGrid: TStringGrid;
     StringColumn1: TStringColumn;
@@ -36,6 +35,7 @@ type
     Label11: TLabel;
     Label12: TLabel;
     Panel3: TPanel;
+    Panel1: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure TempRadioButtonChange(Sender: TObject);
     procedure HeatRadioButtonChange(Sender: TObject);

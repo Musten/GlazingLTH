@@ -2,9 +2,8 @@ object Form5: TForm5
   Left = 0
   Top = 0
   Caption = 'Resultat'
-  ClientHeight = 900
-  ClientWidth = 809
-  WindowState = wsMaximized
+  ClientHeight = 700
+  ClientWidth = 1300
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [dkDesktop, dkiPhone, dkiPad]
@@ -16,173 +15,13 @@ object Form5: TForm5
   DesignerDeviceName = ''
   DesignerOrientation = 0
   DesignerOSVersion = ''
-  object Panel1: TPanel
-    Align = alFitRight
-    Anchors = [akLeft, akTop, akBottom]
-    Height = 900.000000000000000000
-    Position.X = 447.000000000000000000
-    Width = 362.000000000000000000
-    TabOrder = 0
-    object Panel3: TPanel
-      Align = alFitRight
-      Anchors = [akLeft, akTop, akBottom]
-      Height = 900.000000000000000000
-      Width = 362.000000000000000000
-      TabOrder = 0
-      object EtaRadioButton: TRadioButton
-        GroupName = 'DiagramRadioButton'
-        Height = 19.000000000000000000
-        Position.X = 16.000000000000000000
-        Position.Y = 152.000000000000000000
-        TabOrder = 0
-        Text = 'Eta'#39
-        Width = 120.000000000000000000
-        OnChange = EtaRadioButtonChange
-      end
-      object HeatRadioButton: TRadioButton
-        GroupName = 'DiagramRadioButton'
-        Height = 25.000000000000000000
-        Position.X = 16.000000000000000000
-        Position.Y = 72.000000000000000000
-        TabOrder = 1
-        Text = 'Energianv'#228'ndning'
-        Width = 161.000000000000000000
-        OnChange = HeatRadioButtonChange
-      end
-      object Label1: TLabel
-        Height = 24.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 264.000000000000000000
-        Text = 'Energianv'#228'ndning, utan inglasning:'
-        Width = 185.000000000000000000
-      end
-      object Label10: TLabel
-        Height = 24.000000000000000000
-        Position.X = 208.000000000000000000
-        Position.Y = 408.000000000000000000
-        Text = 'Aktuellt Eta:'
-        Width = 65.000000000000000000
-      end
-      object Label11: TLabel
-        Height = 24.000000000000000000
-        Position.X = 208.000000000000000000
-        Position.Y = 336.000000000000000000
-        Text = 'Aktuellt U:'
-        Width = 57.000000000000000000
-      end
-      object Label12: TLabel
-        Height = 25.000000000000000000
-        Position.X = 206.000000000000000000
-        Position.Y = 368.000000000000000000
-        Width = 91.000000000000000000
-      end
-      object Label2: TLabel
-        Height = 25.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 224.000000000000000000
-        Width = 137.000000000000000000
-      end
-      object Label3: TLabel
-        Height = 24.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 192.000000000000000000
-        Text = 'Energianv'#228'ndning, med inglasning:'
-        Width = 169.000000000000000000
-      end
-      object Label4: TLabel
-        Height = 24.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 296.000000000000000000
-        Width = 145.000000000000000000
-      end
-      object Label5: TLabel
-        Height = 25.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 368.000000000000000000
-        Width = 137.000000000000000000
-      end
-      object Label6: TLabel
-        Height = 24.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 336.000000000000000000
-        Text = 'U*, medel '#246'ver hela '#229'ret:'
-        Width = 169.000000000000000000
-      end
-      object Label7: TLabel
-        Height = 25.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 440.000000000000000000
-        Width = 99.000000000000000000
-      end
-      object Label8: TLabel
-        Height = 24.000000000000000000
-        Position.X = 22.000000000000000000
-        Position.Y = 408.000000000000000000
-        Text = 'Eta*, medel '#246'ver hela '#229'ret:'
-        Width = 169.000000000000000000
-      end
-      object Label9: TLabel
-        Height = 25.000000000000000000
-        Position.X = 206.000000000000000000
-        Position.Y = 440.000000000000000000
-        Width = 91.000000000000000000
-      end
-      object ResultGrid: TStringGrid
-        Height = 157.000000000000000000
-        Position.X = 20.000000000000000000
-        Position.Y = 488.000000000000000000
-        TabOrder = 14
-        Width = 306.000000000000000000
-        CanFocus = False
-        RowCount = 6
-        RowHeight = 22.000000000000000000
-        object StringColumn1: TStringColumn
-          Height = 132.000000000000000000
-          TabOrder = 0
-          Width = 75.000000000000000000
-        end
-      end
-      object ResultTxtBtn: TButton
-        Height = 24.000000000000000000
-        Position.X = 24.000000000000000000
-        Position.Y = 664.000000000000000000
-        TabOrder = 15
-        Text = #214'ppna Resultatfil'
-        Width = 121.000000000000000000
-        OnClick = ResultTxtBtnClick
-      end
-      object TempRadioButton: TRadioButton
-        GroupName = 'DiagramRadioButton'
-        Height = 24.000000000000000000
-        Position.X = 16.000000000000000000
-        Position.Y = 32.000000000000000000
-        TabOrder = 16
-        Text = 'Temperatur i vald volym'
-        Width = 153.000000000000000000
-        OnChange = TempRadioButtonChange
-      end
-      object URadioButton: TRadioButton
-        GroupName = 'DiagramRadioButton'
-        Height = 19.000000000000000000
-        Position.X = 16.000000000000000000
-        Position.Y = 112.000000000000000000
-        TabOrder = 17
-        Text = 'U'#39
-        Width = 120.000000000000000000
-        OnChange = URadioButtonChange
-      end
-    end
-  end
   object Panel2: TPanel
-    Align = alFitLeft
-    DesignVisible = False
-    Height = 630.389648437500000000
-    Position.Y = 135.000000000000000000
-    Width = 809.000000000000000000
-    TabOrder = 1
+    Height = 700.000000000000000000
+    Width = 898.333251953125000000
+    TabOrder = 0
     object Chart1: TChart
-      Height = 630.389648437500000000
-      Width = 810.000000000000000000
+      Height = 700.000000000000000000
+      Width = 899.333251953125000000
       AllowPanning = pmNone
       Foot.Font.Brush.Color = claRed
       Legend.Alignment = laBottom
@@ -274,5 +113,161 @@ object Form5: TForm5
         Data = {0000000000}
       end
     end
+  end
+  object Panel3: TPanel
+    Height = 700.000000000000000000
+    Position.X = 899.000000000000000000
+    Width = 1300.000000000000000000
+    TabOrder = 1
+    object EtaRadioButton: TRadioButton
+      GroupName = 'DiagramRadioButton'
+      Height = 19.000000000000000000
+      Position.X = 40.000000000000000000
+      Position.Y = 152.000000000000000000
+      TabOrder = 0
+      Text = 'Eta'#39
+      Width = 120.000000000000000000
+      OnChange = EtaRadioButtonChange
+    end
+    object HeatRadioButton: TRadioButton
+      GroupName = 'DiagramRadioButton'
+      Height = 25.000000000000000000
+      Position.X = 40.000000000000000000
+      Position.Y = 72.000000000000000000
+      TabOrder = 1
+      Text = 'Energianv'#228'ndning'
+      Width = 161.000000000000000000
+      OnChange = HeatRadioButtonChange
+    end
+    object Label1: TLabel
+      Height = 24.000000000000000000
+      Position.X = 206.000000000000000000
+      Position.Y = 104.000000000000000000
+      Text = 'Energianv'#228'ndning, utan inglasning:'
+      Width = 185.000000000000000000
+    end
+    object Label10: TLabel
+      Height = 24.000000000000000000
+      Position.X = 232.000000000000000000
+      Position.Y = 304.000000000000000000
+      Text = 'Aktuellt Eta:'
+      Width = 65.000000000000000000
+    end
+    object Label11: TLabel
+      Height = 24.000000000000000000
+      Position.X = 232.000000000000000000
+      Position.Y = 232.000000000000000000
+      Text = 'Aktuellt U:'
+      Width = 57.000000000000000000
+    end
+    object Label12: TLabel
+      Height = 25.000000000000000000
+      Position.X = 230.000000000000000000
+      Position.Y = 264.000000000000000000
+      Width = 91.000000000000000000
+    end
+    object Label2: TLabel
+      Height = 25.000000000000000000
+      Position.X = 206.000000000000000000
+      Position.Y = 64.000000000000000000
+      Width = 137.000000000000000000
+    end
+    object Label3: TLabel
+      Height = 24.000000000000000000
+      Position.X = 206.000000000000000000
+      Position.Y = 32.000000000000000000
+      Text = 'Energianv'#228'ndning, med inglasning:'
+      Width = 179.000000000000000000
+    end
+    object Label4: TLabel
+      Height = 24.000000000000000000
+      Position.X = 206.000000000000000000
+      Position.Y = 136.000000000000000000
+      Width = 145.000000000000000000
+    end
+    object Label5: TLabel
+      Height = 25.000000000000000000
+      Position.X = 46.000000000000000000
+      Position.Y = 264.000000000000000000
+      Width = 137.000000000000000000
+    end
+    object Label6: TLabel
+      Height = 24.000000000000000000
+      Position.X = 46.000000000000000000
+      Position.Y = 232.000000000000000000
+      Text = 'U*, medel '#246'ver hela '#229'ret:'
+      Width = 169.000000000000000000
+    end
+    object Label7: TLabel
+      Height = 25.000000000000000000
+      Position.X = 46.000000000000000000
+      Position.Y = 336.000000000000000000
+      Width = 99.000000000000000000
+    end
+    object Label8: TLabel
+      Height = 24.000000000000000000
+      Position.X = 46.000000000000000000
+      Position.Y = 304.000000000000000000
+      Text = 'Eta*, medel '#246'ver hela '#229'ret:'
+      Width = 169.000000000000000000
+    end
+    object Label9: TLabel
+      Height = 25.000000000000000000
+      Position.X = 230.000000000000000000
+      Position.Y = 336.000000000000000000
+      Width = 91.000000000000000000
+    end
+    object ResultGrid: TStringGrid
+      Height = 157.000000000000000000
+      Position.X = 44.000000000000000000
+      Position.Y = 392.000000000000000000
+      TabOrder = 14
+      Width = 306.000000000000000000
+      CanFocus = False
+      RowCount = 6
+      RowHeight = 22.000000000000000000
+      object StringColumn1: TStringColumn
+        Height = 132.000000000000000000
+        TabOrder = 0
+        Width = 75.000000000000000000
+      end
+    end
+    object ResultTxtBtn: TButton
+      Height = 24.000000000000000000
+      Position.X = 224.000000000000000000
+      Position.Y = 568.000000000000000000
+      TabOrder = 15
+      Text = #214'ppna Resultatfil'
+      Width = 121.000000000000000000
+      OnClick = ResultTxtBtnClick
+    end
+    object TempRadioButton: TRadioButton
+      GroupName = 'DiagramRadioButton'
+      Height = 24.000000000000000000
+      Position.X = 40.000000000000000000
+      Position.Y = 32.000000000000000000
+      TabOrder = 16
+      Text = 'Temperatur i vald volym'
+      Width = 153.000000000000000000
+      OnChange = TempRadioButtonChange
+    end
+    object URadioButton: TRadioButton
+      GroupName = 'DiagramRadioButton'
+      Height = 19.000000000000000000
+      Position.X = 40.000000000000000000
+      Position.Y = 112.000000000000000000
+      TabOrder = 17
+      Text = 'U'#39
+      Width = 120.000000000000000000
+      OnChange = URadioButtonChange
+    end
+  end
+  object Panel1: TPanel
+    Align = alFitRight
+    Anchors = [akLeft, akTop, akBottom]
+    Height = 0.000000000000000000
+    Position.Y = 350.000000000000000000
+    Width = 1300.000000000000000000
+    TabOrder = 2
   end
 end
