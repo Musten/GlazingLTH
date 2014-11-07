@@ -457,6 +457,16 @@ begin
   begin
     DerobModel.HouseProperties.BoolValue['GlazeTemp'] := False;
   end;
+  // Ifall användaren inte har valt en regleringsstrategi så kommer rumstemperatur väljas
+  if (RoomTempRadioButton.IsChecked = False) and
+    (GlazeTempRadioButton.IsChecked = False) then
+  begin
+    RoomTempRadioButton.IsChecked := True;
+    DerobModel.HouseProperties.BoolValue['RoomTemp'] := True;
+    DerobModel.HouseProperties.BoolValue['GlazeTemp'] := False;
+    DerobModel.HouseProperties.IntValue['TMaxRoom'] :=
+      Round(TempMaxNumberBox.Value);
+  end;
 
   DerobModel.HouseProperties.IntValue['IntHeat'] :=
     Round(IntHeatNumberBox.Value);
@@ -688,8 +698,6 @@ begin
   begin
     DerobModel.GlazingProperties.BoolValue['NorthEast'] := True;
     DerobModel.RemoveGlazing(DerobModel.Glazing[2]);
-    // DerobModel.GlazingProperties.BoolValue['GlazingNorth']:=False;
-    // DerobModel.GlazingProperties.BoolValue['GlazingEast']:=False;
     for i := DerobModel.GlazingCount to DerobModel.GlazingCount + 3 do
     begin
       DerobModel.AddGlazing(TGlazing.Create);
@@ -709,8 +717,6 @@ begin
     begin
       DerobModel.RemoveGlazing(DerobModel.Glazing[2]);
     end;
-    // DerobModel.GlazingProperties.BoolValue['GlazingEast']:=False;
-    // DerobModel.GlazingProperties.BoolValue['GlazingSouth']:=False;
     for i := DerobModel.GlazingCount to DerobModel.GlazingCount + 3 do
     begin
       DerobModel.AddGlazing(TGlazing.Create);
@@ -737,8 +743,6 @@ begin
       DerobModel.RemoveGlazing(DerobModel.Glazing[2]);
     end;
 
-    // DerobModel.GlazingProperties.BoolValue['GlazingSouth']:=False;
-    // DerobModel.GlazingProperties.BoolValue['GlazingWest']:=False;
     for i := DerobModel.GlazingCount to DerobModel.GlazingCount + 3 do
     begin
       DerobModel.AddGlazing(TGlazing.Create);
@@ -1979,7 +1983,7 @@ begin
     end;
     until FindNext(searchResult) <> 0;
     // Must free up resources used by these successful finds
-    // FindClose(searchResult); FUNKAR INTE?     FRÅGA JONAS
+    // FindClose(searchResult); Error men funkar ändå?
   end;
 end;
 
@@ -2221,7 +2225,6 @@ var
   holder: TStringList;
   Material: TMaterial;
 begin
-  // Idx := 0;
   holder := TStringList.Create;
   SetCurrentDir(StartDir);
   AssignFile(SomeTxtFile, 'Library/WallMaterial.lib');
@@ -2521,7 +2524,6 @@ begin
   mainHide;
   // Visar upp den tomma panelen
   EmptyPanel.Visible := True;
-  // Nollsätller räknaren i programmet
 end;
 
 procedure TForm1.EnergyBalanceClick(Sender: TObject);

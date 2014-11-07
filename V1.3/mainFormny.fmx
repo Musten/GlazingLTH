@@ -58,7 +58,7 @@ object Form1: TForm1
       IsExpanded = False
       IsSelected = False
       TabOrder = 4
-      Text = 'EmptyTreeView'
+      Text = 'SynsEj,Anv'#228'ndsF'#246'rBer'#228'kning'
       Visible = False
       OnClick = EmptyTreeViewClick
     end
