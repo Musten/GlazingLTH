@@ -151,8 +151,8 @@ object Form5: TForm5
       Height = 24.000000000000000000
       Position.X = 232.000000000000000000
       Position.Y = 304.000000000000000000
-      Text = 'Aktuellt Eta:'
-      Width = 65.000000000000000000
+      Text = 'Aktuell verkningsgrad:'
+      Width = 113.000000000000000000
     end
     object Label11: TLabel
       Height = 24.000000000000000000

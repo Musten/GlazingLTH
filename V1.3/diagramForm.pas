@@ -2329,7 +2329,7 @@ begin // Med inglasning- linje
   if URadioButton.IsChecked = True then
   begin
     Chart1.LeftAxis.Title.Caption := 'Timmar';
-    Chart1.RightAxis.Title.Caption := 'U*';
+    Chart1.BottomAxis.Title.Caption := 'U*';
 
     With Chart1.Series[2] Do
     begin
@@ -2342,7 +2342,7 @@ begin // Med inglasning- linje
   else if EtaRadioButton.IsChecked = True then
   begin
     Chart1.LeftAxis.Title.Caption := 'Timmar';
-    Chart1.RightAxis.Title.Caption := 'Eta*';
+    Chart1.BottomAxis.Title.Caption := 'Eta*';
 
     With Chart1.Series[3] Do
     begin
