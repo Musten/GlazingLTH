@@ -205,27 +205,6 @@ begin
   SetLength(WindowH, 4); // Fönsterhöjd --"--"--
   SetLength(DeltaT, 8760); // Temperaturskillnad mellan ute och inne
 
-  // EtaTime = Antal timmar EtaPrim behöver ökas med ett visst värde
-  USteg := 250;
-  EtaSteg := 150;
-   SetLength(UTime, USteg);
-  // UTime = Antal timmar UPrim behöver vara under ett visst värde
-  SetLength(EtaTime, EtaSteg);
-  SetLength(UIntervall, USteg);
-  SetLength(EtaIntervall, EtaSteg);
-  UIntervall[0] := -0.5;
-  EtaIntervall[0] := 0;
-
-  for i := 1 to USteg do
-  begin
-    UIntervall[i] := UIntervall[i - 1] + 0.01;
-  end;
-
-  for i := 1 to EtaSteg do
-  begin
-    EtaIntervall[i] := EtaIntervall[i - 1] + 0.01;
-  end;
-
   Langd := DerobModel.Surface.Length;
   Bredd := DerobModel.Surface.Width;
   Hojd := DerobModel.Surface.Height;
@@ -352,6 +331,28 @@ begin
     Comparefile.Add(FloatToStr(i + 1) + ' ' + FloatToStr(DeltaT[i]) + ' ' +
       FloatToStr(TotEnergiGlas[i]) + ' ' + FloatToStr(TotEnergi[i]) + '  ' +
       FloatToStr(UPrim[i]) + '  ' + FloatToStr(EtaPrim[i]));
+  end;
+
+  // UTime = Antal timmar UPrim behöver vara under ett visst värde
+  // Anpassa intervallet för UPrim för finare graf
+  USteg := Round(((MaxValue(UPrim) + 0.1) - (MinValue(UPrim) - 0.1)) / 0.01);
+  SetLength(UIntervall, USteg);
+  SetLength(UTime, USteg);
+  UIntervall[0] := MinValue(UPrim) - 0.1;
+  for i := 1 to USteg do
+  begin
+    UIntervall[i] := UIntervall[i - 1] + 0.01;
+  end;
+
+  // EtaTime = Antal timmar EtaPrim behöver ökas med ett visst värde
+  EtaSteg := 150;
+  SetLength(EtaTime, EtaSteg);
+  SetLength(EtaIntervall, EtaSteg);
+  EtaIntervall[0] := 0;
+
+  for i := 1 to EtaSteg do
+  begin
+    EtaIntervall[i] := EtaIntervall[i - 1] + 0.01;
   end;
 
   for i := 0 to USteg - 1 do
@@ -2140,7 +2141,7 @@ begin
   SetLength(RefEnergi, 8760);
 
   colCount := ResultGrid.ColumnCount;
-  for i := colCount - 1 downto 1 do // Rensa i tabellerna
+  for i := colCount - 1 downto 0 do // Rensa i tabellerna
   begin
     ResultGrid.Columns[i].Free;
   end;
