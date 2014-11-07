@@ -932,6 +932,8 @@ begin
         LoadMaterials;
         LoadGlassConstructions;
         mainUpdateComboBox;
+        mainMenuResult.Enabled := True;
+        mainMenuSimulate.Enabled := True;
         DerobModel.HouseProperties.BoolValue['KGK'] := True;
       end;
 
@@ -971,6 +973,7 @@ begin
   OpenDialog.Filename := '';
   OpenDialog.InitialDir := TPath.GetSharedDocumentsPath + '\Glazing-LTH\Cases\';
   OpenDialog.Filter := 'Sparfiler (.dat)|*.dat';
+
   // -------------------------------
   if OpenDialog.Execute then
   begin
@@ -998,9 +1001,12 @@ begin
     end;
     mainHide;
     Geometry.IsSelected := True;
+    Form1.Caption := 'Geometri';
     GeometryPanel.Visible := True;
     TreeView1.Enabled := True;
     TreeView1.HitTest := True;
+    mainMenuResult.Enabled := True;
+    mainMenuSimulate.Enabled := True;
     DerobModel.HouseProperties.BoolValue['GlazeChange'] := False;
   end;
 
@@ -1015,36 +1021,51 @@ procedure TForm1.resultMenuVisualizationClick(Sender: TObject);
 var
   ArgPath, KGKPath: String;
 begin
-  SetCurrentDir(StartDir);
-  GeometryClick(Self);
-  mainGeometrySave;
-  VolumeCount;
-  mainPropertiesSave;
-  mainEnergySave;
-  mainClimateSave;
-  SaveConstructionNames;
-  DerobModel.HouseProperties.StringValue['StartDir'] := StartDir;
-  if DerobModel.HouseProperties.BoolValue['KGK'] <> False then
-  begin
-    DerobModel.HouseProperties.BoolValue['KGK'] := True;
-    ConvertDerob.DerobModel := Self.DerobModel;
-    ConvertDerob.Surface := Self.Surface;
-    ConvertDerob.ConvertForLib;
-    ConvertDerob.writeLibFile;
-    ConvertDerob.ConvertForInput;
-    ConvertDerob.writeInputFile;
-  end;
-  DerobModel.HouseProperties.BoolValue['KGK'] := False;
-  SetCurrentDir(StartDir);
-  SetCurrentDir('Cases/');
-  SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
-  ArgPath := GetCurrentDir + '\Winter\Indata1.txt';
-  SetCurrentDir(StartDir);
-  SetCurrentDir('Derob');
-  KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "' + ArgPath + '"';
+if  DerobModel.HouseProperties.BoolValue['KGK'] = False then
+begin
 
-  ProcessExec(KGKPath, '', False);
-  DeleteFile('KGK_Show.ini');
+//If-sats för att kolla om man har valt konstrutkioner (Behövs endast vid visualisering innan körning.
+{  if (RoofComboBox.ItemIndex <> -1) and (FloorComboBox.ItemIndex <> -1) and
+    (WallComboBox.ItemIndex <> -1) then
+  begin
+     // Något som inte funkar vid skrivning av 'Libraryfile' om man vill visualisera huset innan körning.
+    { SetCurrentDir(StartDir);
+      GeometryClick(Self);
+      Form1.Caption:='Geometri';
+      mainGeometrySave;
+      VolumeCount;
+      mainPropertiesSave;
+      mainEnergySave;
+      mainClimateSave;
+      SaveConstructionNames;
+      DerobModel.HouseProperties.StringValue['StartDir'] := StartDir;
+      if DerobModel.HouseProperties.BoolValue['KGK'] <> False then
+      begin
+      DerobModel.HouseProperties.BoolValue['KGK'] := True;
+      ConvertDerob.DerobModel := Self.DerobModel;
+      ConvertDerob.Surface := Self.Surface;
+      ConvertDerob.ConvertForLib;
+      ConvertDerob.writeLibFile;
+      ConvertDerob.ConvertForInput;
+      ConvertDerob.writeInputFile;
+      end;
+      DerobModel.HouseProperties.BoolValue['KGK'] := False; }
+    SetCurrentDir(StartDir);
+    SetCurrentDir('Cases/');
+    SetCurrentDir(DerobModel.HouseProperties.StringValue['CaseName']);
+    ArgPath := GetCurrentDir + '\Winter\Indata1.txt';
+    SetCurrentDir(StartDir);
+    SetCurrentDir('Derob');
+    KGKPath := GetCurrentDir + '\KGK_Show.exe' + ' "' + ArgPath + '"';
+
+    ProcessExec(KGKPath, '', False);
+    DeleteFile('KGK_Show.ini');
+  end
+  // Uppmaning till användaren att välja konstruktioner innan visualisering (Krävs för att KGKShow ska funka)                                                                    ;
+{  else
+  begin
+    ShowMessage('Vänligen ange egenskaper för huset');
+  end;}
 end;
 
 procedure TForm1.mainMenuDeleteFilesClick(Sender: TObject);
@@ -1541,7 +1562,10 @@ begin
 
   if ExitCode = 0 then
   begin
+  //Åter aktiverar knapparna för resultaten
     resultMenuChart.Enabled := True;
+    resultMenuVisualization.Enabled:=True;
+    //Återställer vyn man var i
     RestorePanelView;
     DerobModel.HouseProperties.BoolValue['Simulated'] := False;
   end;
