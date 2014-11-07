@@ -56,7 +56,8 @@ var
   idGlaze, GroundConstruction, igGlaze, idGlass: integer;
 
   vent, lat, rsoil, gvr, caph, v2, LeakRoom, LeakNorth, LeakEast, LeakSouth,
-    LeakWest, LeakOpening, NLeakOpening, ELeakOpening, SLeakOpening, WLeakOpening, summervent, v1: double;
+    LeakWest, LeakOpening, NLeakOpening, ELeakOpening, SLeakOpening,
+    WLeakOpening, summervent, v1: double;
   rot, iy1, im1, id1, iy2, im2, id2, imuse, iacc, isun, iout, temp, inclw, nrpm,
     hco, hci, intld, ityp, ndp, nhp, ih1, ih2, v3, v5, v6, nventsummer,
     nventwinter, capc, v4, GlassMatCount, GasMatCount, OpaqueMatCount,
@@ -160,14 +161,22 @@ begin
     else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Gas' then
     begin
       MaterialName[i] := DerobModel.Materials[i].Name;
-      GasCond[i] := DerobModel.Materials[i].DoubleValue['Conductivity'];
-      GasdCdT[i] := DerobModel.Materials[i].DoubleValue['dC/dT'];
-      GasVisc[i] := DerobModel.Materials[i].DoubleValue['Viscosity'];
-      GasdVdT[i] := DerobModel.Materials[i].DoubleValue['dV/dT'];
-      GasDens[i] := DerobModel.Materials[i].DoubleValue['GasDensity'];
-      GasdDdT[i] := DerobModel.Materials[i].DoubleValue['dD/dT'];
-      GasPrand[i] := DerobModel.Materials[i].DoubleValue['Prandtl'];
-      GasdPdT[i] := DerobModel.Materials[i].DoubleValue['dP/dT'];
+      GasCond[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['Conductivity'];
+      GasdCdT[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['dC/dT'];
+      GasVisc[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['Viscosity'];
+      GasdVdT[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['dV/dT'];
+      GasDens[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['GasDensity'];
+      GasdDdT[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['dD/dT'];
+      GasPrand[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['Prandtl'];
+      GasdPdT[i - GlassMatCount] := DerobModel.Materials[i].DoubleValue
+        ['dP/dT'];
       idGasMat[i - GlassMatCount] := (i - GlassMatCount) + 1;
     end
     else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Opaque' then
@@ -273,9 +282,11 @@ begin
     begin
       WriteLn(LibraryFile, ig[1], ' ', idGasMat[i - GlassMatCount], ' ',
         MaterialName[i]);
-      WriteLn(LibraryFile, ' ', GasCond[i], ' ', GasdCdT[i], ' ', GasVisc[i],
-        ' ', GasdVdT[i], ' ', GasDens[i], '  ', GasdDdT[i], ' ', GasPrand[i],
-        ' ', GasdPdT[i]);
+      WriteLn(LibraryFile, ' ', GasCond[i - GlassMatCount], ' ',
+        GasdCdT[i - GlassMatCount], ' ', GasVisc[i - GlassMatCount], ' ',
+        GasdVdT[i - GlassMatCount], ' ', GasDens[i - GlassMatCount], '  ',
+        GasdDdT[i - GlassMatCount], ' ', GasPrand[i - GlassMatCount], ' ',
+        GasdPdT[i - GlassMatCount]);
     end
     else if DerobModel.Materials[i].StringValue['MaterialType'] = 'Opaque' then
     begin
@@ -444,7 +455,7 @@ begin
     EmittanceBack[i] := 87;
   end;
 
-  for i := 0 to WallCount - 1 do      //huhu
+  for i := 0 to WallCount - 1 do // huhu
   begin
     if (i = 0) or (i = 2) then
     begin
@@ -625,8 +636,8 @@ begin
     // NordExtra
     Name[GlazeIndex] := 'NorthEastExtra';
     X[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityNorth'];
-    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
-      ['CavityEast'];
+    Y[GlazeIndex] := DerobModel.Surface.Width +
+      DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex] := DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     B[GlazeIndex] := DerobModel.Surface.Height;
     Zenith[GlazeIndex] := 90;
@@ -634,8 +645,8 @@ begin
     ivol2[GlazeIndex] := NorthVol;
     // ÖstExtra
     Name[GlazeIndex + 1] := 'EastNorthExtra';
-    Y[GlazeIndex + 1] := DerobModel.Surface.Width + DerobModel.GlazingProperties.
-      DoubleValue['CavityEast'];
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width +
+      DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex + 1] := DerobModel.GlazingProperties.DoubleValue
       ['CavityNorth'];
     B[GlazeIndex + 1] := DerobModel.Surface.Height;
@@ -745,10 +756,10 @@ begin
   begin
     X[GlazeIndex] := DerobModel.Surface.Length;
     X[GlazeIndex + 2] := DerobModel.Surface.Length;
-    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
-      ['CavityEast'];
-    Y[GlazeIndex + 1] := DerobModel.Surface.Width + DerobModel.GlazingProperties.
-      DoubleValue['CavityEast'];
+    Y[GlazeIndex] := DerobModel.Surface.Width +
+      DerobModel.GlazingProperties.DoubleValue['CavityEast'];
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width +
+      DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     Y[GlazeIndex + 2] := DerobModel.Surface.Width;
     Y[GlazeIndex + 3] := DerobModel.Surface.Width;
     Z[GlazeIndex + 2] := DerobModel.Surface.Height;
@@ -801,10 +812,10 @@ begin
       DerobModel.Surface.Height) / 2;
     // ÖstExtra
     Name[GlazeIndex] := 'EastSouthExtra';
-    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
-      ['CavitySouth'];
-    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
-      ['CavityEast'];
+    X[GlazeIndex] := DerobModel.Surface.Length +
+      DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
+    Y[GlazeIndex] := DerobModel.Surface.Width +
+      DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     A[GlazeIndex] := DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
     B[GlazeIndex] := DerobModel.Surface.Height;
     Zenith[GlazeIndex] := 90;
@@ -854,10 +865,10 @@ begin
     X[GlazeIndex] := DerobModel.Surface.Length;
     X[GlazeIndex + 2] := DerobModel.Surface.Length;
     X[GlazeIndex + 3] := DerobModel.Surface.Length;
-    Y[GlazeIndex] := DerobModel.Surface.Width + DerobModel.GlazingProperties.DoubleValue
-      ['CavityEast'];
-    Y[GlazeIndex + 1] := DerobModel.Surface.Width + DerobModel.GlazingProperties.
-      DoubleValue['CavityEast'];
+    Y[GlazeIndex] := DerobModel.Surface.Width +
+      DerobModel.GlazingProperties.DoubleValue['CavityEast'];
+    Y[GlazeIndex + 1] := DerobModel.Surface.Width +
+      DerobModel.GlazingProperties.DoubleValue['CavityEast'];
     Y[GlazeIndex + 2] := DerobModel.Surface.Width;
     Y[GlazeIndex + 3] := DerobModel.Surface.Width;
     Y[GlazeIndex + 4] := DerobModel.Surface.Width;
@@ -918,8 +929,8 @@ begin
 
   if DerobModel.GlazingProperties.BoolValue['SouthWest'] = true then
   begin
-    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
-      ['CavitySouth'];
+    X[GlazeIndex] := DerobModel.Surface.Length +
+      DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
     X[GlazeIndex + 1] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
     X[GlazeIndex + 2] := DerobModel.Surface.Length +
@@ -979,8 +990,8 @@ begin
 
     // SydExtra
     Name[GlazeIndex] := 'SouthWestExtra';
-    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
-      ['CavitySouth'];
+    X[GlazeIndex] := DerobModel.Surface.Length +
+      DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
     Y[GlazeIndex] := -DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     A[GlazeIndex] := DerobModel.GlazingProperties.DoubleValue['CavityWest'];
     B[GlazeIndex] := DerobModel.Surface.Height;
@@ -1032,8 +1043,8 @@ begin
   end
   else if DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = true then
   begin
-    X[GlazeIndex] := DerobModel.Surface.Length + DerobModel.GlazingProperties.DoubleValue
-      ['CavitySouth'];
+    X[GlazeIndex] := DerobModel.Surface.Length +
+      DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
     X[GlazeIndex + 1] := DerobModel.Surface.Length +
       DerobModel.GlazingProperties.DoubleValue['CavitySouth'];
     X[GlazeIndex + 2] := DerobModel.Surface.Length;
@@ -1348,7 +1359,8 @@ begin
     LeakEast := DerobModel.VentilationProperties.DoubleValue['Leak3'];
     LeakSouth := DerobModel.VentilationProperties.DoubleValue['Leak4'];
     LeakWest := DerobModel.VentilationProperties.DoubleValue['Leak5'];
-    LeakOpening := DerobModel.VentilationProperties.DoubleValue['OpeningLeakage'];
+    LeakOpening := DerobModel.VentilationProperties.DoubleValue
+      ['OpeningLeakage'];
 
     if Form1.nvol > 1 then
     begin
@@ -1364,7 +1376,6 @@ begin
 
   end;
 end;
-
 
 procedure TDerobConvert.writeInputFile;
 var
@@ -1529,53 +1540,61 @@ begin
         SLeakOpening := 0;
         WLeakOpening := 0;
 
-        if (DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = False) and ((Idx = 3) or (Idx = 4)) then
+        if (DerobModel.VentilationProperties.BoolValue['AdvectionConnection']
+          = false) and ((Idx = 3) or (Idx = 4)) then
+        begin
+          NLeakOpening := LeakOpening;
+          ELeakOpening := LeakOpening;
+          SLeakOpening := LeakOpening;
+          WLeakOpening := LeakOpening;
+        end;
+
+        if (DerobModel.VentilationProperties.BoolValue['AdvectionConnection']
+          = true) and ((Idx = 3) or (Idx = 4)) then
+        begin
+          if DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = true then
+          begin
+            SLeakOpening := LeakOpening;
+          end
+          else if DerobModel.GlazingProperties.BoolValue['GlazingEast'] = true
+          then
+          begin
+            ELeakOpening := LeakOpening;
+          end
+          else if DerobModel.GlazingProperties.BoolValue['GlazingWest'] = true
+          then
+          begin
+            WLeakOpening := LeakOpening;
+          end
+          else if DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = true
+          then
           begin
             NLeakOpening := LeakOpening;
-            ELeakOpening := LeakOpening;
-            SLeakOpening := LeakOpening;
-            WLeakOpening := LeakOpening;
           end;
-
-        if (DerobModel.VentilationProperties.BoolValue['AdvectionConnection'] = True) and ((Idx = 3) or (Idx = 4)) then
-          begin
-            if DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = True then
-              begin
-                SLeakOpening := LeakOpening;
-              end
-            else if DerobModel.GlazingProperties.BoolValue['GlazingEast'] = True then
-              begin
-                ELeakOpening := LeakOpening;
-              end
-            else if DerobModel.GlazingProperties.BoolValue['GlazingWest'] = True then
-              begin
-                WLeakOpening := LeakOpening;
-              end
-            else if DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = True then
-              begin
-                NLeakOpening := LeakOpening;
-              end;
-          end;
-
+        end;
 
         v1 := 0;
         if (LeakRoom <> 0) and (i = 0) then
         begin
           v1 := LeakRoom;
         end;
-        if (DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = True) and (i = NorthVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingNorth'] = true) and
+          (i = NorthVol - 1) then
         begin
           v1 := LeakNorth + NLeakOpening;
         end;
-        if (DerobModel.GlazingProperties.BoolValue['GlazingEast'] = True) and (i = EastVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingEast'] = true) and
+          (i = EastVol - 1) then
         begin
           v1 := LeakEast + ELeakOpening;
         end;
-        if (DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = True) and (i = SouthVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingSouth'] = true) and
+          (i = SouthVol - 1) then
         begin
           v1 := LeakSouth + SLeakOpening;
         end;
-        if (DerobModel.GlazingProperties.BoolValue['GlazingWest'] = True) and (i = WestVol-1) then
+        if (DerobModel.GlazingProperties.BoolValue['GlazingWest'] = true) and
+          (i = WestVol - 1) then
         begin
           v1 := LeakWest + WLeakOpening;
         end;
